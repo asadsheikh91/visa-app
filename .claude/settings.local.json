@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh api *)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "PowerShell($response = Invoke-WebRequest -Uri \"https://raw.githubusercontent.com/anthropics/skills/refs/heads/main/skills/frontend-design/SKILL.md\" -UseBasicParsing; $response.Content)"
+    ]
+  }
+}

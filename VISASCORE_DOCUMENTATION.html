@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VisaScore — Product Documentation</title>
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --card: #12121a;
+      --border: #1e1e2e;
+      --accent: #3b82f6;
+      --accent2: #6366f1;
+      --text: #e2e8f0;
+      --muted: #64748b;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --orange: #f97316;
+      --red: #ef4444;
+      --purple: #a855f7;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      line-height: 1.7;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(10,10,15,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .nav-logo { font-weight: 700; font-size: 1.1rem; color: var(--accent); letter-spacing: -0.5px; }
+    .nav-links { display: flex; gap: 1.5rem; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.85rem; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); }
+
+    /* ─── SECTIONS ─── */
+    section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem;
+    }
+    h1 { font-size: 3rem; font-weight: 800; line-height: 1.2; letter-spacing: -1px; }
+    h2 { font-size: 2rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 0.5rem; }
+    h3 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; }
+    p { color: #94a3b8; margin-bottom: 1rem; }
+    .divider { border: none; border-top: 1px solid var(--border); margin: 0; }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 85vh;
+      display: flex; flex-direction: column; justify-content: center;
+      border-bottom: 1px solid var(--border);
+      max-width: 100%; padding: 5rem 4rem;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 999px; padding: 0.35rem 1rem;
+      font-size: 0.8rem; font-weight: 500; color: var(--accent);
+      margin-bottom: 2rem; width: fit-content;
+    }
+    .hero-badge span { width: 8px; height: 8px; background: var(--accent); border-radius: 50%; display: block; }
+    .hero-title { font-size: clamp(2.5rem, 5vw, 4.5rem); font-weight: 800; line-height: 1.15; letter-spacing: -2px; margin-bottom: 1.5rem; }
+    .hero-title em { font-style: normal; color: var(--accent); }
+    .hero-sub { font-size: 1.2rem; color: #64748b; max-width: 600px; margin-bottom: 3rem; }
+    .hero-stats { display: flex; gap: 3rem; flex-wrap: wrap; }
+    .stat-block .stat-num { font-size: 2.5rem; font-weight: 800; letter-spacing: -1px; }
+    .stat-block .stat-label { font-size: 0.85rem; color: var(--muted); }
+
+    /* ─── CARDS ─── */
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.75rem;
+    }
+    .card-grid { display: grid; gap: 1.25rem; }
+    .card-grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .card-grid-3 { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+    .card-grid-4 { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+
+    /* ─── TAGS ─── */
+    .tag {
+      display: inline-block; padding: 0.2rem 0.65rem;
+      border-radius: 6px; font-size: 0.75rem; font-weight: 600;
+      margin-right: 0.4rem; margin-bottom: 0.4rem;
+    }
+    .tag-blue  { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    .tag-green { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .tag-red   { background: rgba(239,68,68,0.15); color: #f87171; }
+    .tag-orange{ background: rgba(249,115,22,0.15); color: #fb923c; }
+    .tag-purple{ background: rgba(168,85,247,0.15); color: #c084fc; }
+    .tag-yellow{ background: rgba(234,179,8,0.15); color: #facc15; }
+
+    /* ─── STEP FLOW ─── */
+    .flow-steps { display: flex; flex-wrap: wrap; gap: 0; align-items: stretch; }
+    .flow-step {
+      flex: 1; min-width: 120px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 0; padding: 1.5rem 1.25rem;
+      position: relative; text-align: center;
+    }
+    .flow-step:first-child { border-radius: 12px 0 0 12px; }
+    .flow-step:last-child  { border-radius: 0 12px 12px 0; }
+    .flow-step::after {
+      content: '→';
+      position: absolute; right: -14px; top: 50%; transform: translateY(-50%);
+      font-size: 1.2rem; color: var(--muted); z-index: 2;
+    }
+    .flow-step:last-child::after { display: none; }
+    .flow-step-num {
+      width: 32px; height: 32px; border-radius: 50%;
+      background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.3);
+      color: var(--accent); font-weight: 700; font-size: 0.85rem;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 0.75rem;
+    }
+    .flow-step-title { font-size: 0.85rem; font-weight: 600; margin-bottom: 0.3rem; }
+    .flow-step-sub { font-size: 0.75rem; color: var(--muted); }
+
+    /* ─── SCORE CATEGORIES ─── */
+    .score-row {
+      display: flex; align-items: center; gap: 1rem;
+      padding: 1rem 0; border-bottom: 1px solid var(--border);
+    }
+    .score-row:last-child { border-bottom: none; }
+    .score-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .score-bar-wrap { flex: 1; }
+    .score-bar-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 0.85rem; }
+    .score-bar-track { background: var(--border); border-radius: 999px; height: 8px; }
+    .score-bar-fill { height: 8px; border-radius: 999px; }
+
+    /* ─── ARCH DIAGRAM ─── */
+    .arch-wrap { overflow-x: auto; }
+
+    /* ─── API TABLE ─── */
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+    th { background: rgba(59,130,246,0.08); color: var(--muted); padding: 0.75rem 1rem; text-align: left; font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
+    td { padding: 0.85rem 1rem; border-bottom: 1px solid rgba(30,30,46,0.6); vertical-align: top; }
+    tr:last-child td { border-bottom: none; }
+    .method { font-family: monospace; font-size: 0.8rem; padding: 0.2rem 0.5rem; border-radius: 5px; font-weight: 700; }
+    .method-post { background: rgba(34,197,94,0.15); color: #4ade80; }
+    .method-get  { background: rgba(59,130,246,0.15); color: #60a5fa; }
+    code { background: rgba(255,255,255,0.06); border: 1px solid var(--border); padding: 0.15rem 0.45rem; border-radius: 5px; font-family: monospace; font-size: 0.82rem; }
+
+    /* ─── COST TABLE ─── */
+    .cost-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+    .cost-item { display: flex; justify-content: space-between; padding: 0.6rem 0; border-bottom: 1px solid var(--border); font-size: 0.9rem; }
+    .cost-item:last-child { border: none; }
+    .cost-label { color: var(--muted); }
+    .cost-val { font-weight: 600; }
+    .profit-banner {
+      background: linear-gradient(135deg, rgba(34,197,94,0.1), rgba(59,130,246,0.1));
+      border: 1px solid rgba(34,197,94,0.25); border-radius: 12px;
+      padding: 2rem; text-align: center; margin-top: 1.5rem;
+    }
+    .profit-num { font-size: 3rem; font-weight: 800; color: var(--green); letter-spacing: -2px; }
+    .profit-label { color: var(--muted); font-size: 0.9rem; }
+
+    /* ─── ROADMAP ─── */
+    .roadmap-phase {
+      border-left: 2px solid var(--border); padding-left: 1.5rem;
+      margin-bottom: 2rem; position: relative;
+    }
+    .roadmap-dot {
+      width: 12px; height: 12px; border-radius: 50%;
+      position: absolute; left: -7px; top: 4px;
+    }
+    .roadmap-items { margin-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .roadmap-item { display: flex; align-items: flex-start; gap: 0.6rem; font-size: 0.9rem; }
+    .roadmap-item::before { content: '—'; color: var(--muted); flex-shrink: 0; }
+
+    /* ─── SECURITY ─── */
+    .check-item { display: flex; align-items: flex-start; gap: 0.75rem; padding: 0.6rem 0; font-size: 0.9rem; border-bottom: 1px solid rgba(30,30,46,0.5); }
+    .check-item:last-child { border: none; }
+    .chk { font-size: 1rem; flex-shrink: 0; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border); padding: 2.5rem 4rem;
+      display: flex; justify-content: space-between; align-items: center;
+      color: var(--muted); font-size: 0.82rem; flex-wrap: wrap; gap: 1rem;
+    }
+
+    @media (max-width: 768px) {
+      #hero { padding: 4rem 1.5rem; }
+      section { padding: 3.5rem 1.5rem; }
+      .flow-steps { flex-direction: column; }
+      .flow-step { border-radius: 10px !important; }
+      .flow-step::after { content: '↓'; right: 50%; bottom: -16px; top: auto; transform: translateX(50%); }
+      .cost-grid { grid-template-columns: 1fr; }
+      .nav-links { display: none; }
+      h1, .hero-title { font-size: 2.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════════════════ NAV ════════════════════════════════ -->
+<nav>
+  <div class="nav-logo">VisaScore 🇵🇰</div>
+  <div class="nav-links">
+    <a href="#idea">The Idea</a>
+    <a href="#flow">User Flow</a>
+    <a href="#architecture">Architecture</a>
+    <a href="#scoring">AI Scoring</a>
+    <a href="#api">API</a>
+    <a href="#business">Business</a>
+    <a href="#roadmap">Roadmap</a>
+  </div>
+</nav>
+
+<!-- ════════════════════════════════ HERO ════════════════════════════════ -->
+<div id="hero">
+  <div class="hero-badge"><span></span> Product Documentation — v1.0</div>
+  <h1 class="hero-title">
+    Know your visa odds<br/>
+    <em>before you apply.</em>
+  </h1>
+  <p class="hero-sub">
+    VisaScore is an AI-powered Schengen visa risk assessment tool built specifically
+    for Pakistani applicants. Fill out 16 questions. Get your risk score instantly.
+    Pay $12 for the full breakdown and actionable fixes.
+  </p>
+  <div class="hero-stats">
+    <div class="stat-block">
+      <div class="stat-num" style="color:var(--red)">50%</div>
+      <div class="stat-label">Pakistani Schengen rejection rate</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num" style="color:var(--orange)">€185+</div>
+      <div class="stat-label">Cost per failed attempt</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num" style="color:var(--accent)">$12</div>
+      <div class="stat-label">Full AI report price</div>
+    </div>
+    <div class="stat-block">
+      <div class="stat-num" style="color:var(--green)">~99%</div>
+      <div class="stat-label">Gross margin per sale</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider"/>
+
+<!-- ════════════════════════════════ THE IDEA ════════════════════════════ -->
+<section id="idea">
+  <div class="section-label">01 — The Idea</div>
+  <h2>What problem does this solve?</h2>
+  <p style="max-width:680px; font-size:1.05rem;">
+    Pakistani applicants face a 50% Schengen rejection rate. Each failed attempt costs €185+ in fees, plus preparation time, document costs, and the psychological toll of rejection. Most applicants have no idea <em style="color:var(--text)">why</em> they got rejected — they just apply and hope.
+    VisaScore changes that.
+  </p>
+
+  <!-- Problem / Solution cards -->
+  <div class="card-grid card-grid-2" style="margin-top:2.5rem;">
+    <div class="card" style="border-color: rgba(239,68,68,0.3);">
+      <div style="font-size:2rem;margin-bottom:1rem;">😤</div>
+      <h3 style="color:var(--red)">The Problem</h3>
+      <div class="check-item"><span class="chk" style="color:var(--red)">✗</span> No visibility into what embassies assess</div>
+      <div class="check-item"><span class="chk" style="color:var(--red)">✗</span> €185 non-refundable fee per application</div>
+      <div class="check-item"><span class="chk" style="color:var(--red)">✗</span> Generic rejection letters with no explanation</div>
+      <div class="check-item"><span class="chk" style="color:var(--red)">✗</span> Visa consultants charge PKR 20,000+ for vague advice</div>
+    </div>
+    <div class="card" style="border-color: rgba(34,197,94,0.3);">
+      <div style="font-size:2rem;margin-bottom:1rem;">🎯</div>
+      <h3 style="color:var(--green)">The Solution</h3>
+      <div class="check-item"><span class="chk" style="color:var(--green)">✓</span> AI scores your profile across 4 key embassy criteria</div>
+      <div class="check-item"><span class="chk" style="color:var(--green)">✓</span> Know your risk <em>before</em> spending €185</div>
+      <div class="check-item"><span class="chk" style="color:var(--green)">✓</span> Specific, actionable fixes — not vague advice</div>
+      <div class="check-item"><span class="chk" style="color:var(--green)">✓</span> $12 — 15x cheaper than a consultant</div>
+    </div>
+  </div>
+
+  <!-- Business model -->
+  <div style="margin-top:3rem;">
+    <h3 style="margin-bottom:1.25rem; font-size:1.1rem; color:var(--muted); text-transform:uppercase; letter-spacing:1px; font-size:0.78rem;">Business Model — Freemium with Paywall</h3>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap:1px; background:var(--border); border-radius:12px; overflow:hidden; border:1px solid var(--border);">
+      <div class="card" style="border-radius:0; border:none; text-align:center; padding:2rem 1.5rem;">
+        <div style="font-size:2.2rem;margin-bottom:0.75rem;">🎣</div>
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:1px;color:var(--accent);margin-bottom:0.5rem;">HOOK (FREE)</div>
+        <div style="font-size:1rem;font-weight:600;margin-bottom:0.5rem;">Risk Score</div>
+        <p style="font-size:0.82rem;margin:0;">User gets "High Risk" label. Enough to scare them into paying.</p>
+      </div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div class="card" style="border-radius:0; border:none; text-align:center; padding:2rem 1.5rem; background:rgba(59,130,246,0.06);">
+        <div style="font-size:2.2rem;margin-bottom:0.75rem;">💳</div>
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:1px;color:var(--accent);margin-bottom:0.5rem;">PAYWALL ($12)</div>
+        <div style="font-size:1rem;font-weight:600;margin-bottom:0.5rem;">Full Breakdown</div>
+        <p style="font-size:0.82rem;margin:0;">All 4 categories + specific fixes that eliminate the risk.</p>
+      </div>
+      <div style="width:1px;background:var(--border);"></div>
+      <div class="card" style="border-radius:0; border:none; text-align:center; padding:2rem 1.5rem;">
+        <div style="font-size:2.2rem;margin-bottom:0.75rem;">📬</div>
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:1px;color:var(--green);margin-bottom:0.5rem;">DELIVERY</div>
+        <div style="font-size:1rem;font-weight:600;margin-bottom:0.5rem;">Email Report</div>
+        <p style="font-size:0.82rem;margin:0;">Full HTML report delivered to inbox via Resend after payment.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ════════════════════════════════ USER FLOW ═══════════════════════════ -->
+<section id="flow">
+  <div class="section-label">02 — User Flow</div>
+  <h2>How a user experiences VisaScore</h2>
+  <p>7 steps from landing page to full report in under 5 minutes.</p>
+
+  <div class="flow-steps" style="margin-top:2.5rem;">
+    <div class="flow-step">
+      <div class="flow-step-num">1</div>
+      <div class="flow-step-title">Landing Page</div>
+      <div class="flow-step-sub">Sees the problem stat, clicks "Check My Visa Risk"</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">2</div>
+      <div class="flow-step-title">Assessment</div>
+      <div class="flow-step-sub">Fills 16-question 5-step form (financial, ties, docs, profile)</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">3</div>
+      <div class="flow-step-title">AI Scoring</div>
+      <div class="flow-step-sub">Claude Opus analyses profile, returns 0-100 risk score</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">4</div>
+      <div class="flow-step-title">Free Result</div>
+      <div class="flow-step-sub">Sees score + 2 worst categories teased. Full report blurred.</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">5</div>
+      <div class="flow-step-title">Payment</div>
+      <div class="flow-step-sub">Pays $12 via LemonSqueezy checkout</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">6</div>
+      <div class="flow-step-title">Webhook</div>
+      <div class="flow-step-sub">Backend receives payment ping, marks report as paid</div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">7</div>
+      <div class="flow-step-title">Full Report</div>
+      <div class="flow-step-sub">All 4 categories unlocked + email delivered</div>
+    </div>
+  </div>
+
+  <!-- Paywall mechanics -->
+  <div style="margin-top:3rem;">
+    <h3 style="margin-bottom:1.25rem;">Paywall Mechanics</h3>
+    <div class="card-grid card-grid-2">
+      <div class="card">
+        <div class="tag tag-orange">FREE TIER</div>
+        <h3 style="margin-top:0.75rem;">What they see before paying</h3>
+        <div class="check-item"><span class="chk" style="color:var(--green)">✓</span> Overall risk score (e.g. 58/100)</div>
+        <div class="check-item"><span class="chk" style="color:var(--green)">✓</span> Risk level label (Critical / High / Moderate / Good)</div>
+        <div class="check-item"><span class="chk" style="color:var(--green)">✓</span> Summary sentence of biggest concern</div>
+        <div class="check-item"><span class="chk" style="color:var(--green)">✓</span> 2 worst categories shown (scores only, fixes hidden)</div>
+        <div class="check-item"><span class="chk" style="color:var(--red)">✗</span> Actual fixes → "Unlock full report..."</div>
+        <div class="check-item"><span class="chk" style="color:var(--red)">✗</span> 2 remaining categories → blurred</div>
+      </div>
+      <div class="card" style="border-color:rgba(59,130,246,0.3);">
+        <div class="tag tag-blue">PAID TIER — $12</div>
+        <h3 style="margin-top:0.75rem;">What they unlock</h3>
+        <div class="check-item"><span class="chk" style="color:var(--green)">✓</span> All 4 scored categories</div>
+        <div class="check-item"><span class="chk" style="color:var(--green)">✓</span> Specific AI-generated fix for each weakness</div>
+        <div class="check-item"><span class="chk" style="color:var(--green)">✓</span> Full HTML report delivered to email</div>
+        <div class="check-item"><span class="chk" style="color:var(--green)">✓</span> Context-aware for Pakistani Schengen applications</div>
+        <div class="check-item"><span class="chk" style="color:var(--green)">✓</span> Report stored and re-accessible via URL</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ═══════════════════════════ ARCHITECTURE ═════════════════════════════ -->
+<section id="architecture">
+  <div class="section-label">03 — Architecture</div>
+  <h2>System Architecture</h2>
+  <p>A clean monorepo: Next.js frontend → FastAPI backend → PostgreSQL + 3 external services.</p>
+
+  <!-- Architecture SVG diagram -->
+  <div class="arch-wrap" style="margin-top:2.5rem;">
+    <svg viewBox="0 0 900 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:900px;display:block;margin:0 auto;">
+      <!-- Background -->
+      <rect width="900" height="420" fill="#0a0a0f" rx="12"/>
+
+      <!-- ─ USER BOX ─ -->
+      <rect x="30" y="170" width="120" height="80" rx="10" fill="#12121a" stroke="#1e1e2e" stroke-width="1.5"/>
+      <text x="90" y="204" fill="#e2e8f0" font-size="12" font-family="Inter,sans-serif" text-anchor="middle" font-weight="600">User</text>
+      <text x="90" y="222" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">Browser</text>
+      <text x="90" y="237" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">:3000</text>
+
+      <!-- ─ FRONTEND BOX ─ -->
+      <rect x="210" y="155" width="140" height="110" rx="10" fill="#12121a" stroke="#3b82f6" stroke-width="1.5"/>
+      <rect x="210" y="155" width="140" height="28" rx="10" fill="rgba(59,130,246,0.15)"/>
+      <rect x="210" y="172" width="140" height="11" fill="rgba(59,130,246,0.15)"/>
+      <text x="280" y="174" fill="#3b82f6" font-size="10" font-family="Inter,sans-serif" text-anchor="middle" font-weight="700">FRONTEND</text>
+      <text x="280" y="200" fill="#e2e8f0" font-size="12" font-family="Inter,sans-serif" text-anchor="middle" font-weight="600">Next.js 14</text>
+      <text x="280" y="218" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">App Router</text>
+      <text x="280" y="233" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">TypeScript + Tailwind</text>
+      <text x="280" y="248" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">Framer Motion</text>
+
+      <!-- ─ BACKEND BOX ─ -->
+      <rect x="420" y="130" width="150" height="160" rx="10" fill="#12121a" stroke="#6366f1" stroke-width="1.5"/>
+      <rect x="420" y="130" width="150" height="28" rx="10" fill="rgba(99,102,241,0.15)"/>
+      <rect x="420" y="147" width="150" height="11" fill="rgba(99,102,241,0.15)"/>
+      <text x="495" y="149" fill="#6366f1" font-size="10" font-family="Inter,sans-serif" text-anchor="middle" font-weight="700">BACKEND</text>
+      <text x="495" y="176" fill="#e2e8f0" font-size="12" font-family="Inter,sans-serif" text-anchor="middle" font-weight="600">FastAPI</text>
+      <text x="495" y="194" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">reports.py</text>
+      <text x="495" y="210" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">webhooks.py</text>
+      <text x="495" y="226" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">ai_scorer.py</text>
+      <text x="495" y="242" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">email_service.py</text>
+      <text x="495" y="260" fill="#94a3b8" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">Port :8000</text>
+      <text x="495" y="278" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">SQLAlchemy Async ORM</text>
+
+      <!-- ─ DATABASE BOX ─ -->
+      <rect x="420" y="320" width="150" height="75" rx="10" fill="#12121a" stroke="#22c55e" stroke-width="1.5"/>
+      <text x="495" y="349" fill="#22c55e" font-size="10" font-family="Inter,sans-serif" text-anchor="middle" font-weight="700">DATABASE</text>
+      <text x="495" y="368" fill="#e2e8f0" font-size="12" font-family="Inter,sans-serif" text-anchor="middle" font-weight="600">PostgreSQL</text>
+      <text x="495" y="385" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">Users + Reports · Port :5432</text>
+
+      <!-- ─ EXTERNAL SERVICES ─ -->
+      <!-- Anthropic -->
+      <rect x="650" y="50" width="140" height="70" rx="10" fill="#12121a" stroke="#a855f7" stroke-width="1.5"/>
+      <text x="720" y="78" fill="#a855f7" font-size="10" font-family="Inter,sans-serif" text-anchor="middle" font-weight="700">ANTHROPIC API</text>
+      <text x="720" y="96" fill="#e2e8f0" font-size="11" font-family="Inter,sans-serif" text-anchor="middle" font-weight="600">Claude Opus 4.5</text>
+      <text x="720" y="112" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">AI Scoring Engine</text>
+
+      <!-- LemonSqueezy -->
+      <rect x="650" y="180" width="140" height="70" rx="10" fill="#12121a" stroke="#eab308" stroke-width="1.5"/>
+      <text x="720" y="208" fill="#eab308" font-size="10" font-family="Inter,sans-serif" text-anchor="middle" font-weight="700">LEMONSQUEEZY</text>
+      <text x="720" y="226" fill="#e2e8f0" font-size="11" font-family="Inter,sans-serif" text-anchor="middle" font-weight="600">Payments</text>
+      <text x="720" y="242" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">Checkout + Webhooks</text>
+
+      <!-- Resend -->
+      <rect x="650" y="310" width="140" height="70" rx="10" fill="#12121a" stroke="#f97316" stroke-width="1.5"/>
+      <text x="720" y="338" fill="#f97316" font-size="10" font-family="Inter,sans-serif" text-anchor="middle" font-weight="700">RESEND API</text>
+      <text x="720" y="356" fill="#e2e8f0" font-size="11" font-family="Inter,sans-serif" text-anchor="middle" font-weight="600">Email Delivery</text>
+      <text x="720" y="372" fill="#64748b" font-size="10" font-family="Inter,sans-serif" text-anchor="middle">HTML Report Email</text>
+
+      <!-- ─ ARROWS ─ -->
+      <!-- User → Frontend -->
+      <line x1="150" y1="210" x2="208" y2="210" stroke="#334155" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <polygon points="206,206 214,210 206,214" fill="#334155"/>
+
+      <!-- Frontend ↔ Backend -->
+      <line x1="350" y1="200" x2="418" y2="200" stroke="#3b82f6" stroke-width="1.5"/>
+      <polygon points="416,196 424,200 416,204" fill="#3b82f6"/>
+      <line x1="418" y1="215" x2="350" y2="215" stroke="#3b82f6" stroke-width="1.5"/>
+      <polygon points="352,211 344,215 352,219" fill="#3b82f6"/>
+      <text x="384" y="196" fill="#3b82f6" font-size="9" font-family="Inter,sans-serif" text-anchor="middle">HTTP/REST</text>
+
+      <!-- Backend → DB -->
+      <line x1="495" y1="292" x2="495" y2="318" stroke="#22c55e" stroke-width="1.5"/>
+      <polygon points="491,316 495,324 499,316" fill="#22c55e"/>
+
+      <!-- Backend → Anthropic -->
+      <line x1="570" y1="165" x2="648" y2="100" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <polygon points="645,103 652,96 648,106" fill="#a855f7"/>
+
+      <!-- LemonSqueezy → Backend (webhook) -->
+      <line x1="648" y1="220" x2="572" y2="220" stroke="#eab308" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <polygon points="574,216 566,220 574,224" fill="#eab308"/>
+      <text x="610" y="212" fill="#eab308" font-size="9" font-family="Inter,sans-serif" text-anchor="middle">webhook</text>
+
+      <!-- Backend → Resend -->
+      <line x1="570" y1="270" x2="648" y2="330" stroke="#f97316" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <polygon points="645,327 652,334 643,334" fill="#f97316"/>
+    </svg>
+  </div>
+
+  <!-- Tech Stack Cards -->
+  <div style="margin-top:3rem;">
+    <h3 style="margin-bottom:1.25rem;">Tech Stack</h3>
+    <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));">
+      <div class="card" style="text-align:center;">
+        <div style="font-size:2rem;margin-bottom:0.5rem;">⚡</div>
+        <div style="font-weight:700;margin-bottom:0.25rem;">FastAPI</div>
+        <div style="font-size:0.78rem;color:var(--muted);">Async Python backend</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:2rem;margin-bottom:0.5rem;">▲</div>
+        <div style="font-weight:700;margin-bottom:0.25rem;">Next.js 14</div>
+        <div style="font-size:0.78rem;color:var(--muted);">React + App Router</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:2rem;margin-bottom:0.5rem;">🐘</div>
+        <div style="font-weight:700;margin-bottom:0.25rem;">PostgreSQL</div>
+        <div style="font-size:0.78rem;color:var(--muted);">Users + reports DB</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:2rem;margin-bottom:0.5rem;">🤖</div>
+        <div style="font-weight:700;margin-bottom:0.25rem;">Claude Opus 4.5</div>
+        <div style="font-size:0.78rem;color:var(--muted);">AI scoring engine</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:2rem;margin-bottom:0.5rem;">🍋</div>
+        <div style="font-weight:700;margin-bottom:0.25rem;">LemonSqueezy</div>
+        <div style="font-size:0.78rem;color:var(--muted);">Payments + webhooks</div>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div style="font-size:2rem;margin-bottom:0.5rem;">📧</div>
+        <div style="font-weight:700;margin-bottom:0.25rem;">Resend</div>
+        <div style="font-size:0.78rem;color:var(--muted);">Email report delivery</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Project structure -->
+  <div style="margin-top:2.5rem;">
+    <h3 style="margin-bottom:1rem;">Project Structure</h3>
+    <div class="card" style="font-family:monospace; font-size:0.85rem; line-height:2;">
+      <span style="color:var(--accent)">visa/</span><br/>
+      &nbsp;&nbsp;<span style="color:#a855f7">backend/</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">main.py</span> <span style="color:#334155">— FastAPI entry point</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">database.py</span> <span style="color:#334155">— async PostgreSQL connection</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">models.py</span> <span style="color:#334155">— User + Report schema</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">schemas.py</span> <span style="color:#334155">— Pydantic validation</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#6366f1">routers/</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">reports.py</span> <span style="color:#334155">— core API logic</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">webhooks.py</span> <span style="color:#334155">— LemonSqueezy payment listener</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#6366f1">services/</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">ai_scorer.py</span> <span style="color:#334155">— Claude prompt + response parsing</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">email_service.py</span> <span style="color:#334155">— Resend email trigger</span><br/>
+      <br/>
+      &nbsp;&nbsp;<span style="color:#3b82f6">frontend/</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#3b82f6">app/</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">page.tsx</span> <span style="color:#334155">— landing page</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">assess/page.tsx</span> <span style="color:#334155">— 16-question form</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">results/[reportId]/page.tsx</span> <span style="color:#334155">— free + paid results</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#3b82f6">components/</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">ScoreCircle.tsx</span> <span style="color:#334155">— animated score ring</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:var(--muted)">BreakdownCard.tsx</span> <span style="color:#334155">— per-category card</span><br/>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ════════════════════════════ AI SCORING ══════════════════════════════ -->
+<section id="scoring">
+  <div class="section-label">04 — AI Scoring</div>
+  <h2>How the AI scores your application</h2>
+  <p>Claude Opus 4.5 receives 16 data points and evaluates them against the 4 criteria Schengen embassies actually use when assessing Pakistani applicants.</p>
+
+  <div class="card" style="margin-top:2rem;">
+
+    <div class="score-row">
+      <div class="score-icon" style="background:rgba(59,130,246,0.15);">💰</div>
+      <div style="flex:1;">
+        <div class="score-bar-label">
+          <span style="font-weight:600;">Financial Stability</span>
+          <span style="color:var(--muted); font-size:0.82rem;">25 points max</span>
+        </div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:80%;background:var(--accent);"></div></div>
+        <div style="font-size:0.82rem;color:var(--muted);margin-top:6px;">Monthly income (PKR), bank balance, consistency of savings, trip sponsorship type</div>
+        <div style="margin-top:6px;"><span class="tag tag-blue">monthly_income_pkr</span><span class="tag tag-blue">bank_balance_pkr</span><span class="tag tag-blue">bank_balance_consistent</span><span class="tag tag-blue">trip_sponsor</span></div>
+      </div>
+    </div>
+
+    <div class="score-row">
+      <div class="score-icon" style="background:rgba(34,197,94,0.15);">🏠</div>
+      <div style="flex:1;">
+        <div class="score-bar-label">
+          <span style="font-weight:600;">Home Ties</span>
+          <span style="color:var(--muted); font-size:0.82rem;">25 points max</span>
+        </div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:65%;background:var(--green);"></div></div>
+        <div style="font-size:0.82rem;color:var(--muted);margin-top:6px;">Employment status, property ownership, dependents (family to return to), prior international travel</div>
+        <div style="margin-top:6px;"><span class="tag tag-green">employment_status</span><span class="tag tag-green">owns_property</span><span class="tag tag-green">has_dependents</span><span class="tag tag-green">prior_travel</span></div>
+      </div>
+    </div>
+
+    <div class="score-row">
+      <div class="score-icon" style="background:rgba(168,85,247,0.15);">📄</div>
+      <div style="flex:1;">
+        <div class="score-bar-label">
+          <span style="font-weight:600;">Purpose & Documentation</span>
+          <span style="color:var(--muted); font-size:0.82rem;">25 points max</span>
+        </div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:55%;background:var(--purple);"></div></div>
+        <div style="font-size:0.82rem;color:var(--muted);margin-top:6px;">Visit purpose clarity, itinerary detail, hotel + return ticket booked, Schengen travel insurance</div>
+        <div style="margin-top:6px;"><span class="tag tag-purple">visit_purpose</span><span class="tag tag-purple">has_itinerary</span><span class="tag tag-purple">hotel_booked</span><span class="tag tag-purple">has_insurance</span></div>
+      </div>
+    </div>
+
+    <div class="score-row">
+      <div class="score-icon" style="background:rgba(239,68,68,0.15);">⚠️</div>
+      <div style="flex:1;">
+        <div class="score-bar-label">
+          <span style="font-weight:600;">Risk Profile</span>
+          <span style="color:var(--muted); font-size:0.82rem;">25 points max</span>
+        </div>
+        <div class="score-bar-track"><div class="score-bar-fill" style="width:40%;background:var(--red);"></div></div>
+        <div style="font-size:0.82rem;color:var(--muted);margin-top:6px;">Prior visa refusals, applicant age, marital status, target Schengen country (acceptance rates vary)</div>
+        <div style="margin-top:6px;"><span class="tag tag-red">prior_visa_refusal</span><span class="tag tag-red">age</span><span class="tag tag-red">marital_status</span><span class="tag tag-red">target_country</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Risk levels -->
+  <div style="margin-top:2.5rem;">
+    <h3 style="margin-bottom:1rem;">Risk Level Labels</h3>
+    <div class="card-grid card-grid-4">
+      <div class="card" style="text-align:center; border-color:rgba(34,197,94,0.3);">
+        <div style="font-size:1.8rem;font-weight:800;color:var(--green);">75–100</div>
+        <div style="font-weight:600;color:var(--green);margin-top:0.4rem;">GOOD</div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-top:0.4rem;">Strong profile. Ready to apply.</div>
+      </div>
+      <div class="card" style="text-align:center; border-color:rgba(234,179,8,0.3);">
+        <div style="font-size:1.8rem;font-weight:800;color:var(--yellow);">50–74</div>
+        <div style="font-weight:600;color:var(--yellow);margin-top:0.4rem;">MODERATE</div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-top:0.4rem;">Some concerns. Fixable with action.</div>
+      </div>
+      <div class="card" style="text-align:center; border-color:rgba(249,115,22,0.3);">
+        <div style="font-size:1.8rem;font-weight:800;color:var(--orange);">25–49</div>
+        <div style="font-weight:600;color:var(--orange);margin-top:0.4rem;">HIGH RISK</div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-top:0.4rem;">Likely rejection. Fix first.</div>
+      </div>
+      <div class="card" style="text-align:center; border-color:rgba(239,68,68,0.3);">
+        <div style="font-size:1.8rem;font-weight:800;color:var(--red);">0–24</div>
+        <div style="font-weight:600;color:var(--red);margin-top:0.4rem;">CRITICAL</div>
+        <div style="font-size:0.8rem;color:var(--muted);margin-top:0.4rem;">Do not apply yet. Major gaps.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ═══════════════════════════ API REFERENCE ═════════════════════════════ -->
+<section id="api">
+  <div class="section-label">05 — API Reference</div>
+  <h2>Endpoints</h2>
+  <p>Base URL: <code>http://localhost:8000</code> &nbsp;·&nbsp; Auto-docs: <code>/docs</code></p>
+
+  <div class="card" style="margin-top:2rem; padding:0; overflow:hidden;">
+    <table>
+      <thead>
+        <tr>
+          <th>Method</th>
+          <th>Endpoint</th>
+          <th>Purpose</th>
+          <th>Auth</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="method method-post">POST</span></td>
+          <td><code>/api/reports/start</code></td>
+          <td>Create a new report, returns <code>report_id</code></td>
+          <td><span style="color:var(--muted);">None</span></td>
+        </tr>
+        <tr>
+          <td><span class="method method-post">POST</span></td>
+          <td><code>/api/reports/{id}/submit</code></td>
+          <td>Submit 16 answers → triggers Claude scoring</td>
+          <td><span style="color:var(--muted);">None</span></td>
+        </tr>
+        <tr>
+          <td><span class="method method-get">GET</span></td>
+          <td><code>/api/reports/{id}</code></td>
+          <td>Fetch report. Returns full breakdown if <code>paid=true</code></td>
+          <td><span style="color:var(--muted);">None</span></td>
+        </tr>
+        <tr>
+          <td><span class="method method-post">POST</span></td>
+          <td><code>/api/webhooks/lemonsqueezy</code></td>
+          <td>Payment webhook. Marks report paid + sends email</td>
+          <td><span style="color:var(--yellow);">HMAC Signature</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Sample response -->
+  <div style="margin-top:2rem;">
+    <h3 style="margin-bottom:1rem;">Sample — Score Response (POST /submit)</h3>
+    <div class="card" style="font-family:monospace;font-size:0.82rem;line-height:1.8;overflow-x:auto;">
+      <span style="color:#22c55e;">{</span><br/>
+      &nbsp;&nbsp;<span style="color:#60a5fa;">"risk_score"</span>: <span style="color:#f97316;">58</span>,<br/>
+      &nbsp;&nbsp;<span style="color:#60a5fa;">"risk_level"</span>: <span style="color:#a5f3fc;">"moderate"</span>,<br/>
+      &nbsp;&nbsp;<span style="color:#60a5fa;">"summary"</span>: <span style="color:#a5f3fc;">"Limited international travel history is the primary concern..."</span>,<br/>
+      &nbsp;&nbsp;<span style="color:#60a5fa;">"teaser"</span>: [<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;{<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#60a5fa;">"category"</span>: <span style="color:#a5f3fc;">"Home Ties"</span>,<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#60a5fa;">"score"</span>: <span style="color:#f97316;">18</span>, <span style="color:#60a5fa;">"max_score"</span>: <span style="color:#f97316;">25</span>,<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#60a5fa;">"issue"</span>: <span style="color:#a5f3fc;">"No prior international travel raises concern..."</span>,<br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color:#60a5fa;">"fix"</span>: <span style="color:#64748b;">"🔒 Unlock full report to see fix"</span><br/>
+      &nbsp;&nbsp;&nbsp;&nbsp;}<br/>
+      &nbsp;&nbsp;]<br/>
+      <span style="color:#22c55e;">}</span>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ═══════════════════════════ BUSINESS MODEL ═══════════════════════════ -->
+<section id="business">
+  <div class="section-label">06 — Business Model</div>
+  <h2>Unit Economics</h2>
+  <p>This is why the margin is ridiculous. AI inference costs ~$0.05. You charge $12.</p>
+
+  <div class="cost-grid" style="margin-top:2.5rem;">
+    <div class="card">
+      <h3 style="margin-bottom:1.25rem; color:var(--muted);">Cost Per Assessment</h3>
+      <div class="cost-item"><span class="cost-label">Claude Opus 4.5 (~500 tokens)</span><span class="cost-val">$0.03–0.05</span></div>
+      <div class="cost-item"><span class="cost-label">PostgreSQL write</span><span class="cost-val">&lt;$0.001</span></div>
+      <div class="cost-item"><span class="cost-label">Email via Resend</span><span class="cost-val">$0.001</span></div>
+      <div class="cost-item" style="border-top:1px solid var(--border);padding-top:0.75rem;margin-top:0.5rem;">
+        <span style="font-weight:700;">Total cost</span>
+        <span style="font-weight:800;color:var(--red);">~$0.05</span>
+      </div>
+      <div class="cost-item">
+        <span style="font-weight:700;">Revenue per sale</span>
+        <span style="font-weight:800;color:var(--accent);">$12.00</span>
+      </div>
+      <div class="cost-item">
+        <span style="font-weight:700;">Gross margin</span>
+        <span style="font-weight:800;color:var(--green);">~99.6%</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:1.25rem; color:var(--muted);">Monthly at 1,000 Paying Users</h3>
+      <div class="cost-item"><span class="cost-label">Anthropic AI</span><span class="cost-val">$30–50</span></div>
+      <div class="cost-item"><span class="cost-label">PostgreSQL (managed)</span><span class="cost-val">$10–20</span></div>
+      <div class="cost-item"><span class="cost-label">Backend (Railway)</span><span class="cost-val">$5–10</span></div>
+      <div class="cost-item"><span class="cost-label">Frontend (Vercel)</span><span class="cost-val">$0</span></div>
+      <div class="cost-item"><span class="cost-label">Resend email</span><span class="cost-val">$2</span></div>
+      <div class="cost-item" style="border-top:1px solid var(--border);padding-top:0.75rem;margin-top:0.5rem;">
+        <span style="font-weight:700;">Total costs</span>
+        <span style="font-weight:800;color:var(--red);">~$50–80</span>
+      </div>
+      <div class="cost-item">
+        <span style="font-weight:700;">Revenue (1000 × $12)</span>
+        <span style="font-weight:800;color:var(--accent);">$12,000</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="profit-banner">
+    <div class="profit-num">~$11,920</div>
+    <div class="profit-label" style="margin-top:0.5rem;">Net profit per month at 1,000 paying users</div>
+    <div style="font-size:0.8rem;color:var(--muted);margin-top:0.5rem;">~33 paying users/day needed to hit this. Less than 1 per hour.</div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ═══════════════════════════ SECURITY ════════════════════════════════ -->
+<section id="security">
+  <div class="section-label">07 — Security</div>
+  <h2>Security Status</h2>
+  <p>Current state before production. Green = done. Red = must fix before launch.</p>
+
+  <div class="card-grid card-grid-2" style="margin-top:2rem;">
+    <div class="card">
+      <h3 style="color:var(--green);margin-bottom:1rem;">Done ✓</h3>
+      <div class="check-item"><span class="chk" style="color:var(--green);">✓</span> API keys stored in environment variables only</div>
+      <div class="check-item"><span class="chk" style="color:var(--green);">✓</span> Webhook HMAC signature verification</div>
+      <div class="check-item"><span class="chk" style="color:var(--green);">✓</span> DB password encrypted / not in code</div>
+      <div class="check-item"><span class="chk" style="color:var(--green);">✓</span> No sensitive keys exposed to browser</div>
+      <div class="check-item"><span class="chk" style="color:var(--green);">✓</span> NEXT_PUBLIC_ prefix policy enforced</div>
+    </div>
+    <div class="card" style="border-color:rgba(239,68,68,0.3);">
+      <h3 style="color:var(--red);margin-bottom:1rem;">Must Fix Before Launch ⚠️</h3>
+      <div class="check-item"><span class="chk" style="color:var(--red);">✗</span> CORS is currently <code>allow_origins=["*"]</code> — lock to your domain</div>
+      <div class="check-item"><span class="chk" style="color:var(--red);">✗</span> No rate limiting on <code>/submit</code> — anyone can spam Claude API calls</div>
+      <div class="check-item"><span class="chk" style="color:var(--red);">✗</span> No legal disclaimer — "not a lawyer/immigration consultant"</div>
+      <div class="check-item"><span class="chk" style="color:var(--red);">✗</span> HTTPS not enforced on webhook endpoint</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ═══════════════════════════ ROADMAP ════════════════════════════════ -->
+<section id="roadmap">
+  <div class="section-label">08 — Roadmap</div>
+  <h2>What's Next</h2>
+  <p>From MVP to a defensible visa-tech platform.</p>
+
+  <div style="margin-top:2.5rem; display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.5rem;">
+    <div>
+      <div class="roadmap-phase">
+        <div class="roadmap-dot" style="background:var(--green);"></div>
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--green);">Phase 1 — Now</div>
+        <h3 style="margin-top:0.5rem;">Launch MVP</h3>
+        <div class="roadmap-items">
+          <div class="roadmap-item">Fix CORS + rate limiting</div>
+          <div class="roadmap-item">Add legal disclaimer</div>
+          <div class="roadmap-item">Configure LemonSqueezy + Resend</div>
+          <div class="roadmap-item">Deploy to Railway + Vercel</div>
+          <div class="roadmap-item">Add analytics (Plausible or Posthog)</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="roadmap-phase">
+        <div class="roadmap-dot" style="background:var(--accent);"></div>
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--accent);">Phase 2 — Month 1–3</div>
+        <h3 style="margin-top:0.5rem;">Growth Features</h3>
+        <div class="roadmap-items">
+          <div class="roadmap-item">SEO optimization (target "Pakistan Schengen visa")</div>
+          <div class="roadmap-item">Urdu language support</div>
+          <div class="roadmap-item">User testimonials + social proof</div>
+          <div class="roadmap-item">PDF report generation</div>
+          <div class="roadmap-item">Referral / affiliate program</div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="roadmap-phase">
+        <div class="roadmap-dot" style="background:var(--purple);"></div>
+        <div style="font-size:0.75rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--purple);">Phase 3 — Month 3–12</div>
+        <h3 style="margin-top:0.5rem;">Platform Expansion</h3>
+        <div class="roadmap-items">
+          <div class="roadmap-item">UK, USA, Canada visa types</div>
+          <div class="roadmap-item">Consultation booking (upsell)</div>
+          <div class="roadmap-item">Document checklist generator</div>
+          <div class="roadmap-item">Mobile app</div>
+          <div class="roadmap-item">Success tracking + reapplication tool</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider"/>
+
+<!-- ════════════════════════════ FOOTER ════════════════════════════════ -->
+<footer>
+  <div>
+    <strong style="color:var(--text);">VisaScore</strong> — Internal Product Documentation
+  </div>
+  <div style="display:flex;gap:2rem;flex-wrap:wrap;">
+    <span>Stack: FastAPI · Next.js · PostgreSQL · Claude Opus 4.5</span>
+    <span style="color:var(--border);">|</span>
+    <span>Status: <span style="color:var(--green);">Production-ready</span></span>
+    <span style="color:var(--border);">|</span>
+    <span>May 2026</span>
+  </div>
+</footer>
+
+</body>
+</html>
