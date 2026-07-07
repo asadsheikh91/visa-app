@@ -43,17 +43,46 @@ class ClerkAuthProvider(AuthProvider):
         # Keys are refreshed when a new kid (key ID) is encountered.
         self._jwks_client = PyJWKClient(jwks_url, cache_keys=True)
 
+        # Expected issuer (iss). Clerk signs session tokens with iss set to the
+        # instance's Frontend API origin, which is exactly the origin of the JWKS
+        # URL (…/.well-known/jwks.json). We pin to it so a validly-signed token
+        # from a *different* Clerk instance can't be replayed against us. An
+        # explicit CLERK_ISSUER override is supported for non-standard setups.
+        self._issuer = os.environ.get("CLERK_ISSUER") or self._derive_issuer(jwks_url)
+
+        # Audience (aud). Clerk's DEFAULT session token does NOT carry an `aud`
+        # claim, so enabling audience verification unconditionally would reject
+        # every valid token. We therefore verify aud only when the operator has
+        # opted in by configuring CLERK_AUDIENCE (i.e. they've added an `aud`
+        # claim via a Clerk JWT template). Otherwise aud verification is skipped
+        # — see the module/return notes. Issuer pinning above is the always-on
+        # equivalent protection (it ties the token to our specific instance).
+        self._audience = os.environ.get("CLERK_AUDIENCE") or None
+
+    @staticmethod
+    def _derive_issuer(jwks_url: str) -> str:
+        """Origin (scheme://host) of the JWKS URL == Clerk's `iss` claim value."""
+        parts = urllib.parse.urlsplit(jwks_url)
+        return f"{parts.scheme}://{parts.netloc}"
+
     def verify_token(self, token: str) -> AuthUser:
+        decode_options = {"require": ["exp", "sub"], "verify_aud": bool(self._audience)}
+        decode_kwargs: dict = {"issuer": self._issuer}
+        if self._audience:
+            decode_kwargs["audience"] = self._audience
         try:
             signing_key = self._jwks_client.get_signing_key_from_jwt(token)
             payload = jwt.decode(
                 token,
                 signing_key.key,
                 algorithms=["RS256"],
-                options={"verify_aud": False},  # Clerk does not always set aud
+                options=decode_options,
+                **decode_kwargs,
             )
         except jwt.ExpiredSignatureError:
             raise AuthError("Token has expired.")
+        except jwt.InvalidIssuerError:
+            raise AuthError("Token issuer is not trusted.")
         except jwt.InvalidTokenError as exc:
             raise AuthError(f"Invalid token: {exc}")
         except Exception as exc:

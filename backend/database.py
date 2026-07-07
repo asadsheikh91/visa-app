@@ -23,7 +23,10 @@ def normalize_async_database_url(url: str) -> str:
 
 
 DATABASE_URL = normalize_async_database_url(DATABASE_URL_RAW)
-engine = create_async_engine(DATABASE_URL, echo=True)
+# Verbose SQL logging is opt-in (set SQL_ECHO=1 locally). Off by default so
+# production logs aren't flooded with every statement.
+_SQL_ECHO = os.getenv("SQL_ECHO", "").strip().lower() in {"1", "true", "yes"}
+engine = create_async_engine(DATABASE_URL, echo=_SQL_ECHO)
 async_session_maker = async_sessionmaker(
     engine, class_=AsyncSession, expire_on_commit=False
 )

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
@@ -15,6 +15,33 @@
     --white-12: rgba(255, 255, 255, 0.12);
     --white-15: rgba(255, 255, 255, 0.15);
     --white-20: rgba(255, 255, 255, 0.20);
+
+    --surface-1: rgba(255, 255, 255, 0.02);
+    --surface-2: rgba(255, 255, 255, 0.04);
+    --surface-3: rgba(255, 255, 255, 0.05);
+    --surface-4: rgba(255, 255, 255, 0.08);
+
+    --line-1: rgba(255, 255, 255, 0.08);
+    --line-2: rgba(255, 255, 255, 0.14);
+    --line-3: rgba(255, 255, 255, 0.20);
+
+    --readiness-high: #10b981;
+    --readiness-mid:  #f59e0b;
+    --readiness-low:  #ef4444;
+
+    --accent-violet: #7c3aed;
+    --accent-pink:   #ff5f8f;
+    --accent-orange: #ff5a1f;
+    --accent-amber:  #ffb05a;
+    --accent-green:  #22c55e;
+    --accent-lilac:  #c77bff;
+
+    --grad-from: #ff5a1f;
+    --grad-via:  #ff7a3c;
+    --grad-to:   #ffb05a;
+
+    --display: 'Anton', sans-serif;
+
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);
@@ -61,26 +88,23 @@
   body {
     @apply font-sans bg-background text-foreground;
     min-height: 100vh;
-    /* Hero background promoted to the whole site.
-       background-attachment: fixed keeps it static while content scrolls over it. */
-    background-color: #020414;
-    background-image:
-      radial-gradient(circle at 78% 58%, rgba(255, 95, 20, 0.24), transparent 24%),
-      radial-gradient(circle at 28% 47%, rgba(60, 55, 255, 0.22), transparent 38%),
-      linear-gradient(120deg, #03071d 0%, #05061c 45%, #07051b 70%, #170719 100%);
+    background-color: #0a0908;
+    background-image: radial-gradient(circle at 72% 44%, rgba(255, 90, 31, 0.14), transparent 36%);
     background-attachment: fixed;
   }
 
-  ::selection { @apply bg-brand-600 text-white; }
+  ::selection { background: #ff5a1f; color: #fff; }
+
+  :where(a, button, [role='button'], input, [tabindex]):focus-visible {
+    outline: 2px solid var(--accent-orange);
+    outline-offset: 2px;
+  }
 
   ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { @apply bg-surface-900; }
-  ::-webkit-scrollbar-thumb { @apply bg-slate-600 rounded-full; }
-  ::-webkit-scrollbar-thumb:hover { @apply bg-slate-500; }
-  .theme {
-    --font-heading: var(--font-sans);
-    --font-sans: var(--font-sans);
-  }
+  ::-webkit-scrollbar-track { background: #0a0908; }
+  ::-webkit-scrollbar-thumb { background: #333; border-radius: 9999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #444; }
+
   .dark {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
@@ -100,11 +124,6 @@
     --border: oklch(1 0 0 / 10%);
     --input: oklch(1 0 0 / 15%);
     --ring: oklch(0.556 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
     --sidebar: oklch(0.205 0 0);
     --sidebar-foreground: oklch(0.985 0 0);
     --sidebar-primary: oklch(0.488 0.243 264.376);
@@ -118,84 +137,104 @@
 
 @layer components {
   .glass {
-    background: rgba(255, 255, 255, 0.05);
-    @apply backdrop-blur-md border border-white/10;
+    background: var(--surface-3);
+    @apply backdrop-blur-md border;
+    border-color: var(--line-1);
   }
 
   .glass-strong {
     background:
-      linear-gradient(145deg, rgba(255, 255, 255, 0.075), rgba(255, 255, 255, 0.035)),
-      rgba(11, 16, 38, 0.74);
+      linear-gradient(145deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.025)),
+      rgba(14, 13, 12, 0.82);
     @apply backdrop-blur-xl border;
     border-color: var(--white-15);
   }
 
   .gradient-text {
-    background-image: linear-gradient(90deg, #7C3AED 0%, #FF5F8F 55%, #FF6A2A 100%);
+    background-image: linear-gradient(90deg, var(--accent-orange) 0%, var(--accent-amber) 100%);
     @apply bg-clip-text text-transparent;
   }
 
+  /* ── Primary button — orange pill ── */
   .btn-primary {
-    @apply inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold text-white
-           shadow-lg shadow-brand-900/40
-           transition-all duration-200
-           active:scale-95;
-    background-image: linear-gradient(90deg, #673BFF 0%, #A13CFF 48%, #FF6A2A 100%);
+    @apply inline-flex items-center gap-2.5 px-6 py-3 rounded-full font-semibold text-white
+           transition-all duration-200 active:scale-95;
+    background: #ff5a1f;
+    box-shadow: 0 6px 22px -6px rgba(255, 90, 31, 0.55);
+  }
+  .btn-primary:hover {
+    background: #ff7a3c;
+    box-shadow: 0 8px 28px -6px rgba(255, 90, 31, 0.72);
+    transform: translateY(-1px);
   }
 
   .btn-primary-lg {
-    @apply btn-primary px-8 py-4 text-base sm:text-lg rounded-2xl;
+    @apply btn-primary px-8 py-4 text-base sm:text-lg rounded-full;
   }
 
+  /* ── Orange button (alias, same as primary) ── */
+  .btn-orange {
+    @apply inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white
+           transition-all duration-200 active:scale-95;
+    background: #ff5a1f;
+    box-shadow: 0 6px 22px -6px rgba(255, 90, 31, 0.55);
+  }
+  .btn-orange:hover {
+    background: #ff7a3c;
+    box-shadow: 0 8px 28px -6px rgba(255, 90, 31, 0.72);
+    transform: translateY(-1px);
+  }
+
+  .btn-orange-lg {
+    @apply btn-orange px-7 py-3.5 text-base rounded-full;
+  }
+
+  /* ── Secondary button — ghost pill ── */
   .btn-secondary {
-    @apply inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold
-           text-slate-200 border border-white/20
-           transition-all duration-200
-           active:scale-95;
+    @apply inline-flex items-center gap-2.5 px-6 py-3 rounded-full font-semibold
+           text-slate-200 border border-white/[0.14]
+           bg-transparent transition-all duration-200 active:scale-95;
   }
-
   .btn-secondary:hover {
-    border-color: var(--white-20);
-    background: var(--white-6);
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.05);
   }
 
   .hover-glow:hover {
     box-shadow:
-      0 0 0 1px rgba(167, 139, 250, 0.20),
-      0 18px 42px rgba(103, 59, 255, 0.24),
-      0 0 34px rgba(249, 115, 22, 0.12);
+      0 0 0 1px rgba(255, 90, 31, 0.20),
+      0 18px 42px rgba(255, 90, 31, 0.18);
     transform: translateY(-1px);
   }
 
   .hover-lift {
     @apply transition-all duration-300;
   }
-
   .hover-lift:hover {
     transform: translateY(-4px);
-    border-color: rgba(167, 139, 250, 0.32);
-    box-shadow: 0 24px 70px rgba(2, 6, 23, 0.52);
+    border-color: rgba(255, 90, 31, 0.25);
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.52);
   }
 
   .section { @apply py-20 px-4; }
   .container-inner { @apply max-w-6xl mx-auto; }
 
   .card {
-    @apply bg-white/5 backdrop-blur-md border border-white/10
-           rounded-2xl p-6
-           transition-all duration-300
-           hover:shadow-xl hover:shadow-brand-900/20
-           hover:-translate-y-0.5;
+    @apply backdrop-blur-md border rounded-2xl p-6 transition-all duration-300
+           hover:shadow-xl hover:-translate-y-0.5;
+    background: var(--surface-3);
+    border-color: var(--line-1);
   }
-
   .card:hover {
-    background: var(--white-8);
-    border-color: var(--white-20);
+    background: var(--surface-4);
+    border-color: var(--line-3);
   }
 
   .badge {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold
-           bg-brand-900/60 text-brand-300 border border-brand-700/40;
+    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold;
+    background: rgba(255, 90, 31, 0.12);
+    color: #ff7a3c;
+    border: 1px solid rgba(255, 90, 31, 0.3);
   }
 
   .badge-green {
@@ -216,14 +255,14 @@
     background: var(--white-6);
     border: 1px solid var(--white-15);
   }
-
   .input-base:focus {
-    border-color: rgba(103, 59, 255, 0.6);
+    border-color: rgba(255, 90, 31, 0.5);
     background: var(--white-8);
   }
 
   .section-label {
-    @apply text-brand-400 text-sm font-semibold uppercase tracking-widest;
+    @apply text-sm font-semibold uppercase tracking-widest;
+    color: #ff7a3c;
   }
 
   .divider {
@@ -233,6 +272,7 @@
 
 @layer utilities {
   .text-balance { text-wrap: balance; }
+  .font-display { font-family: 'Anton', sans-serif; }
   .animate-delay-100 { animation-delay: 100ms; }
   .animate-delay-200 { animation-delay: 200ms; }
   .animate-delay-300 { animation-delay: 300ms; }
@@ -240,17 +280,17 @@
   .animate-delay-500 { animation-delay: 500ms; }
 }
 
+/* ── Reveal animations ─────────────────────────────────────────────────── */
 .reveal-up,
 .reveal-fade { opacity: 1; }
 
 @keyframes revealUp {
   from { opacity: 0; transform: translateY(16px); }
-  to { opacity: 1; transform: translateY(0); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes revealFade {
   from { opacity: 0; }
-  to { opacity: 1; }
+  to   { opacity: 1; }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -259,13 +299,65 @@
     animation: revealUp 0.6s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
     animation-delay: var(--reveal-delay, 0ms);
   }
-
   .reveal-fade {
     opacity: 0;
     animation: revealFade 0.6s ease-out forwards;
     animation-delay: var(--reveal-delay, 0ms);
   }
 }
+
+/* ── Shared ambient animations ─────────────────────────────────────────── */
+@keyframes scrollCue {
+  0%, 100% { transform: translateY(0); opacity: 0.5; }
+  50%       { transform: translateY(7px); opacity: 1; }
+}
+@keyframes dashFlow {
+  to { stroke-dashoffset: -120; }
+}
+
+.animate-scroll-cue { animation: scrollCue 1.9s ease-in-out infinite; }
+.animate-dash-flow  { animation: dashFlow 6s linear infinite; }
+
+/* ── Portal / score-dial animations (hero visual) ──────────────────────── */
+@keyframes pvArc {
+  from { stroke-dashoffset: 942.48; }
+  to   { stroke-dashoffset: 207.35; }
+}
+@keyframes pvSpin { to { transform: rotate(360deg); } }
+@keyframes pvBreathe {
+  0%, 100% { opacity: .6; transform: scale(1); }
+  50%       { opacity: .95; transform: scale(1.05); }
+}
+@keyframes pvFadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.pv-arc {
+  stroke-dasharray: 942.48;
+  stroke-dashoffset: 942.48;
+  animation: pvArc 1.9s cubic-bezier(.22, 1, .36, 1) .25s forwards;
+  filter: drop-shadow(0 0 7px rgba(255, 90, 31, .6));
+}
+.pv-spin {
+  animation: pvSpin 75s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.pv-breathe {
+  animation: pvBreathe 7s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.pv-fade-up {
+  opacity: 0;
+  animation: pvFadeUp .7s cubic-bezier(.22, 1, .36, 1) forwards;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.pv-d1 { animation-delay: 1.45s; }
+.pv-d2 { animation-delay: 1.7s; }
+.pv-d3 { animation-delay: 1.95s; }
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -275,5 +367,26 @@
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.001ms !important;
+  }
+  .pv-arc { stroke-dashoffset: 207.35; }
+  .pv-fade-up { opacity: 1; }
+}
+
+/* ---------------------------------------------------------------------------
+   Readiness Report — chrome suppression on the print route.
+   The report's print route must render with no app chrome (for Playwright PDF).
+   `data-report-print` is set on <body> by the print page; we hide ONLY the app's
+   own direct-child <header> (Navbar) and <footer> (Footer). The report's OWN
+   <footer> is nested inside <main>, so `body > footer` never matches it.
+   The @media print rule additionally strips chrome from any page sent to PDF.
+--------------------------------------------------------------------------- */
+body[data-report-print] > header,
+body[data-report-print] > footer {
+  display: none !important;
+}
+@media print {
+  body > header,
+  body > footer {
+    display: none !important;
   }
 }

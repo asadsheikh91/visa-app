@@ -6,7 +6,7 @@ FastAPI dependency for protecting routes.
 
 import logging
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -20,6 +20,7 @@ _bearer = HTTPBearer(auto_error=True)
 
 
 async def get_current_user(
+    request: Request,
     credentials: HTTPAuthorizationCredentials = Depends(_bearer),
     db: AsyncSession = Depends(get_db),
 ) -> AuthUser:
@@ -37,6 +38,11 @@ async def get_current_user(
             detail=str(exc),
             headers={"WWW-Authenticate": "Bearer"},
         )
+
+    # Expose the verified user id to the rate limiter so it can key by account
+    # rather than IP (see limiter.py). This is purely for rate-limit accounting
+    # and is never used for an authorization decision.
+    request.state.auth_user_id = auth_user.user_id
 
     if not auth_user.email:
         try:

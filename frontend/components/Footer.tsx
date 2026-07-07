@@ -1,152 +1,115 @@
+import type { ComponentType, SVGProps } from 'react'
 import Link from 'next/link'
-import { Github, Linkedin, Mail, Twitter, Zap } from 'lucide-react'
-import { SignUpButton, SignedIn, SignedOut } from '@clerk/nextjs'
+import { Instagram, Twitter, Youtube } from 'lucide-react'
 
-const CLERK_ENABLED = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+const columns: { title: string; links: { label: string; href: string }[] }[] = [
+  {
+    title: 'Product',
+    links: [
+      { label: 'Check Eligibility', href: '/tools/student-visa/countries' },
+      { label: 'Visa Rules', href: '/why-rejected' },
+      { label: 'Documentation', href: '/checklist' },
+      { label: 'Guides', href: '/compare' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { label: 'About Us', href: '/about' },
+      { label: 'How It Works', href: '/how-it-works' },
+      { label: 'Privacy Policy', href: '/privacy' },
+      { label: 'Terms of Use', href: '/terms' },
+    ],
+  },
+  {
+    title: 'Support',
+    links: [
+      { label: 'Help Center', href: '/help' },
+      { label: 'Contact Us', href: 'mailto:hello@parchivisa.com' },
+      { label: 'FAQ', href: '/faq' },
+    ],
+  },
+]
 
-const footerLinks = {
-  Product: [
-    { label: 'Student Visa Checker', href: '/tools/student-visa/countries', disabled: false },
-    { label: 'All Tools', href: '/tools', disabled: false },
-    { label: 'Tourist Visa', href: '#', disabled: true },
-    { label: 'Business Visa', href: '#', disabled: true },
-  ],
-  Company: [
-    { label: 'About Us', href: '/about', disabled: false },
-    { label: 'How It Works', href: '/how-it-works', disabled: false },
-    { label: 'Blog', href: '#', disabled: true },
-    { label: 'Contact', href: 'mailto:hello@parchivisa.com', disabled: false },
-  ],
-  Legal: [
-    { label: 'Privacy Policy', href: '#', disabled: true },
-    { label: 'Terms of Service', href: '#', disabled: true },
-    { label: 'Cookie Policy', href: '#', disabled: true },
-    { label: 'Disclaimer', href: '#', disabled: true },
-  ],
-}
-
-const socials = [
-  { icon: Twitter, href: '#', label: 'Twitter' },
-  { icon: Github, href: '#', label: 'GitHub' },
-  { icon: Linkedin, href: '#', label: 'LinkedIn' },
-  { icon: Mail, href: 'mailto:hello@parchivisa.com', label: 'Email' },
+const socials: { label: string; href: string; icon: ComponentType<SVGProps<SVGSVGElement>> }[] = [
+  { label: 'Instagram', href: '#', icon: Instagram },
+  { label: 'TikTok', href: '#', icon: TikTokIcon },
+  { label: 'YouTube', href: '#', icon: Youtube },
+  { label: 'X / Twitter', href: '#', icon: Twitter },
 ]
 
 export function Footer() {
   return (
-    <footer>
-      <div className="relative overflow-hidden">
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              'linear-gradient(90deg, rgba(103,59,255,0.22), rgba(161,60,255,0.10), rgba(255,106,42,0.10), rgba(103,59,255,0.20))',
-          }}
-        />
-        <div className="relative mx-auto max-w-6xl px-4 py-14 text-center sm:px-6">
-          <p className="section-label">Start free today</p>
-          <h2 className="mt-3 text-2xl font-bold text-white sm:text-3xl">Know before you apply.</h2>
-          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-slate-400">
-            Run your first readiness check in under 5 minutes. No credit card, no approval promises.
-          </p>
-          <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <FooterPrimaryCta />
-            <Link href="/tools" className="btn-secondary px-6 py-3 text-sm">
-              Explore Tools
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      <div className="divider" />
-
-      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
-        <div className="grid grid-cols-2 gap-8 md:grid-cols-4 lg:gap-12">
-          <div className="col-span-2 space-y-4 md:col-span-1">
-            <Link href="/" className="flex w-fit items-center gap-2.5">
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 via-accent-500 to-orange-500">
-                <Zap size={15} className="text-white" fill="white" />
+    <footer className="relative border-t border-line-1 px-5 pb-10 pt-16 sm:px-8 lg:px-20">
+      <div className="mx-auto max-w-[1280px]">
+        <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:grid-cols-[1.4fr_repeat(3,1fr)_1.2fr]">
+          {/* Brand */}
+          <div className="col-span-2 sm:col-span-3 lg:col-span-1">
+            <Link href="/" className="flex w-fit items-center gap-3" aria-label="ParchiVisa home">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#ff5a1f] text-xs font-black text-[#ff5a1f] transition-all duration-200 hover:bg-[#ff5a1f]/10 hover:shadow-[0_0_14px_rgba(255,90,31,0.45)]">
+                PV
               </span>
-              <span className="text-lg font-bold">
-                <span className="gradient-text">Parchi</span>
-                <span className="text-white">Visa</span>
-              </span>
+              <span className="text-base font-bold uppercase tracking-[0.22em] text-white">Parchivisa</span>
             </Link>
-            <p className="max-w-[220px] text-sm leading-relaxed text-slate-500">
-              Helping visa applicants understand their readiness before submitting.
+            <p className="mt-4 max-w-[240px] text-sm leading-relaxed text-slate-400">
+              We catch the fixable mistakes before the embassy does. No guesswork, no agents — just
+              your real readiness.
             </p>
-            <div className="flex items-center gap-2 pt-1">
-              {socials.map(({ icon: Icon, href, label }) => (
+            <p className="mt-6 text-xs text-slate-500">
+              © {new Date().getFullYear()} ParchiVisa. All rights reserved.
+            </p>
+          </div>
+
+          {columns.map((col) => (
+            <nav key={col.title} aria-label={col.title}>
+              <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{col.title}</h4>
+              <ul className="mt-4 space-y-2.5">
+                {col.links.map((link) => (
+                  <li key={link.label}>
+                    <Link
+                      href={link.href}
+                      className="text-sm text-slate-500 transition-colors duration-150 hover:text-white"
+                    >
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          ))}
+
+          {/* Follow Us */}
+          <div className="col-span-2 sm:col-span-1">
+            <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Follow Us</h4>
+            <div className="mt-4 flex flex-wrap gap-2.5">
+              {socials.map(({ label, href, icon: Icon }) => (
                 <a
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-slate-500 transition-all duration-150 hover:border-white/20 hover:bg-white/10 hover:text-white"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-line-2 bg-tint-2 text-slate-400 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#ff5a1f]/50 hover:text-[#ff5a1f]"
                 >
-                  <Icon size={14} />
+                  <Icon width={16} height={16} aria-hidden />
                 </a>
               ))}
             </div>
           </div>
-
-          {Object.entries(footerLinks).map(([group, links]) => (
-            <div key={group} className="space-y-4">
-              <h4 className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">{group}</h4>
-              <ul className="space-y-2.5">
-                {links.map(({ label, href, disabled }) => (
-                  <li key={label}>
-                    <a
-                      href={href}
-                      className={
-                        disabled
-                          ? 'pointer-events-none cursor-default text-sm text-slate-700'
-                          : 'text-sm text-slate-500 transition-colors duration-150 hover:text-slate-200'
-                      }
-                    >
-                      {label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
         </div>
-      </div>
 
-      <div className="divider" />
-      <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-4 py-5 sm:flex-row sm:px-6">
-        <p className="text-xs text-slate-600">
-          &copy; {new Date().getFullYear()} ParchiVisa. All rights reserved.
-        </p>
-        <p className="text-center text-xs text-slate-700 sm:text-right">
-          Not affiliated with any government visa authority. For informational purposes only.
-        </p>
+        <div className="mt-12 border-t border-line-1 pt-5">
+          <p className="text-center text-xs text-slate-500 sm:text-left">
+            Not affiliated with any government visa authority. For informational purposes only.
+          </p>
+        </div>
       </div>
     </footer>
   )
 }
 
-function FooterPrimaryCta() {
-  if (!CLERK_ENABLED) {
-    return (
-      <Link href="/tools/student-visa/countries" className="btn-primary hover-glow">
-        Check My Readiness
-      </Link>
-    )
-  }
-
+function TikTokIcon(props: SVGProps<SVGSVGElement>) {
   return (
-    <>
-      <SignedOut>
-        <SignUpButton mode="modal">
-          <button className="btn-primary hover-glow">Create free account</button>
-        </SignUpButton>
-      </SignedOut>
-      <SignedIn>
-        <Link href="/tools/student-visa/countries" className="btn-primary hover-glow">
-          Check My Readiness
-        </Link>
-      </SignedIn>
-    </>
+    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
+      <path d="M16.5 3c.3 2.1 1.6 3.7 3.5 4v2.5c-1.3 0-2.5-.4-3.5-1v6.2a5.7 5.7 0 1 1-5.7-5.7c.3 0 .6 0 .9.1v2.6a3.1 3.1 0 1 0 2.2 3V3h2.6Z" />
+    </svg>
   )
 }

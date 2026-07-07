@@ -31,6 +31,11 @@ jest.mock('next/link', () => ({
   ),
 }))
 
+// PreviousChecks now renders GenerateReportButton, which uses the app router.
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: jest.fn(), replace: jest.fn(), prefetch: jest.fn() }),
+}))
+
 // AuthGate — render children directly in tests (no auth enforcement)
 jest.mock('../components/auth/AuthGate', () => ({
   AuthGate: ({ children }: { children: React.ReactNode }) => <>{children}</>,
@@ -38,8 +43,7 @@ jest.mock('../components/auth/AuthGate', () => ({
 
 import { useVisaApi } from '../lib/useVisaApi'
 import { HistoryResultCard } from '../components/checker/HistoryResultCard'
-import { DashboardContent } from '../app/dashboard/page'
-import { ApiError } from '../lib/api'
+import { PreviousChecks } from '../components/dashboard/PreviousChecks'
 
 // ---------------------------------------------------------------------------
 // Shared mock api
@@ -293,67 +297,74 @@ describe('HistoryResultCard — sources_used', () => {
 })
 
 // ===========================================================================
-// DashboardContent — page-level states
+// PreviousChecks — dashboard history section (presentational)
 // ===========================================================================
 
-describe('DashboardContent — loading state', () => {
-  it('shows loading spinner initially', async () => {
-    // Hang the promise so loading state persists during assertion
-    mockGetHistory.mockReturnValueOnce(new Promise(() => {}))
-    render(<DashboardContent />)
+const noop = () => {}
+
+function renderPrevious(props: Partial<React.ComponentProps<typeof PreviousChecks>> = {}) {
+  return render(
+    <PreviousChecks
+      checks={[]}
+      loading={false}
+      error={null}
+      onRetry={noop}
+      onBuildFile={noop}
+      {...props}
+    />
+  )
+}
+
+describe('PreviousChecks — loading state', () => {
+  it('shows loading spinner while loading', () => {
+    renderPrevious({ loading: true })
     expect(screen.getByText('Loading your checks…')).toBeInTheDocument()
   })
 })
 
-describe('DashboardContent — empty state', () => {
-  it('shows empty state message when no checks exist', async () => {
-    mockGetHistory.mockResolvedValueOnce([])
-    await act(async () => { render(<DashboardContent />) })
-    await waitFor(
-      () => expect(screen.queryByText('Loading your checks…')).not.toBeInTheDocument(),
-      { timeout: 3000 }
-    )
-    // Match the empty-state card text specifically (subtitle also says "No checks yet")
+describe('PreviousChecks — empty state', () => {
+  it('shows empty state message when no checks exist', () => {
+    renderPrevious({ checks: [] })
     expect(screen.getByText(/No checks yet.*run your first/)).toBeInTheDocument()
   })
 })
 
-describe('DashboardContent — error state', () => {
-  it('shows error message when API fails', async () => {
-    mockGetHistory.mockRejectedValueOnce(new ApiError('History service unavailable', 503))
-    await act(async () => { render(<DashboardContent />) })
-    await waitFor(
-      () => expect(screen.queryByText('Loading your checks…')).not.toBeInTheDocument(),
-      { timeout: 3000 }
-    )
+describe('PreviousChecks — error state', () => {
+  it('shows error message when an error is passed', () => {
+    renderPrevious({ error: 'History service unavailable' })
     expect(screen.getByText('History service unavailable')).toBeInTheDocument()
   })
 
-  it('shows generic error message for non-ApiError', async () => {
-    mockGetHistory.mockRejectedValueOnce(new Error('Network failure'))
-    await act(async () => { render(<DashboardContent />) })
-    await waitFor(
-      () => expect(screen.queryByText('Loading your checks…')).not.toBeInTheDocument(),
-      { timeout: 3000 }
-    )
-    expect(
-      screen.getByText(/Failed to load your history/)
-    ).toBeInTheDocument()
+  it('shows a Try again control on error', () => {
+    renderPrevious({ error: 'Something broke' })
+    expect(screen.getByText('Try again')).toBeInTheDocument()
   })
 })
 
-describe('DashboardContent — history list', () => {
-  it('renders a history item with country and score', async () => {
-    mockGetHistory.mockResolvedValueOnce([
-      makeItem({ country: 'uk', score: 90, result: 'Strong Readiness' }),
-    ])
-    await act(async () => { render(<DashboardContent />) })
-    await waitFor(
-      () => expect(screen.queryByText('Loading your checks…')).not.toBeInTheDocument(),
-      { timeout: 3000 }
-    )
+describe('PreviousChecks — history list', () => {
+  it('renders a history item with country, score and result', () => {
+    renderPrevious({
+      checks: [makeItem({ country: 'uk', score: 90, result: 'Strong Readiness' })],
+    })
     expect(screen.getByText('United Kingdom')).toBeInTheDocument()
     expect(screen.getByText('90')).toBeInTheDocument()
     expect(screen.getByText('Strong Readiness')).toBeInTheDocument()
+  })
+
+  it('offers "Build file from this check" for an inactive check', () => {
+    renderPrevious({
+      checks: [makeItem({ id: 'chk-1', country: 'uk' })],
+      activeCheckId: null,
+    })
+    expect(screen.getByText('Build file from this check')).toBeInTheDocument()
+  })
+
+  it('marks the active check instead of offering to build it', () => {
+    renderPrevious({
+      checks: [makeItem({ id: 'chk-active', country: 'uk' })],
+      activeCheckId: 'chk-active',
+    })
+    expect(screen.getByText('Active file')).toBeInTheDocument()
+    expect(screen.queryByText('Build file from this check')).not.toBeInTheDocument()
   })
 })

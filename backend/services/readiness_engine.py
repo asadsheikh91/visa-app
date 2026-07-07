@@ -358,11 +358,34 @@ def _evaluate_computed_trigger(ctype, answer, all_answers, config):
 # Band helpers (Phase 1B)
 # ---------------------------------------------------------------------------
 
+def band_for_score(score, bands):
+    """
+    THE single source of truth mapping a final numeric score to its band.
+
+    Every band label shown anywhere (engine result, report badge, verdict
+    paragraph, meter highlight) must come from this function applied to the
+    final score. Do not duplicate threshold logic elsewhere.
+
+    Semantics: bands sorted by "min" ascending; returns the highest band whose
+    "min" <= score. This is equivalent to min <= score <= max for in-range
+    values, and additionally well-defined for values the integer band edges do
+    not cover: fractional scores inside a gap (e.g. 84.5 with bands 70-84 /
+    85-100) fall into the band below, scores above the top band's max return
+    the top band, and scores below the lowest "min" return the lowest band.
+    """
+    ordered = sorted(bands, key=lambda b: b.get("min", 0))
+    chosen = ordered[0]
+    for band in ordered:
+        if score >= band["min"]:
+            chosen = band
+        else:
+            break
+    return chosen
+
+
 def _get_band(score, bands):
-    for band in bands:
-        if band["min"] <= score <= band["max"]:
-            return band
-    return min(bands, key=lambda b: b["min"])
+    # Backward-compatible alias; the logic lives in band_for_score.
+    return band_for_score(score, bands)
 
 
 def _lowest_band(bands):
@@ -690,7 +713,9 @@ def evaluate(questions, scoring, answers):
             critical_blockers.append(_enrich_issue(qid, blocker, question))
 
     if critical_blockers:
-        not_ready = _lowest_band(score_bands)
+        # Score is forced to 0, so the label comes from band_for_score(0) —
+        # same single source of truth as the main path.
+        not_ready = band_for_score(0, score_bands)
         normalized = normalize_answers(questions, answers)
         sources    = _collect_sources_used(critical_blockers, question_map)
         return {
@@ -748,9 +773,17 @@ def evaluate(questions, scoring, answers):
         if triggered:
             triggered_flags.append(_enrich_issue(qid, flag, question))
 
-    # Step 4: band + cap
-    band = _get_band(final_score, score_bands)
-    band = _apply_band_cap(band, len(triggered_flags), score_bands)
+    # Step 4: band + cap.
+    # The cap lowers the SCORE (to the cap band's max), and the band is then
+    # derived from the final score via band_for_score — so the numeric score
+    # and its label can never disagree. Capping only the label while leaving
+    # the score uncapped is exactly the bug that produced reports showing
+    # "87/100" next to a "High Refusal Risk" badge.
+    capped = _apply_band_cap(band_for_score(final_score, score_bands),
+                             len(triggered_flags), score_bands)
+    if final_score > capped["max"]:
+        final_score = capped["max"]
+    band = band_for_score(final_score, score_bands)
 
     # Step 5: soft warnings (Phase 4A)
     soft_warnings = _evaluate_soft_warnings(
@@ -791,6 +824,54 @@ def evaluate(questions, scoring, answers):
         "normalized_answers": normalized,
         "sources_used":       sources,
     }
+
+
+# ---------------------------------------------------------------------------
+# Per-category breakdown (read-only view for the Readiness Report)
+# ---------------------------------------------------------------------------
+
+def category_breakdown(questions, scoring, answers):
+    """
+    Per-criterion 0–100 scores, using the SAME pass logic as evaluate() (this
+    reuses _is_passing / _question_id rather than re-deriving the formula, so the
+    breakdown can never drift from the headline score).
+
+    Returns a list of dicts, one per scoring category, in scoring order:
+        {category_id, label, sublabel, score}  where score is 0–100.
+
+    A category whose questions carry no score_impact scores 0. This is a pure,
+    read-only view — it does not affect evaluate()'s output in any way.
+    """
+    question_map: dict = {}
+    for q in questions:
+        k = _question_id(q)
+        if k:
+            question_map[k] = q
+
+    out: list[dict] = []
+    for category in scoring.get("scoring_categories", []):
+        cat_qs = [
+            question_map[qid]
+            for qid in category.get("question_ids", [])
+            if qid in question_map
+        ]
+        total_impact = sum(q.get("score_impact", 0) for q in cat_qs)
+        if total_impact == 0:
+            pct = 0
+        else:
+            passing_impact = sum(
+                q.get("score_impact", 0)
+                for q in cat_qs
+                if _is_passing(answers.get(_question_id(q)), q)
+            )
+            pct = round(passing_impact / total_impact * 100)
+        out.append({
+            "category_id": category.get("category_id", ""),
+            "label":       category.get("label") or category.get("category_id", ""),
+            "sublabel":    category.get("sublabel") or category.get("description", "") or "",
+            "score":       pct,
+        })
+    return out
 
 
 # ---------------------------------------------------------------------------

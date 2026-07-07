@@ -373,12 +373,34 @@ def validate_scoring(country, scoring, question_ids):
                 "Missing required section: {!r}".format(section), "error"))
 
     # score_bands
-    for i, band in enumerate(scoring.get("score_bands", [])):
+    bands = scoring.get("score_bands", [])
+    for i, band in enumerate(bands):
         for key in ("min", "max", "label", "description"):
             if key not in band:
                 issues.append(Issue(country, filename, "",
                     "score_bands[{}].{}".format(i, key),
                     "score_band missing key {!r}".format(key), "error"))
+
+    # score_bands structure: must cover 0..100 contiguously with no gaps or
+    # overlaps, so every score maps to exactly one band (the badge/verdict and
+    # the meter marker are all derived from band_for_score over these edges).
+    complete = [b for b in bands if isinstance(b.get("min"), int) and isinstance(b.get("max"), int)]
+    if complete and len(complete) == len(bands):
+        ordered = sorted(complete, key=lambda b: b["min"])
+        if ordered[0]["min"] != 0:
+            issues.append(Issue(country, filename, "", "score_bands",
+                "Lowest band must start at 0 (starts at {})".format(ordered[0]["min"]), "error"))
+        if ordered[-1]["max"] != 100:
+            issues.append(Issue(country, filename, "", "score_bands",
+                "Highest band must end at 100 (ends at {})".format(ordered[-1]["max"]), "error"))
+        for lower, upper in zip(ordered, ordered[1:]):
+            if lower["max"] >= lower["min"] and upper["min"] != lower["max"] + 1:
+                issues.append(Issue(country, filename, "", "score_bands",
+                    "Band boundary gap/overlap: {!r} ends at {} but {!r} starts at {}".format(
+                        lower.get("label"), lower["max"], upper.get("label"), upper["min"]), "error"))
+            if lower["max"] < lower["min"]:
+                issues.append(Issue(country, filename, "", "score_bands",
+                    "Band {!r} has max < min".format(lower.get("label")), "error"))
 
     # scoring_categories
     cat_ids = set()

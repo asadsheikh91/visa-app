@@ -12,6 +12,13 @@ alembic==1.13.1
 # ─── Auth (Clerk JWT verification) ───────────────────────────────────────────
 PyJWT[crypto]==2.8.0
 
+# ─── Form parsing (Gumroad webhook posts application/x-www-form-urlencoded) ────
+python-multipart>=0.0.9
+
+# ─── Field-level encryption (UserDocument.extracted PII) ──────────────────────
+# Also pulled in transitively by PyJWT[crypto]; pinned here as a direct dependency.
+cryptography>=42.0.0
+
 # ─── Visa data (Cloudflare R2) ────────────────────────────────────────────────
 boto3==1.34.51
 
@@ -20,3 +27,20 @@ redis==5.0.8
 
 # ─── Rate limiting ────────────────────────────────────────────────────────────
 slowapi==0.1.9
+
+# ─── AI (Claude) — SOP reviewer + mock interview ──────────────────────────────
+anthropic==0.40.0
+
+# ─── AI (Gemini) — Readiness Report narration (schema-locked structured output) ─
+# Used ONLY to rewrite the four per-finding prose fields; never originates facts.
+# If GEMINI_API_KEY is unset, report generation falls back to deterministic
+# templated prose — the feature never hard-depends on a live LLM call.
+# Requires the 1.x client API (genai.Client, response_schema, HttpOptions timeout).
+google-genai>=1.0.0
+
+# ─── PDF rendering — Readiness Report (server-side Playwright) ─────────────────
+# Renders the print route to an A4 PDF. After installing, fetch the browser:
+#   python -m playwright install chromium
+# If Playwright/Chromium is unavailable, the /pdf route returns 503 (the on-screen
+# report still works).
+playwright>=1.40.0

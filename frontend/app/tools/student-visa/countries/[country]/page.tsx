@@ -1,7 +1,10 @@
 import { Metadata } from 'next'
 import { CheckerHeader } from '@/components/checker/CheckerHeader'
 import { CountryChecker } from '@/components/checker/CountryChecker'
+import { ProofOfFundsConverter } from '@/components/checker/ProofOfFundsConverter'
 import { AuthGate } from '@/components/auth/AuthGate'
+import { COUNTRY_CURRENCY } from '@/lib/currency'
+import type { CountrySlug } from '@/lib/countries'
 
 const COUNTRY_NAMES: Record<string, { name: string; route: string }> = {
   uk: { name: 'United Kingdom', route: 'Student Visa' },
@@ -37,6 +40,12 @@ export default function CountryCheckerPage({ params }: { params: { country: stri
         <AuthGate>
           <CountryChecker country={slug} />
         </AuthGate>
+
+        {/* Visa-readiness helper: convert PKR funds to the destination currency
+            for proof-of-funds comparison. Independent of the checker/scoring. */}
+        {slug in COUNTRY_CURRENCY && (
+          <ProofOfFundsConverter country={slug as CountrySlug} />
+        )}
       </div>
     </div>
   )

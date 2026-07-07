@@ -45,6 +45,7 @@ from services.visa_data_service import (
     StorageUnavailableError,
 )
 from services.readiness_engine import evaluate
+from services.country_sources import get_country_meta
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -85,6 +86,23 @@ async def get_countries(request: Request, current_user: AuthUser = Depends(get_c
         if mapped is not None:
             return mapped
         return JSONResponse(status_code=500, content={"error": "Failed to load country list."})
+
+
+# ---------------------------------------------------------------------------
+# GET /{country}/meta  — official authority + last-reviewed date (Module D)
+# ---------------------------------------------------------------------------
+
+@router.get("/{country}/meta")
+@limiter.limit("60/minute")
+async def get_country_meta_route(
+    request: Request,
+    country: str,
+    current_user: AuthUser = Depends(get_current_user),
+):
+    meta = get_country_meta(country)
+    if meta is None:
+        return JSONResponse(status_code=404, content={"error": "This country is not supported yet."})
+    return JSONResponse(content=meta)
 
 
 # ---------------------------------------------------------------------------

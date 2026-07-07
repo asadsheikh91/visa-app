@@ -622,6 +622,7 @@ class TestGetPassIf:
 
 from services.readiness_engine import (
     evaluate,
+    band_for_score,
     _apply_band_cap,
     _second_lowest_band,
     _evaluate_computed_trigger,
@@ -999,21 +1000,35 @@ class TestBandCapEndToEnd:
         )
 
     def test_high_score_with_one_flag_is_capped_at_high(self):
+        """The cap lowers the SCORE too — score and label must agree."""
         scoring, qs, answers = self._scoring_with_flags(1)
         result = evaluate(qs, scoring, answers)
-        assert result["score"] >= 85  # raw score is high
         assert result["result"] == "High Refusal Risk"
+        assert result["score"] == 69  # capped to the High Refusal Risk band max
+        assert band_for_score(result["score"], BANDS)["label"] == result["result"]
 
     def test_high_score_with_three_flags_is_capped_at_critical(self):
         scoring, qs, answers = self._scoring_with_flags(3)
         result = evaluate(qs, scoring, answers)
-        assert result["score"] >= 85
         assert result["result"] == "Critical Refusal Risk"
+        assert result["score"] == 49  # capped to the Critical band max
+        assert band_for_score(result["score"], BANDS)["label"] == result["result"]
 
     def test_zero_flags_high_score_is_not_capped(self):
         scoring, qs, answers = self._scoring_with_flags(0)
         result = evaluate(qs, scoring, answers)
         assert result["result"] == "Strong Readiness"
+        assert result["score"] >= 85  # uncapped
+
+    def test_low_score_with_flags_is_not_raised_by_cap(self):
+        """A score already below the cap band's max must not move."""
+        scoring, qs, answers = self._scoring_with_flags(1)
+        # Shrink the scored category so the raw score lands at 45 (Critical band).
+        scoring["scoring_categories"][0]["max_points"] = 45
+        result = evaluate(qs, scoring, answers)
+        assert result["score"] == 45
+        assert result["result"] == "Critical Refusal Risk"
+        assert band_for_score(result["score"], BANDS)["label"] == result["result"]
 
 
 # ---------------------------------------------------------------------------
