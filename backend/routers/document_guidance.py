@@ -16,7 +16,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from auth.dependencies import get_current_user
@@ -52,7 +52,9 @@ class DocStateRequest(BaseModel):
 class CorrectionRequest(BaseModel):
     document_id: Optional[str] = None
     office_id: Optional[str] = None
-    note: str
+    # Free-text "this is wrong" note, persisted as-is; 2k chars is ample for a
+    # correction and caps stored size.
+    note: str = Field(..., max_length=2_000)
 
 
 async def _resolve_db_user(db: AsyncSession, current_user: AuthUser):

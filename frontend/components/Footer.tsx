@@ -1,6 +1,6 @@
 import type { ComponentType, SVGProps } from 'react'
 import Link from 'next/link'
-import { Instagram, Twitter, Youtube } from 'lucide-react'
+import { Instagram, Linkedin } from 'lucide-react'
 
 const columns: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -32,10 +32,8 @@ const columns: { title: string; links: { label: string; href: string }[] }[] = [
 ]
 
 const socials: { label: string; href: string; icon: ComponentType<SVGProps<SVGSVGElement>> }[] = [
-  { label: 'Instagram', href: '#', icon: Instagram },
-  { label: 'TikTok', href: '#', icon: TikTokIcon },
-  { label: 'YouTube', href: '#', icon: Youtube },
-  { label: 'X / Twitter', href: '#', icon: Twitter },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/company/parchivisa', icon: Linkedin },
+  { label: 'Instagram', href: 'https://www.instagram.com/parchi.visa/', icon: Instagram },
 ]
 
 export function Footer() {
@@ -86,6 +84,8 @@ export function Footer() {
                 <a
                   key={label}
                   href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   aria-label={label}
                   className="flex h-9 w-9 items-center justify-center rounded-full border border-line-2 bg-tint-2 text-slate-400 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#ff5a1f]/50 hover:text-[#ff5a1f]"
                 >
@@ -103,13 +103,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
-}
-
-function TikTokIcon(props: SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
-      <path d="M16.5 3c.3 2.1 1.6 3.7 3.5 4v2.5c-1.3 0-2.5-.4-3.5-1v6.2a5.7 5.7 0 1 1-5.7-5.7c.3 0 .6 0 .9.1v2.6a3.1 3.1 0 1 0 2.2 3V3h2.6Z" />
-    </svg>
   )
 }

@@ -65,9 +65,9 @@ def _data_error_response(exc: Exception) -> JSONResponse | None:
     if isinstance(exc, DataCorruptedError):
         return JSONResponse(status_code=500, content={"error": str(exc)})
     if isinstance(exc, StorageConfigError):
-        return JSONResponse(status_code=503, content={"error": "Visa data service is not configured. Please try again later."})
+        return JSONResponse(status_code=503, content={"error": "The readiness checker is temporarily unavailable. Please try again later."})
     if isinstance(exc, StorageUnavailableError):
-        return JSONResponse(status_code=503, content={"error": "Visa data is temporarily unavailable. Please try again in a moment."})
+        return JSONResponse(status_code=503, content={"error": "The readiness checker is temporarily unavailable. Please try again in a moment."})
     return None
 
 
@@ -163,6 +163,14 @@ async def get_questions(
 
     try:
         raw_questions = load_questions(VISA_TYPE, country)
+        # Preflight the scoring data too. The check step needs scoring.json, and
+        # in practice questions.json is often served from the cache while
+        # scoring.json is fetched fresh — so an R2 outage can slip past this
+        # questions load and only surface AFTER the applicant has answered every
+        # question ("visa data not available"). Loading scoring here verifies R2
+        # connectivity up front (and warms the cache), so we can tell the user the
+        # checker is temporarily unavailable BEFORE they take the test.
+        load_scoring(VISA_TYPE, country)
     except Exception as exc:
         mapped = _data_error_response(exc)
         if mapped is not None:

@@ -13,7 +13,9 @@ alembic==1.13.1
 PyJWT[crypto]==2.8.0
 
 # ─── Form parsing (Gumroad webhook posts application/x-www-form-urlencoded) ────
-python-multipart>=0.0.9
+# Floor is 0.0.18: earlier releases are affected by CVE-2024-53981 (multipart
+# parser DoS via excessive header CR/LF). FastAPI reaches this on any form POST.
+python-multipart>=0.0.18
 
 # ─── Field-level encryption (UserDocument.extracted PII) ──────────────────────
 # Also pulled in transitively by PyJWT[crypto]; pinned here as a direct dependency.

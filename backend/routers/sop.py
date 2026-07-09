@@ -16,7 +16,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -36,7 +36,10 @@ router = APIRouter()
 
 
 class SopReviewRequest(BaseModel):
-    sop_text: str
+    # Cap sits above the engine's 15k-char limit (build_review) so an over-length
+    # SOP still gets the engine's friendly "trim it" 400; this only turns away
+    # abusive payloads before they reach the AI provider.
+    sop_text: str = Field(..., max_length=20_000)
     country: Optional[str] = None
 
 

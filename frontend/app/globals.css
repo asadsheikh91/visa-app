@@ -314,9 +314,19 @@
 @keyframes dashFlow {
   to { stroke-dashoffset: -120; }
 }
+@keyframes pvTwinkle {
+  0%, 100% { opacity: 0.25; }
+  50%      { opacity: 0.9; }
+}
 
 .animate-scroll-cue { animation: scrollCue 1.9s ease-in-out infinite; }
 .animate-dash-flow  { animation: dashFlow 6s linear infinite; }
+.pv-twinkle         { animation: pvTwinkle 3s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-dash-flow,
+  .pv-twinkle { animation: none; }
+}
 
 /* ── Portal / score-dial animations (hero visual) ──────────────────────── */
 @keyframes pvArc {

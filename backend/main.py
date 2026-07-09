@@ -43,6 +43,17 @@ async def lifespan(app: FastAPI):
 _ENVIRONMENT = os.getenv("ENVIRONMENT", "development").strip().lower()
 _IS_PRODUCTION = _ENVIRONMENT == "production"
 
+# Hard ceiling on request-body size, enforced before any route parses the body,
+# to bound memory use and downstream (AI/DB) cost from oversized payloads. The
+# API's largest legitimate bodies (an SOP, a manually-entered bank statement) are
+# only tens of KB, so the 512 KB default has an enormous margin; override with
+# MAX_REQUEST_BODY_BYTES if a future endpoint needs more.
+_BODY_METHODS = {"POST", "PUT", "PATCH"}
+try:
+    _MAX_REQUEST_BODY_BYTES = int(os.getenv("MAX_REQUEST_BODY_BYTES", str(512 * 1024)))
+except ValueError:
+    _MAX_REQUEST_BODY_BYTES = 512 * 1024
+
 # In production, disable the interactive API docs (Swagger /docs, ReDoc /redoc)
 # AND the machine-readable schema (/openapi.json) so the full API surface isn't
 # publicly enumerable. In dev/staging these stay at the FastAPI defaults
@@ -129,13 +140,32 @@ SECURITY_HEADERS = {
 }
 
 
-@app.middleware("http")
-async def add_security_headers(request, call_next):
-    response = await call_next(request)
+def _apply_security_headers(response):
     # setdefault: never clobber a header a route deliberately set itself.
     for header, value in SECURITY_HEADERS.items():
         response.headers.setdefault(header, value)
     return response
+
+
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    # Reject oversized bodies up front — before the route buffers/parses them —
+    # using the declared Content-Length. Requests without a Content-Length (rare
+    # for JSON clients) fall through to the ASGI server's own stream limits. The
+    # 413 is built here so it still carries the security headers below.
+    if request.method in _BODY_METHODS:
+        declared = request.headers.get("content-length")
+        if declared is not None:
+            try:
+                oversized = int(declared) > _MAX_REQUEST_BODY_BYTES
+            except ValueError:
+                oversized = False
+            if oversized:
+                return _apply_security_headers(
+                    JSONResponse(status_code=413, content={"error": "Request body too large."})
+                )
+    response = await call_next(request)
+    return _apply_security_headers(response)
 
 
 # --- Routers ---

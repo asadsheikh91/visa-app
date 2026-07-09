@@ -1,11 +1,21 @@
-# env files — never commit real secrets, only *.example templates
+# env files — never commit ANY env file (real secrets OR *.example templates)
 .env
 .env.*
 *.env
 frontend/.env
 backend/.env
-!*.env.example
-!.env.prod.example
+
+# Docker — ONLY docker-compose.prod.yml is committed. Every other Docker file
+# (Dockerfiles, .dockerignore, other compose files) is excluded so it can't
+# confuse the Coolify deployment.
+Dockerfile
+*.dockerfile
+.dockerignore
+docker-compose*.yml
+!docker-compose.prod.yml
+
+# Local agent / editor tooling — never part of the app
+.claude/
 
 # dependencies
 node_modules/

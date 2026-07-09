@@ -22,22 +22,40 @@ def is_configured() -> bool:
     return bool(os.getenv("NOTIFY_EMAIL_PROVIDER", "").strip())
 
 
+def _redact_email(addr: str) -> str:
+    """
+    Mask a recipient address for logs so we never write the raw email (PII) —
+    'ada.lovelace@example.com' -> 'a***@example.com'. Keeps just enough (first
+    char + domain) to correlate a delivery issue without storing the address.
+    """
+    addr = (addr or "").strip()
+    if "@" not in addr:
+        return "<redacted>"
+    local, _, domain = addr.partition("@")
+    head = local[:1] if local else ""
+    return f"{head}***@{domain}"
+
+
 def send_email(to: str, subject: str, body: str) -> bool:
     """
     Send a transactional email. Returns True if dispatched, False if skipped.
 
     Never raises — a notification failure must not break the request that
     triggered it. When no provider is configured this logs and returns False.
+    The recipient address is redacted in all log lines (PII).
     """
     if not to:
         return False
     if not is_configured():
-        logger.info("notifications: provider not configured; skipping email to %s (%r)", to, subject)
+        logger.info(
+            "notifications: provider not configured; skipping email to %s (%r)",
+            _redact_email(to), subject,
+        )
         return False
     try:
         return _send_via_provider(to, subject, body)
     except Exception:
-        logger.exception("notifications: failed to send email to %s", to)
+        logger.exception("notifications: failed to send email to %s", _redact_email(to))
         return False
 
 

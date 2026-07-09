@@ -17,7 +17,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -45,7 +45,9 @@ class StartRequest(BaseModel):
 
 
 class ReplyRequest(BaseModel):
-    answer: str
+    # A spoken-style interview answer; 5k chars is far more than a genuine reply
+    # needs and keeps a single turn from ballooning the transcript / AI cost.
+    answer: str = Field(..., max_length=5_000)
 
 
 async def _resolve_db_user(db: AsyncSession, current_user: AuthUser):

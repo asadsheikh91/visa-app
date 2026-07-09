@@ -166,6 +166,12 @@ _USA_SOURCES = {
 class TestGetQuestionsCanonicalFields:
     def setup_method(self):
         self.client = _make_client()
+        # get_questions preflights scoring.json for R2 connectivity; keep it happy.
+        self._scoring_patch = patch("routers.student_visa.load_scoring", return_value=_SCORING)
+        self._scoring_patch.start()
+
+    def teardown_method(self):
+        self._scoring_patch.stop()
 
     def test_returns_200_for_supported_country(self):
         with patch("routers.student_visa.load_questions", return_value=[_CANONICAL_QUESTION]):
@@ -223,6 +229,11 @@ class TestGetQuestionsDoesNotReturnOldFields:
 
     def setup_method(self):
         self.client = _make_client()
+        self._scoring_patch = patch("routers.student_visa.load_scoring", return_value=_SCORING)
+        self._scoring_patch.start()
+
+    def teardown_method(self):
+        self._scoring_patch.stop()
 
     def test_question_id_not_in_response(self):
         raw = dict(_CANONICAL_QUESTION, question_id="old_id")
@@ -273,6 +284,11 @@ class TestGetQuestionsDoesNotReturnOldFields:
 class TestGetQuestionsSourceResolution:
     def setup_method(self):
         self.client = _make_client()
+        self._scoring_patch = patch("routers.student_visa.load_scoring", return_value=_SCORING)
+        self._scoring_patch.start()
+
+    def teardown_method(self):
+        self._scoring_patch.stop()
 
     def test_usa_sources_resolved_when_include_sources_true(self):
         q_with_src = dict(_CANONICAL_QUESTION, source_ids=["usa_src_state_dept"])
@@ -364,6 +380,26 @@ class TestGetQuestionsErrors:
     def test_storage_unavailable_returns_503(self):
         from services.visa_data_service import StorageUnavailableError
         with patch("routers.student_visa.load_questions", side_effect=StorageUnavailableError()):
+            resp = self.client.get("/api/visa/student/australia/questions")
+        assert resp.status_code == 503
+
+    def test_scoring_preflight_storage_unavailable_returns_503(self):
+        """
+        Questions load fine (often from cache) but R2 is unreachable for scoring.
+        The preflight must surface 503 BEFORE the applicant answers anything,
+        rather than letting the failure appear at check time.
+        """
+        from services.visa_data_service import StorageUnavailableError
+        with patch("routers.student_visa.load_questions", return_value=[_CANONICAL_QUESTION]), \
+             patch("routers.student_visa.load_scoring", side_effect=StorageUnavailableError()):
+            resp = self.client.get("/api/visa/student/australia/questions")
+        assert resp.status_code == 503
+
+    def test_scoring_preflight_config_error_returns_503(self):
+        """Missing R2 configuration also blocks the checker up front with 503."""
+        from services.visa_data_service import StorageConfigError
+        with patch("routers.student_visa.load_questions", return_value=[_CANONICAL_QUESTION]), \
+             patch("routers.student_visa.load_scoring", side_effect=StorageConfigError(["R2_ENDPOINT_URL"])):
             resp = self.client.get("/api/visa/student/australia/questions")
         assert resp.status_code == 503
 

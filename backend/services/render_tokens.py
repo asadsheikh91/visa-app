@@ -65,10 +65,21 @@ def consume(rt: str) -> str | None:
     if client is not None:
         try:
             key = _PREFIX + rt
-            val = client.get(key)
+            # Atomic read-and-delete so a token can be consumed exactly once even
+            # under concurrent requests. A plain GET-then-DELETE has a TOCTOU window
+            # where two callers can both read the value before either deletes it; a
+            # transactional MULTI/EXEC pipeline executes the GET and DEL as one
+            # indivisible unit server-side, guaranteeing single use. (A pipeline is
+            # used instead of GETDEL for compatibility with Redis < 6.2.)
+            pipe = client.pipeline(transaction=True)
+            pipe.get(key)
+            pipe.delete(key)
+            val = pipe.execute()[0]
             if val is not None:
-                client.delete(key)
                 return val.decode("utf-8") if isinstance(val, (bytes, bytearray)) else str(val)
+            # Absent in Redis: fall through to the local store — the token may have
+            # been minted during a transient Redis outage. The fall-through is still
+            # single-use (the local pop below removes it).
         except Exception as exc:  # noqa: BLE001 - fall through to local store
             logger.warning("Render-token Redis read failed (%s).", type(exc).__name__)
 
