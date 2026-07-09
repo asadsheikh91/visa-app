@@ -5,14 +5,16 @@
 frontend/.env
 backend/.env
 
-# Docker — ONLY docker-compose.prod.yml is committed. Every other Docker file
-# (Dockerfiles, .dockerignore, other compose files) is excluded so it can't
-# confuse the Coolify deployment.
+# Docker — committed build infra: docker-compose.prod.yml and the backend build
+# context (backend/Dockerfile is tracked; backend/.dockerignore is re-included
+# below so the build context stays hygienic). Any OTHER stray Docker file stays
+# ignored so it can't confuse the Coolify deployment.
 Dockerfile
 *.dockerfile
 .dockerignore
 docker-compose*.yml
 !docker-compose.prod.yml
+!backend/.dockerignore
 
 # Local agent / editor tooling — never part of the app
 .claude/

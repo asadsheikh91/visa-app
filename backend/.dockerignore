@@ -1,0 +1,51 @@
+# Build-context hygiene for the Coolify Docker build (context = backend/).
+# The Dockerfile does `COPY . .`, so anything NOT excluded here is baked into the
+# image. Keep secrets, local envs, caches, the virtualenv, VCS, and dev-only
+# files out of the runtime image. (alembic/, alembic.ini, requirements.txt,
+# docker-entrypoint.sh and all app code are intentionally NOT excluded — the
+# entrypoint runs `alembic upgrade head` on start.)
+
+# Secrets & environment — must never be baked into the image.
+.env
+.env.*
+*.env
+!.env.example
+
+# Keys / certificates
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Python bytecode, test/tool caches, and the local virtualenv
+# (large, and contains wrong-platform binaries).
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+pytest-cache-files-*/
+.coverage
+htmlcov/
+
+# Tests & documentation — not needed in the runtime image.
+tests/
+*.md
+
+# VCS, local tooling, and Docker/build meta — not part of the runtime image.
+.git
+.gitignore
+.dockerignore
+Dockerfile
+docker-compose*.yml
+docker-compose*.yaml
+.claude/
+.vscode/
+.idea/
+node_modules/
+
+# Dev-only setup scripts.
+setup.sh
+setup.ps1
