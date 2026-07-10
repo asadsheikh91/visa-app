@@ -1,6 +1,7 @@
 import type { ComponentType, SVGProps } from 'react'
 import Link from 'next/link'
 import { Instagram, Linkedin } from 'lucide-react'
+import { BrandLogo } from '@/components/BrandLogo'
 
 const columns: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -43,11 +44,8 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:grid-cols-[1.4fr_repeat(3,1fr)_1.2fr]">
           {/* Brand */}
           <div className="col-span-2 sm:col-span-3 lg:col-span-1">
-            <Link href="/" className="flex w-fit items-center gap-3" aria-label="ParchiVisa home">
-              <span className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-[#ff5a1f] text-xs font-black text-[#ff5a1f] transition-all duration-200 hover:bg-[#ff5a1f]/10 hover:shadow-[0_0_14px_rgba(255,90,31,0.45)]">
-                PV
-              </span>
-              <span className="text-base font-bold uppercase tracking-[0.22em] text-white">Parchivisa</span>
+            <Link href="/" className="group flex w-fit items-center" aria-label="ParchiVisa home">
+              <BrandLogo className="h-9 w-auto transition-all duration-200 group-hover:drop-shadow-[0_0_10px_rgba(255,90,31,0.45)]" />
             </Link>
             <p className="mt-4 max-w-[240px] text-sm leading-relaxed text-slate-400">
               We catch the fixable mistakes before the embassy does. No guesswork, no agents — just

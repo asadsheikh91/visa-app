@@ -5,7 +5,7 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 
 export const metadata: Metadata = {
-  title: 'ParchiVisa — Know Your Visa Readiness Before You Apply',
+  title: 'ParchiVisa',
   description: 'ParchiVisa checks your documents and gives you a readiness score before you apply for a visa.',
   keywords: ['visa readiness', 'student visa', 'visa checker', 'UK visa', 'USA visa', 'Canada visa'],
   openGraph: {

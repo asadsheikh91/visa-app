@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import type { LucideIcon } from 'lucide-react'
-import { FileText, MessagesSquare, ShieldCheck, BadgeCheck, ArrowRight, Sparkles, Clock } from 'lucide-react'
+import { FileText, MessagesSquare, ShieldCheck, /* BadgeCheck, */ ArrowRight, Sparkles, Clock } from 'lucide-react'
 
 type Tool = {
   href: string
@@ -20,13 +20,14 @@ const TOOLS: Tool[] = [
     desc: 'Enter your statement figures — we check them against the UK financial rules (28-day rule, balance, recency). Our rules decide, not AI.',
     status: 'live',
   },
-  {
-    href: '/trust',
-    icon: BadgeCheck,
-    title: 'Trust & rule freshness',
-    desc: 'See when each destination’s rules were last reviewed and what changed — every check traceable to an official source.',
-    status: 'live',
-  },
+  // Hidden from the dashboard for now — restore by uncommenting.
+  // {
+  //   href: '/trust',
+  //   icon: BadgeCheck,
+  //   title: 'Trust & rule freshness',
+  //   desc: 'See when each destination’s rules were last reviewed and what changed — every check traceable to an official source.',
+  //   status: 'live',
+  // },
   {
     href: '/tools/sop-review',
     icon: FileText,

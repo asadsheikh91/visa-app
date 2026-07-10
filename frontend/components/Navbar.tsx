@@ -7,6 +7,7 @@ import { ArrowRight, Menu, X } from 'lucide-react'
 import clsx from 'clsx'
 import { SignedIn, UserButton } from '@clerk/nextjs'
 import { CurrencyConverterWidget } from '@/components/currency/CurrencyConverterWidget'
+import { BrandLogo } from '@/components/BrandLogo'
 
 const navLinks = [
   { label: 'Check Eligibility', href: '/tools/student-visa/countries' },
@@ -164,13 +165,8 @@ export function Navbar() {
 
 function Brand() {
   return (
-    <Link href="/" className="group flex flex-shrink-0 items-center gap-3" aria-label="ParchiVisa home">
-      <span className="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full border-2 border-[#ff5a1f] text-sm font-black tracking-tight text-[#ff5a1f] transition-all duration-200 group-hover:bg-[#ff5a1f]/10 group-hover:shadow-[0_0_16px_rgba(255,90,31,0.5)]">
-        PV
-      </span>
-      <span className="whitespace-nowrap text-base font-bold uppercase tracking-[0.22em] text-white">
-        Parchivisa
-      </span>
+    <Link href="/" className="group flex flex-shrink-0 items-center" aria-label="ParchiVisa home">
+      <BrandLogo className="h-9 w-auto transition-all duration-200 group-hover:drop-shadow-[0_0_10px_rgba(255,90,31,0.5)]" />
     </Link>
   )
 }
