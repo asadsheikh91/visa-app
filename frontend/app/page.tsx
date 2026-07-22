@@ -1,4 +1,5 @@
 import { LandingNav } from '@/components/landing/paper/LandingNav'
+import { Hero } from '@/components/landing/paper/Hero'
 import { pvSerif, pvSans, pvMono } from './pv-fonts'
 
 /**
@@ -17,8 +18,7 @@ export default function HomePage() {
       className={`${pvSerif.variable} ${pvSans.variable} ${pvMono.variable} min-h-screen bg-paper font-body text-ink antialiased`}
     >
       <LandingNav />
-      {/* Hero (Section 2) lands here next */}
-      <div className="h-[60vh]" />
+      <Hero />
     </div>
   )
 }
