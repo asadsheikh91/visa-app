@@ -8,6 +8,19 @@
 
 @layer base {
   :root {
+    /* ── "The Official Document" landing tokens (pv-*) ──────────────────
+       parchi = a slip of paper (Urdu). Ink, paper, stamps.
+       stamp-green is the dominant accent; seal-orange is budgeted to
+       ≤3 semantic "attention" uses on the landing page. */
+    --pv-paper: #FAF8F4;
+    --pv-paper-deep: #F3EEE4;
+    --pv-ink: #14213D;
+    --pv-stamp: #1F6B4A;
+    --pv-stamp-deep: color-mix(in oklab, #1F6B4A 80%, #14213D);
+    --pv-seal: #E8590C;
+    --pv-support: #6B6560;
+    --pv-hairline: #E5E0D8;
+
     --radius: 0.625rem;
     --white-4: rgba(255, 255, 255, 0.04);
     --white-6: rgba(255, 255, 255, 0.06);
@@ -393,6 +406,25 @@
 body[data-report-print] > header,
 body[data-report-print] > footer {
   display: none !important;
+}
+
+/* ---------------------------------------------------------------------------
+   "The Official Document" landing — scoped chrome + paper ground.
+   The redesigned landing route renders its own paper-styled Nav/Footer, so the
+   global dark chrome is suppressed for it (same technique as the report print
+   route above, but keyed off the landing wrapper instead of a body attr).
+--------------------------------------------------------------------------- */
+body:has([data-pv-landing]) > header,
+body:has([data-pv-landing]) > footer {
+  display: none;
+}
+body:has([data-pv-landing]) {
+  background-color: var(--pv-paper);
+  background-image: none;
+}
+[data-pv-landing] ::selection {
+  background: var(--pv-stamp);
+  color: #fff;
 }
 @media print {
   body > header,

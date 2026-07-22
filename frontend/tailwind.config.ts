@@ -95,6 +95,21 @@ const config: Config = {
           2: 'var(--line-2)',
           3: 'var(--line-3)',
         },
+        // ── "The Official Document" landing palette (pv tokens) ──
+        // Values live as --pv-* CSS variables in globals.css; components never
+        // hardcode hex. stamp = dominant green accent; seal = budgeted orange.
+        paper: {
+          DEFAULT: withOpacity('--pv-paper'),
+          deep: withOpacity('--pv-paper-deep'),
+        },
+        ink: withOpacity('--pv-ink'),
+        stamp: {
+          DEFAULT: withOpacity('--pv-stamp'),
+          deep: withOpacity('--pv-stamp-deep'),
+        },
+        seal: withOpacity('--pv-seal'),
+        support: withOpacity('--pv-support'),
+        hairline: withOpacity('--pv-hairline'),
         // Single readiness/quality language — shared by score bands and pills.
         readiness: {
           high: withOpacity('--readiness-high'),
@@ -105,6 +120,11 @@ const config: Config = {
       fontFamily: {
         sans:    ['Inter', 'system-ui', 'sans-serif'],
         display: ['Anton', 'sans-serif'],
+        // Landing ("Official Document") stack — variables set by next/font in
+        // app/pv-fonts.ts, scoped to the landing wrapper.
+        serif: ['var(--font-pv-serif)', 'Georgia', 'serif'],
+        body:  ['var(--font-pv-sans)', 'system-ui', 'sans-serif'],
+        mono:  ['var(--font-pv-mono)', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',

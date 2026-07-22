@@ -1,28 +1,24 @@
-import { HeroSection } from '@/components/landing/HeroSection'
-import { StatsStrip } from '@/components/landing/StatsStrip'
-import { StorySection } from '@/components/landing/StorySection'
-import { FeatureSection } from '@/components/landing/FeatureSection'
-import { TestimonialSection } from '@/components/landing/TestimonialSection'
-import { FinalCTA } from '@/components/landing/FinalCta'
+import { LandingNav } from '@/components/landing/paper/LandingNav'
+import { pvSerif, pvSans, pvMono } from './pv-fonts'
 
 /**
- * ParchiVisa landing page.
+ * ParchiVisa landing — "The Official Document."
+ * parchi = a slip of paper (Urdu): ink, paper, stamps. The wrapper scopes the
+ * pv font variables and triggers globals.css to swap the global dark chrome
+ * for this route's own paper-styled Nav/Footer.
  *
- * Reads top-to-bottom as one story: the fear of an avoidable refusal (Hero),
- * the credibility behind us (Stats), every place a visa goes wrong and the
- * module that catches it (Story), why our engine can be trusted (Features),
- * proof from real students (Testimonial), and the call to act (Final CTA).
- * The Footer is rendered globally in app/layout.tsx.
+ * Sections are being rebuilt one at a time; the old dark landing components
+ * in components/landing/ are superseded by components/landing/paper/.
  */
 export default function HomePage() {
   return (
-    <>
-      <HeroSection />
-      <StatsStrip />
-      <StorySection />
-      <FeatureSection />
-      <TestimonialSection />
-      <FinalCTA />
-    </>
+    <div
+      data-pv-landing=""
+      className={`${pvSerif.variable} ${pvSans.variable} ${pvMono.variable} min-h-screen bg-paper font-body text-ink antialiased`}
+    >
+      <LandingNav />
+      {/* Hero (Section 2) lands here next */}
+      <div className="h-[60vh]" />
+    </div>
   )
 }
