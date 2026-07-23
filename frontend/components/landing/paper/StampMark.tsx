@@ -13,13 +13,15 @@ export function StampMark({ className }: { className?: string }) {
         const a = (i / TICK_COUNT) * Math.PI * 2
         const cos = Math.cos(a)
         const sin = Math.sin(a)
+        // Fixed precision so server/client render byte-identical markup
+        // (raw float serialization differs across runtimes → hydration warn).
         return (
           <line
             key={i}
-            x1={24 + 17.2 * cos}
-            y1={24 + 17.2 * sin}
-            x2={24 + 19.4 * cos}
-            y2={24 + 19.4 * sin}
+            x1={(24 + 17.2 * cos).toFixed(2)}
+            y1={(24 + 17.2 * sin).toFixed(2)}
+            x2={(24 + 19.4 * cos).toFixed(2)}
+            y2={(24 + 19.4 * sin).toFixed(2)}
             stroke="currentColor"
             strokeWidth="1"
           />
