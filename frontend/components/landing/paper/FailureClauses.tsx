@@ -53,13 +53,7 @@ export function FailureClauses() {
   const reduced = useReducedMotion() ?? false
 
   return (
-    <Section
-      id="failures"
-      aria-labelledby="failures-heading"
-      tone="paper-alt"
-      railed
-      railNumber="§ 01"
-    >
+    <Section id="failures" aria-labelledby="failures-heading" tone="paper-alt" railed>
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10">
         {/* ── Left: sticky section header ── */}
         <div className="lg:col-span-4">

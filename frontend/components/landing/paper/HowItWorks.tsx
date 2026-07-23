@@ -62,13 +62,7 @@ export function HowItWorks() {
   const scaleY = useTransform(drawn, [0, 1], [0, 1])
 
   return (
-    <Section
-      id="how-it-works"
-      aria-labelledby="how-heading"
-      tone="paper-alt"
-      railed
-      railNumber="§ 03"
-    >
+    <Section id="how-it-works" aria-labelledby="how-heading" tone="paper-alt" railed>
       <div>
         <div className="max-w-[560px]">
           <p className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-support">
