@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "./pv-tokens.css"; /* landing color/type/layout tokens + .type-* / .measure classes */
 
 @tailwind base;
 @tailwind components;
@@ -8,19 +9,8 @@
 
 @layer base {
   :root {
-    /* ── "The Official Document" landing tokens (pv-*) ──────────────────
-       parchi = a slip of paper (Urdu). Ink, paper, stamps.
-       stamp-green is the dominant accent; seal-orange is budgeted to
-       ≤3 semantic "attention" uses on the landing page. */
-    --pv-paper: #FAF8F4;
-    --pv-paper-deep: #F3EEE4;
-    --pv-ink: #14213D;
-    --pv-stamp: #1F6B4A;
-    --pv-stamp-deep: color-mix(in oklab, #1F6B4A 80%, #14213D);
-    --pv-seal: #E8590C;
-    --pv-support: #6B6560;
-    --pv-hairline: #E5E0D8;
-
+    /* "The Official Document" landing tokens (--pv-*, --type-*, layout)
+       live in pv-tokens.css — imported above. */
     --radius: 0.625rem;
     --white-4: rgba(255, 255, 255, 0.04);
     --white-6: rgba(255, 255, 255, 0.06);

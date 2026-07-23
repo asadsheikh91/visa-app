@@ -117,6 +117,29 @@ const config: Config = {
           low:  withOpacity('--readiness-low'),
         },
       },
+      // ── Landing ("Official Document") semantic type scale ──
+      // Sizes are --type-* vars from pv-tokens.css; the bundled .type-*
+      // classes there also set family/weight — these Tailwind entries exist
+      // for cases where size/leading alone is wanted.
+      fontSize: {
+        display:      ['var(--type-display)', { lineHeight: '1.02', letterSpacing: '-0.02em' }],
+        title:        ['var(--type-title)', { lineHeight: '1.1', letterSpacing: '-0.01em' }],
+        lead:         ['var(--type-lead)', { lineHeight: '1.45' }],
+        'body-lg':    ['var(--type-body-lg)', { lineHeight: '1.65' }],
+        body:         ['var(--type-body)', { lineHeight: '1.6' }],
+        small:        ['var(--type-small)', { lineHeight: '1.5' }],
+        'mono-micro': ['var(--type-mono-micro)', { lineHeight: '1.4', letterSpacing: '0.09em' }],
+      },
+      maxWidth: {
+        content: 'var(--container-content)',   // 1440px page container
+        wide:    'var(--container-wide)',      // 1560px breakout container
+        measure: 'var(--measure)',             // 62ch prose cap (same as .measure)
+      },
+      spacing: {
+        gutter: 'var(--gutter)',   // px-gutter — horizontal page padding
+        rail:   'var(--rail)',     // w-rail / pl-rail — outer margin furniture column
+        band:   'var(--band-y)',   // py-band — full-bleed section vertical padding
+      },
       fontFamily: {
         sans:    ['Inter', 'system-ui', 'sans-serif'],
         display: ['Anton', 'sans-serif'],

@@ -1,0 +1,110 @@
+/* ═══════════════════════════════════════════════════════════════════════════
+   ParchiVisa marketing tokens — "The Official Document"
+   Single source of truth for the landing route's color, type, and layout
+   tokens. Imported by globals.css. Components must consume tokens/classes,
+   never raw values.
+
+   NOTE: deliberately no @layer here — this file is processed standalone by
+   PostCSS (Next resolves CSS @import after the per-file pass), and Tailwind
+   errors on @layer without a matching @tailwind directive in the same file.
+   Plain single-class selectors keep specificity low; Tailwind utilities
+   emitted later in the bundle still win when stacked on top.
+═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Color ─────────────────────────────────────────────────────────────
+     parchi = a slip of paper (Urdu). Ink, paper, stamps.
+     stamp-green is the dominant accent; seal-orange is budgeted to
+     ≤3 semantic "attention" uses on the landing page. */
+  --pv-paper: #FAF8F4;
+  --pv-paper-deep: #F3EEE4;
+  --pv-ink: #14213D;
+  --pv-stamp: #1F6B4A;
+  --pv-stamp-deep: color-mix(in oklab, #1F6B4A 80%, #14213D);
+  --pv-seal: #E8590C;
+  --pv-support: #6B6560;
+  --pv-hairline: #E5E0D8;
+
+  /* ── Type scale ────────────────────────────────────────────────────────
+     Families come from next/font variables set on the landing wrapper
+     (app/pv-fonts.ts): Newsreader serif display, Public Sans body/UI,
+     JetBrains Mono form print. Sizes are semantic — the html root
+     font-size is untouched. */
+  --type-display:    clamp(3.25rem, 4.4vw, 4rem);       /* 52→64px */
+  --type-title:      clamp(2.125rem, 2.8vw, 2.5rem);    /* 34→40px, section h2 */
+  --type-lead:       clamp(1.375rem, 1.5vw, 1.625rem);  /* 22→26px, subheads */
+  --type-body-lg:    1.1875rem;                          /* 19px — DEFAULT body copy */
+  --type-body:       1.0625rem;                          /* 17px — dense/secondary copy */
+  --type-small:      0.9375rem;                          /* 15px — captions, footer */
+  --type-mono-micro: 0.78rem;                            /* eyebrows + form labels */
+
+  /* ── Measure ─────────────────────────────────────────────────────────── */
+  --measure: 62ch;   /* hard cap for prose width at any container size */
+
+  /* ── Layout ──────────────────────────────────────────────────────────── */
+  --container-content: 1440px;
+  --container-wide: 1560px;
+  --gutter: clamp(1.5rem, 4vw, 4rem);       /* horizontal page padding */
+  --rail: 88px;                              /* reserved outer margin-furniture column (desktop) */
+  --band-y: clamp(4.5rem, 7vw, 7.5rem);      /* vertical padding, full-bleed sections */
+}
+
+/* ── Semantic type classes ────────────────────────────────────────────────
+   One class = family + size + leading + tracking + weight.
+   Stack Tailwind color/spacing utilities on top as needed. */
+
+.type-display {
+  font-family: var(--font-pv-serif, Georgia, serif);
+  font-size: var(--type-display);
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  font-weight: 500;
+}
+
+.type-title {
+  font-family: var(--font-pv-serif, Georgia, serif);
+  font-size: var(--type-title);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+  font-weight: 500;
+}
+
+.type-lead {
+  font-family: var(--font-pv-sans, system-ui, sans-serif);
+  font-size: var(--type-lead);
+  line-height: 1.45;
+  font-weight: 400;
+}
+
+.type-body-lg {
+  font-family: var(--font-pv-sans, system-ui, sans-serif);
+  font-size: var(--type-body-lg);
+  line-height: 1.65;
+}
+
+.type-body {
+  font-family: var(--font-pv-sans, system-ui, sans-serif);
+  font-size: var(--type-body);
+  line-height: 1.6;
+}
+
+.type-small {
+  font-family: var(--font-pv-sans, system-ui, sans-serif);
+  font-size: var(--type-small);
+  line-height: 1.5;
+}
+
+.type-mono-micro {
+  font-family: var(--font-pv-mono, ui-monospace, monospace);
+  font-size: var(--type-mono-micro);
+  line-height: 1.4;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* ── Measure utility ─────────────────────────────────────────────────────
+   Prose must never exceed the measure, however wide the container gets. */
+.measure {
+  max-width: var(--measure);
+}

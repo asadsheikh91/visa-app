@@ -17,6 +17,10 @@ export const pvSerif = Newsreader({
   axes: ['opsz'],
   variable: '--font-pv-serif',
   display: 'swap',
+  // Next 14 has no fallback-metric table for Newsreader and logs
+  // "Failed to find font override values" on every compile; the automatic
+  // adjustment is already a no-op, so disable it explicitly.
+  adjustFontFallback: false,
 })
 
 export const pvSans = Public_Sans({
