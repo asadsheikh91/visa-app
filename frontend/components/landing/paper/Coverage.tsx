@@ -220,7 +220,7 @@ export function Coverage() {
                 href={`/tools/student-visa/countries/${country.slug}`}
                 className="mt-6 inline-block rounded-[3px] bg-stamp px-5 py-3 font-body text-[14px] font-semibold text-paper transition-colors hover:bg-stamp-deep"
               >
-                Check my readiness — {country.code}
+                Run the {country.code} check
               </Link>
               <div className="mt-8 flex justify-end">
                 <RubberStamp
