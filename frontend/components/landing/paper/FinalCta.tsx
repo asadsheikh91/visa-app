@@ -37,7 +37,7 @@ export function FinalCta() {
               href={CHECKER_HREF}
               className="inline-block rounded-[3px] border border-paper/25 bg-stamp px-7 py-4 font-body text-[15px] font-semibold text-paper transition-colors hover:bg-stamp-deep"
             >
-              Check my readiness — free
+              Check my readiness
             </Link>
           </div>
           <p className="mt-6 font-mono text-[10.5px] uppercase tracking-[0.16em] text-paper/60">
