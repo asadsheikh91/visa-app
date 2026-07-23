@@ -3,6 +3,9 @@ import { Hero } from '@/components/landing/paper/Hero'
 import { FailureClauses } from '@/components/landing/paper/FailureClauses'
 import { Coverage } from '@/components/landing/paper/Coverage'
 import { HowItWorks } from '@/components/landing/paper/HowItWorks'
+import { PullQuote } from '@/components/landing/paper/PullQuote'
+import { FinalCta } from '@/components/landing/paper/FinalCta'
+import { LandingFooter } from '@/components/landing/paper/LandingFooter'
 import { pvSerif, pvSans, pvMono } from './pv-fonts'
 
 /**
@@ -25,6 +28,9 @@ export default function HomePage() {
       <FailureClauses />
       <Coverage />
       <HowItWorks />
+      <PullQuote />
+      <FinalCta />
+      <LandingFooter />
     </div>
   )
 }
