@@ -38,7 +38,7 @@ const columns: { title: string; links: { label: string; href: string }[] }[] = [
 export function LandingFooter() {
   return (
     <footer className="border-t border-hairline bg-paper-deep">
-      <div className="mx-auto max-w-content px-gutter py-16">
+      <div className="mx-auto max-w-content px-gutter py-band">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-12">
           <div className="md:col-span-5">
             <Link href="/" className="flex items-center gap-2.5" aria-label="ParchiVisa home">
