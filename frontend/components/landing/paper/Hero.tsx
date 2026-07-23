@@ -35,12 +35,24 @@ export function Hero() {
   const reduced = useReducedMotion() ?? false
 
   return (
-    <Section aria-labelledby="hero-heading" tone="paper" className="relative overflow-hidden">
+    <Section
+      aria-labelledby="hero-heading"
+      tone="paper"
+      // overflow-hidden is the hard guarantee that the watermark can never
+      // produce horizontal scroll at any viewport width.
+      className="relative overflow-hidden"
+      // Positions the watermark against the CONTAINER edge, not the viewport.
+      innerClassName="relative"
+    >
       <StampInkFilter />
-      {/* Watermark seal — documents carry watermarks; ours is the mark itself. */}
-      <StampMark className="pointer-events-none absolute -right-24 -top-24 h-[460px] w-[460px] text-ink opacity-[0.035]" />
 
-      <div className="grid grid-cols-1 items-start gap-14 lg:grid-cols-12 lg:gap-10">
+      {/* Watermark seal — documents carry watermarks; ours is the mark itself.
+          Sits inside the container, vertically centred, inset from the
+          container's right edge, and behind the card (z-0 vs the grid's z-10). */}
+      {/* (StampMark sets aria-hidden on its own <svg>.) */}
+      <StampMark className="pointer-events-none absolute right-12 top-1/2 z-0 h-[420px] w-[420px] -translate-y-1/2 text-ink opacity-[0.035]" />
+
+      <div className="relative z-10 grid grid-cols-1 items-start gap-14 lg:grid-cols-12 lg:gap-10">
         {/* ── Left: copy ── */}
         <div className="lg:col-span-7 lg:pr-6">
           <motion.p
@@ -105,14 +117,24 @@ export function Hero() {
 
         {/* ── Right: the official document card ── */}
         <motion.div
-          className="relative lg:col-span-5 lg:mt-2"
+          className="relative overflow-visible lg:col-span-5 lg:mt-2"
           initial={reduced ? undefined : { opacity: 0, x: 28 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.2, type: 'spring', stiffness: 220, damping: 30 }}
         >
           <DocumentCard reduced={reduced} />
-          <div className="absolute -right-3 -top-9 z-10 sm:-right-5">
-            <RubberStamp label="Ready ✓" sublabel="PV · 23 Jul 2026" rotate={-8} delay={1.15} />
+
+          {/* Stamp pressed ACROSS the card's top-right corner.
+              Outer box = placement only: anchored to the corner, then shifted
+              out by ~37% of its own size on both axes so it straddles the edge.
+              The x-shift steps down on narrower desktops, where the gap between
+              the container edge and the viewport is too small to clear the
+              section's overflow-hidden. Inner box = rotation + 14px of padding,
+              so the rotated bounding box never crops the ink. */}
+          <div className="absolute right-0 top-0 z-20 -translate-y-[37%] translate-x-[16%] overflow-visible xl:translate-x-[26%] 2xl:translate-x-[37%]">
+            <div className="-rotate-[8deg] overflow-visible p-[14px]">
+              <RubberStamp label="Ready ✓" sublabel="PV · 23 Jul 2026" rotate={0} delay={1.15} />
+            </div>
           </div>
         </motion.div>
       </div>
@@ -153,12 +175,11 @@ function DocumentCard({ reduced }: { reduced: boolean }) {
       />
 
       <div className="px-6 pb-6 pt-7 sm:px-7">
-        <div className="flex items-baseline justify-between gap-4 border-b border-hairline pb-3">
+        {/* The header keeps the whole top-left run to itself — the form number
+            moved to the bottom meta row so the corner stamp lands on paper. */}
+        <div className="border-b border-hairline pb-3">
           <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-ink">
             Readiness assessment
-          </span>
-          <span className="font-mono text-[10px] uppercase tracking-[0.16em] text-support">
-            Form PV-01
           </span>
         </div>
 
@@ -226,7 +247,11 @@ function DocumentCard({ reduced }: { reduced: boolean }) {
 
         <div className="mt-5 flex items-end justify-between gap-4 border-t border-hairline pt-4">
           <Barcode />
-          <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-support">
+          <span className="flex items-baseline gap-3 font-mono text-[10px] uppercase tracking-[0.18em] text-support">
+            <span>Form PV-01</span>
+            <span aria-hidden="true" className="text-hairline">
+              ·
+            </span>
             PV-2026-0193
           </span>
         </div>
