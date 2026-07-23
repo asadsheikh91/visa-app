@@ -107,7 +107,12 @@ const config: Config = {
           DEFAULT: withOpacity('--pv-stamp'),
           deep: withOpacity('--pv-stamp-deep'),
         },
-        seal: withOpacity('--pv-seal'),
+        seal: {
+          DEFAULT: withOpacity('--pv-seal'),
+          // AA-safe small-text variants — see pv-tokens.css.
+          text: withOpacity('--pv-seal-text'),
+          bright: withOpacity('--pv-seal-bright'),
+        },
         support: withOpacity('--pv-support'),
         hairline: withOpacity('--pv-hairline'),
         // Single readiness/quality language — shared by score bands and pills.
@@ -145,7 +150,9 @@ const config: Config = {
         display: ['Anton', 'sans-serif'],
         // Landing ("Official Document") stack — variables set by next/font in
         // app/pv-fonts.ts, scoped to the landing wrapper.
-        serif: ['var(--font-pv-serif)', 'Georgia', 'serif'],
+        // 'PV Serif Fallback' carries size-adjust metrics (pv-tokens.css) so
+        // the headline keeps its line count while Newsreader loads.
+        serif: ['var(--font-pv-serif)', 'PV Serif Fallback', 'Georgia', 'serif'],
         body:  ['var(--font-pv-sans)', 'system-ui', 'sans-serif'],
         mono:  ['var(--font-pv-mono)', 'ui-monospace', 'SFMono-Regular', 'monospace'],
       },

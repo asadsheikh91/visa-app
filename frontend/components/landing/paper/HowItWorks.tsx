@@ -89,7 +89,10 @@ export function HowItWorks() {
             {steps.map((step, i) => (
               <motion.li
                 key={step.n}
-                className="relative grid grid-cols-[36px_1fr] gap-4 sm:grid-cols-[56px_1fr_190px] sm:gap-6"
+                // The 190px stamp column only appears at lg. At sm/md the
+                // rotated stamp is wider than the column and overran the
+                // container (22px of horizontal scroll at 768).
+                className="relative grid grid-cols-[36px_1fr] gap-4 sm:gap-6 lg:grid-cols-[56px_1fr_190px]"
                 initial={reduced ? undefined : { opacity: 0 }}
                 whileInView={{ opacity: 1 }}
                 viewport={{ once: true, amount: 0.5 }}
@@ -116,7 +119,7 @@ export function HowItWorks() {
                 </div>
 
                 {/* Margin stamp — the file's official status at this checkpoint */}
-                <div className="col-start-2 mt-1 sm:col-start-3 sm:mt-0 sm:justify-self-end sm:pt-1">
+                <div className="col-start-2 mt-1 lg:col-start-3 lg:mt-0 lg:justify-self-end lg:pt-1">
                   <RubberStamp
                     label={step.stamp}
                     sublabel={step.sub}

@@ -22,6 +22,11 @@
   --pv-stamp: #1F6B4A;
   --pv-stamp-deep: color-mix(in oklab, #1F6B4A 80%, #14213D);
   --pv-seal: #E8590C;
+  /* #E8590C is only AA-safe for LARGE text. These are the small-text variants:
+     seal-text 5.26:1 on white / 4.96 on paper / 4.55 on paper-deep;
+     seal-bright 5.11:1 on ink. Use them for anything under 24px. */
+  --pv-seal-text: #BA470A;
+  --pv-seal-bright: #EE6A1E;
   --pv-support: #6B6560;
   --pv-hairline: #E5E0D8;
 
@@ -107,4 +112,42 @@
    Prose must never exceed the measure, however wide the container gets. */
 .measure {
   max-width: var(--measure);
+}
+
+/* ── Serif fallback metrics (CLS) ────────────────────────────────────────
+   next/font auto-generates size-adjusted fallbacks for Public Sans and
+   JetBrains Mono, but ships no metrics table for Newsreader, so the display
+   headline — the largest text and the likely LCP element — had no adjusted
+   fallback and could reflow when the webfont swapped in. These two faces
+   supply it.
+
+   96% on Times New Roman is measured, not derived. Matching advance width
+   exactly (the naive 111.18% for Times, 102.87% for Georgia) leaves the
+   headline with zero wrapping headroom and actually ADDS a line at 375 and
+   1280. Sweeping real line counts across 375/768/1024/1280/1440/1920 showed
+   Times holds the webfont's 2-line wrap at 92-98% — 96% is the middle of that
+   band. Georgia was rejected: it wraps to 3 lines at 375 at every adjustment
+   value, because text-balance resolves its metrics differently.
+   line-gap-override:0% because the headline sets its own line-height, so only
+   advance width can move the wrap. Consumed via `serif` in tailwind.config. */
+@font-face {
+  font-family: 'PV Serif Fallback';
+  src: local('Times New Roman'), local('Tinos'), local('Liberation Serif');
+  size-adjust: 96%;
+  line-gap-override: 0%;
+  font-display: swap;
+}
+
+/* ── Focus ring ──────────────────────────────────────────────────────────
+   The global ring is the app's orange (#ff5a1f), which is off-palette here
+   and low-contrast on paper. Landing rings are ink, flipping to paper on the
+   ink band. outline-offset keeps a 2px band-coloured gap between the control
+   and the ring, so the ring's contrast is measured against the band (13:1),
+   never against a green button fill. */
+[data-pv-landing] :where(a, button, [role='button'], input, [tabindex]):focus-visible {
+  outline: 2px solid var(--pv-ink);
+  outline-offset: 2px;
+}
+[data-pv-landing] .bg-ink :where(a, button, [role='button'], input, [tabindex]):focus-visible {
+  outline-color: var(--pv-paper);
 }

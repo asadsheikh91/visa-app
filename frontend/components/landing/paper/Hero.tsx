@@ -50,7 +50,9 @@ export function Hero() {
           Sits inside the container, vertically centred, inset from the
           container's right edge, and behind the card (z-0 vs the grid's z-10). */}
       {/* (StampMark sets aria-hidden on its own <svg>.) */}
-      <StampMark className="pointer-events-none absolute right-12 top-1/2 z-0 h-[420px] w-[420px] -translate-y-1/2 text-ink opacity-[0.035]" />
+      {/* 420px overflows the container below ~md, so it steps down to stay
+          fully inside the hero at every width. */}
+      <StampMark className="pointer-events-none absolute right-12 top-1/2 z-0 h-[240px] w-[240px] -translate-y-1/2 text-ink opacity-[0.035] sm:h-[340px] sm:w-[340px] md:h-[420px] md:w-[420px]" />
 
       <div className="relative z-10 grid grid-cols-1 items-start gap-14 lg:grid-cols-12 lg:gap-10">
         {/* ── Left: copy ── */}
@@ -62,14 +64,22 @@ export function Hero() {
             Student visa readiness&ensp;·&ensp;PK → UK · AUS · CAN · USA
           </motion.p>
 
+          {/* Sizes are derived from the measured width of the longer line
+              ("before the embassy does." = 9.86x font-size) against the copy
+              column, so each line fits on one line and the headline is never
+              more than two. The lg dip is real, not a typo: the two-column
+              grid starts at 1024 and cuts the copy column to ~509px, which is
+              narrower than the single-column layout at 768. Below sm the two
+              lines run inline and balance, which buys ~4px of size over
+              forcing the designed break. */}
           <h1
             id="hero-heading"
-            className="mt-6 font-serif text-[44px] font-medium leading-[1.04] tracking-[-0.015em] text-ink sm:text-[58px] lg:text-[64px]"
+            className="mt-6 text-balance font-serif text-[34px] font-medium leading-[1.04] tracking-[-0.015em] text-ink sm:text-[52px] md:text-[60px] lg:text-[46px] xl:text-[60px] 2xl:text-[64px]"
           >
-            <motion.span {...rise(reduced, 0.08)} className="block">
-              Know you&rsquo;re ready&thinsp;—
+            <motion.span {...rise(reduced, 0.08)} className="sm:block">
+              Know you&rsquo;re ready&thinsp;—{' '}
             </motion.span>
-            <motion.span {...rise(reduced, 0.16)} className="block text-balance italic">
+            <motion.span {...rise(reduced, 0.16)} className="italic sm:block">
               before the embassy does.
             </motion.span>
           </h1>
@@ -236,8 +246,9 @@ function DocumentCard({ reduced }: { reduced: boolean }) {
                   Verified ✓
                 </span>
               ) : (
-                /* seal-orange budget use 1 of 3: a genuine action-required state */
-                <span className="font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-seal">
+                /* seal-orange budget use 1 of 3: a genuine action-required
+                   state. seal-text (not seal) because 10.5px needs AA 4.5:1. */
+                <span className="font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-seal-text">
                   Action required
                 </span>
               )}

@@ -23,7 +23,8 @@ export function FinalCta() {
           viewport={{ once: true, amount: 0.5 }}
           transition={{ duration: 0.5 }}
         >
-          <p className="font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-seal">
+          {/* seal-bright, not seal: 11px on ink needs AA 4.5:1 (seal is 4.46). */}
+          <p className="font-mono text-[11px] font-bold uppercase tracking-[0.24em] text-seal-bright">
             Before you pay the fee
           </p>
           <h2
