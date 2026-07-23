@@ -4,6 +4,7 @@ import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
 import { RubberStamp } from './RubberStamp'
+import { Section } from './Section'
 
 type Country = {
   slug: string
@@ -121,8 +122,8 @@ export function Coverage() {
   }
 
   return (
-    <section id="coverage" aria-labelledby="coverage-heading" className="bg-paper">
-      <div className="mx-auto max-w-[1160px] px-5 py-20 sm:px-8 lg:py-28">
+    <Section id="coverage" aria-labelledby="coverage-heading" tone="paper">
+      <div>
         <p className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-support">
           Coverage
         </p>
@@ -200,7 +201,7 @@ export function Coverage() {
                     <dt className="font-mono text-[11px] font-bold uppercase leading-relaxed tracking-[0.12em] text-stamp">
                       {check.label}
                     </dt>
-                    <dd className="font-body text-[14.5px] leading-relaxed text-support">
+                    <dd className="measure font-body text-[14.5px] leading-relaxed text-support">
                       {check.body}
                     </dd>
                   </div>
@@ -235,6 +236,6 @@ export function Coverage() {
           </motion.div>
         </div>
       </div>
-    </section>
+    </Section>
   )
 }

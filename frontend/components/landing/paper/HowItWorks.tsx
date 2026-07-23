@@ -3,6 +3,7 @@
 import { useRef } from 'react'
 import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
 import { RubberStamp } from './RubberStamp'
+import { Section } from './Section'
 
 /**
  * "How it works" — a processing ledger. The ONLY numbered sequence on the
@@ -61,8 +62,8 @@ export function HowItWorks() {
   const scaleY = useTransform(drawn, [0, 1], [0, 1])
 
   return (
-    <section id="how-it-works" aria-labelledby="how-heading" className="bg-paper-deep">
-      <div className="mx-auto max-w-[1160px] px-5 py-20 sm:px-8 lg:py-28">
+    <Section id="how-it-works" aria-labelledby="how-heading" tone="paper-alt" railed>
+      <div>
         <div className="max-w-[560px]">
           <p className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-support">
             Processing timeline
@@ -109,7 +110,7 @@ export function HowItWorks() {
                   <h3 className="font-serif text-[23px] font-medium leading-snug text-ink">
                     {step.title}
                   </h3>
-                  <p className="mt-2 max-w-[54ch] font-body text-[15px] leading-relaxed text-support">
+                  <p className="measure mt-2 font-body text-[15px] leading-relaxed text-support">
                     {step.body}
                   </p>
                 </div>
@@ -131,6 +132,6 @@ export function HowItWorks() {
           </ol>
         </div>
       </div>
-    </section>
+    </Section>
   )
 }

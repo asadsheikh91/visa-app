@@ -1,6 +1,7 @@
 'use client'
 
 import { motion, useReducedMotion } from 'framer-motion'
+import { Section } from './Section'
 
 /**
  * Testimonial as an editorial pull-quote — one voice, set large between
@@ -12,11 +13,11 @@ export function PullQuote() {
   const reduced = useReducedMotion() ?? false
 
   return (
-    <section aria-labelledby="quote-heading" className="bg-paper">
+    <Section aria-labelledby="quote-heading" tone="paper">
       <h2 id="quote-heading" className="sr-only">
         What students say
       </h2>
-      <div className="mx-auto max-w-[860px] px-5 py-20 sm:px-8 lg:py-28">
+      <div className="mx-auto max-w-[860px]">
         <motion.figure
           initial={reduced ? undefined : { opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -40,6 +41,6 @@ export function PullQuote() {
           </figcaption>
         </motion.figure>
       </div>
-    </section>
+    </Section>
   )
 }

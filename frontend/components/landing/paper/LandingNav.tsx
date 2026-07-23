@@ -25,7 +25,7 @@ export function LandingNav() {
 
   return (
     <header className="sticky top-0 z-50 border-t-[3px] border-t-ink border-b border-b-hairline bg-paper">
-      <div className="mx-auto flex h-16 max-w-[1160px] items-center justify-between px-5 sm:px-8">
+      <div className="mx-auto flex h-16 max-w-content items-center justify-between px-gutter">
         <Link href="/" className="flex items-center gap-2.5" aria-label="ParchiVisa home">
           <StampMark className="h-8 w-8 -rotate-[8deg] text-stamp" />
           <span className="font-serif text-[21px] leading-none tracking-tight text-ink">

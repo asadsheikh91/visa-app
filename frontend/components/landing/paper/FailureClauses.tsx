@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
+import { Section } from './Section'
 
 /**
  * "Where applications fail" — set as a regulation excerpt, because that is how
@@ -52,8 +53,8 @@ export function FailureClauses() {
   const reduced = useReducedMotion() ?? false
 
   return (
-    <section id="failures" aria-labelledby="failures-heading" className="bg-paper-deep">
-      <div className="mx-auto grid max-w-[1160px] grid-cols-1 gap-12 px-5 py-20 sm:px-8 lg:grid-cols-12 lg:gap-10 lg:py-28">
+    <Section id="failures" aria-labelledby="failures-heading" tone="paper-alt" railed>
+      <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10">
         {/* ── Left: sticky section header ── */}
         <div className="lg:col-span-4">
           <div className="lg:sticky lg:top-24">
@@ -108,7 +109,7 @@ export function FailureClauses() {
                   <h3 className="font-serif text-[22px] font-medium leading-snug text-ink">
                     {c.title}
                   </h3>
-                  <p className="mt-2 max-w-[58ch] font-body text-[15px] leading-relaxed text-support">
+                  <p className="measure mt-2 font-body text-[15px] leading-relaxed text-support">
                     {c.body}
                   </p>
                   <Link
@@ -125,6 +126,6 @@ export function FailureClauses() {
           <div aria-hidden="true" className="h-px bg-hairline" />
         </div>
       </div>
-    </section>
+    </Section>
   )
 }

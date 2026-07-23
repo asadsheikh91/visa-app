@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { motion, useReducedMotion } from 'framer-motion'
+import { Section } from './Section'
 
 const CHECKER_HREF = '/tools/student-visa/countries'
 
@@ -14,8 +15,8 @@ export function FinalCta() {
   const reduced = useReducedMotion() ?? false
 
   return (
-    <section aria-labelledby="final-heading" className="bg-ink">
-      <div className="mx-auto max-w-[860px] px-5 py-24 text-center sm:px-8 lg:py-32">
+    <Section aria-labelledby="final-heading" tone="ink">
+      <div className="mx-auto max-w-[860px] text-center">
         <motion.div
           initial={reduced ? undefined : { opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -44,6 +45,6 @@ export function FinalCta() {
           </p>
         </motion.div>
       </div>
-    </section>
+    </Section>
   )
 }

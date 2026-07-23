@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { animate, motion, useReducedMotion } from 'framer-motion'
 import { RubberStamp, StampInkFilter } from './RubberStamp'
 import { StampMark } from './StampMark'
+import { Section } from './Section'
 
 const CHECKER_HREF = '/tools/student-visa/countries'
 const SCORE = 82
@@ -34,12 +35,12 @@ export function Hero() {
   const reduced = useReducedMotion() ?? false
 
   return (
-    <section aria-labelledby="hero-heading" className="relative overflow-hidden bg-paper">
+    <Section aria-labelledby="hero-heading" tone="paper" className="relative overflow-hidden">
       <StampInkFilter />
       {/* Watermark seal — documents carry watermarks; ours is the mark itself. */}
       <StampMark className="pointer-events-none absolute -right-24 -top-24 h-[460px] w-[460px] text-ink opacity-[0.035]" />
 
-      <div className="mx-auto grid max-w-[1160px] grid-cols-1 items-start gap-14 px-5 pb-20 pt-14 sm:px-8 lg:grid-cols-12 lg:gap-10 lg:pb-28 lg:pt-24">
+      <div className="grid grid-cols-1 items-start gap-14 lg:grid-cols-12 lg:gap-10">
         {/* ── Left: copy ── */}
         <div className="lg:col-span-7 lg:pr-6">
           <motion.p
@@ -63,7 +64,7 @@ export function Hero() {
 
           <motion.p
             {...rise(reduced, 0.26)}
-            className="mt-6 max-w-[50ch] font-body text-[17px] leading-relaxed text-support"
+            className="measure mt-6 font-body text-[17px] leading-relaxed text-support"
           >
             ParchiVisa reads your file the way a visa officer will — it checks every document
             against the official rules, scores your readiness, and tells you exactly what to fix
@@ -115,7 +116,7 @@ export function Hero() {
           </div>
         </motion.div>
       </div>
-    </section>
+    </Section>
   )
 }
 
