@@ -122,7 +122,14 @@ export function Coverage() {
   }
 
   return (
-    <Section id="coverage" aria-labelledby="coverage-heading" tone="paper">
+    <Section
+      id="coverage"
+      aria-labelledby="coverage-heading"
+      tone="paper"
+      railed
+      railNumber="§ 02"
+      railCaption="Rules sourced from UKVI · IRCC · DHA · USCIS"
+    >
       <div>
         <p className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-support">
           Coverage

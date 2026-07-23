@@ -1,5 +1,6 @@
 import clsx from 'clsx'
 import type { ComponentPropsWithoutRef, ElementType, ReactNode } from 'react'
+import { Rails } from './Rails'
 
 type Tone = 'paper' | 'paper-alt' | 'ink' | 'transparent'
 type Width = 'content' | 'wide' | 'full'
@@ -32,7 +33,12 @@ const widthClass: Record<Width, string> = {
 type SectionOwnProps<T extends ElementType> = {
   tone?: Tone
   width?: Width
+  /** Render the margin furniture (see Rails). Desktop ≥1280 only. */
   railed?: boolean
+  /** Right rail, top-anchored — e.g. "§ 01". Only meaningful with `railed`. */
+  railNumber?: string
+  /** Right rail, bottom-anchored caption. Only meaningful with `railed`. */
+  railCaption?: string
   as?: T
   /** Extra classes for the full-bleed outer element (e.g. relative, overflow). */
   className?: string
@@ -45,6 +51,8 @@ export function Section<T extends ElementType = 'section'>({
   tone = 'paper',
   width = 'content',
   railed = false,
+  railNumber,
+  railCaption,
   as,
   className,
   innerClassName,
@@ -54,15 +62,23 @@ export function Section<T extends ElementType = 'section'>({
   const Comp = (as ?? 'section') as ElementType
 
   return (
-    <Comp className={clsx('w-full', toneClass[tone], className)} {...rest}>
+    <Comp
+      className={clsx('w-full', toneClass[tone], railed && 'relative', className)}
+      {...rest}
+    >
       <div
         className={clsx(
           'mx-auto px-gutter py-band',
           widthClass[width],
-          railed && 'lg:pr-[calc(var(--gutter)+var(--rail))]',
+          // Rails anchor to THIS box's edges, so they track the container
+          // rather than the viewport.
+          railed && 'relative lg:pr-[calc(var(--gutter)+var(--rail))]',
           innerClassName
         )}
       >
+        {railed && (
+          <Rails sectionNo={railNumber} caption={railCaption} inverted={tone === 'ink'} />
+        )}
         {children}
       </div>
     </Comp>

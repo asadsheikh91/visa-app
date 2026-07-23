@@ -38,6 +38,8 @@ export function Hero() {
     <Section
       aria-labelledby="hero-heading"
       tone="paper"
+      // The cover sheet: form identity in the left rail, no § number.
+      railed
       // overflow-hidden is the hard guarantee that the watermark can never
       // produce horizontal scroll at any viewport width.
       className="relative overflow-hidden"
