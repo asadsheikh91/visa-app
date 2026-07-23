@@ -1,6 +1,7 @@
 import { LandingNav } from '@/components/landing/paper/LandingNav'
 import { Hero } from '@/components/landing/paper/Hero'
 import { FailureClauses } from '@/components/landing/paper/FailureClauses'
+import { Coverage } from '@/components/landing/paper/Coverage'
 import { pvSerif, pvSans, pvMono } from './pv-fonts'
 
 /**
@@ -21,6 +22,7 @@ export default function HomePage() {
       <LandingNav />
       <Hero />
       <FailureClauses />
+      <Coverage />
     </div>
   )
 }
