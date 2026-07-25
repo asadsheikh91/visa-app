@@ -1,7 +1,7 @@
 import type { ComponentType, SVGProps } from 'react'
 import Link from 'next/link'
 import { Instagram, Linkedin } from 'lucide-react'
-import { BrandLogo } from '@/components/BrandLogo'
+import { BrandSeal } from '@/components/BrandSeal'
 
 const columns: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -37,34 +37,45 @@ const socials: { label: string; href: string; icon: ComponentType<SVGProps<SVGSV
   { label: 'Instagram', href: 'https://www.instagram.com/parchi.visa/', icon: Instagram },
 ]
 
+/**
+ * Global app footer — "The Official Document" paper theme (mirrors the landing
+ * LandingFooter). Paper-deep ground, mono column heads, ink links, the
+ * persistent independence disclaimer. Hidden on the landing route, which
+ * renders its own LandingFooter.
+ */
 export function Footer() {
   return (
-    <footer className="relative border-t border-line-1 px-5 pb-10 pt-16 sm:px-8 lg:px-20">
-      <div className="mx-auto max-w-[1280px]">
+    <footer className="border-t border-hairline bg-paper-deep">
+      <div className="mx-auto max-w-content px-gutter py-16">
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:grid-cols-[1.4fr_repeat(3,1fr)_1.2fr]">
           {/* Brand */}
           <div className="col-span-2 sm:col-span-3 lg:col-span-1">
-            <Link href="/" className="group flex w-fit items-center" aria-label="ParchiVisa home">
-              <BrandLogo className="h-9 w-auto transition-all duration-200 group-hover:drop-shadow-[0_0_10px_rgba(255,90,31,0.45)]" />
+            <Link href="/" className="flex w-fit items-center gap-2.5" aria-label="ParchiVisa home">
+              <BrandSeal className="h-11 w-11" />
+              <span className="font-serif text-[20px] leading-none tracking-tight text-ink">
+                Parchi<em className="italic">Visa</em>
+              </span>
             </Link>
-            <p className="mt-4 max-w-[240px] text-sm leading-relaxed text-slate-400">
-              We catch the fixable mistakes before the embassy does. No guesswork, no agents — just
-              your real readiness.
+            <p className="mt-4 max-w-[240px] font-body text-sm leading-relaxed text-support">
+              We catch the fixable mistakes before the embassy does. No guesswork, no agents —
+              just your real readiness, in ink.
             </p>
-            <p className="mt-6 text-xs text-slate-500">
-              © {new Date().getFullYear()} ParchiVisa. All rights reserved.
+            <p className="mt-6 font-mono text-[10px] uppercase tracking-[0.14em] text-support">
+              © {new Date().getFullYear()} ParchiVisa · All rights reserved
             </p>
           </div>
 
           {columns.map((col) => (
             <nav key={col.title} aria-label={col.title}>
-              <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">{col.title}</h4>
+              <h4 className="font-mono text-[10.5px] font-bold uppercase tracking-[0.2em] text-ink">
+                {col.title}
+              </h4>
               <ul className="mt-4 space-y-2.5">
                 {col.links.map((link) => (
                   <li key={link.label}>
                     <Link
                       href={link.href}
-                      className="text-sm text-slate-500 transition-colors duration-150 hover:text-white"
+                      className="font-body text-[13.5px] text-support transition-colors duration-150 hover:text-ink"
                     >
                       {link.label}
                     </Link>
@@ -76,8 +87,10 @@ export function Footer() {
 
           {/* Follow Us */}
           <div className="col-span-2 sm:col-span-1">
-            <h4 className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-400">Follow Us</h4>
-            <div className="mt-4 flex flex-wrap gap-2.5">
+            <h4 className="font-mono text-[10.5px] font-bold uppercase tracking-[0.2em] text-ink">
+              Follow Us
+            </h4>
+            <div className="mt-4 flex flex-wrap gap-3">
               {socials.map(({ label, href, icon: Icon }) => (
                 <a
                   key={label}
@@ -85,7 +98,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-line-2 bg-tint-2 text-slate-400 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#ff5a1f]/50 hover:text-[#ff5a1f]"
+                  className="flex h-9 w-9 items-center justify-center rounded-[3px] border border-hairline bg-paper text-support transition-colors duration-200 hover:border-stamp hover:text-stamp"
                 >
                   <Icon width={16} height={16} aria-hidden />
                 </a>
@@ -94,11 +107,10 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-line-1 pt-5">
-          <p className="text-center text-xs text-slate-500 sm:text-left">
-            Not affiliated with any government visa authority. For informational purposes only.
-          </p>
-        </div>
+        <p className="mt-14 max-w-[70ch] border-t border-hairline pt-6 font-body text-[12px] leading-relaxed text-support">
+          ParchiVisa is an independent tool. Not affiliated with, endorsed by, or acting on behalf
+          of any government, embassy, or high commission. This is not immigration advice.
+        </p>
       </div>
     </footer>
   )

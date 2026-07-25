@@ -8,21 +8,21 @@ const CLERK_ENABLED = !!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 
 function SignInWall() {
   return (
-    <div className="glass rounded-2xl p-8 text-center border border-white/10 max-w-md mx-auto">
-      <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-600 to-accent-600 flex items-center justify-center mx-auto mb-4 shadow-lg shadow-brand-900/40">
-        <Lock size={20} className="text-white" />
+    <div className="mx-auto max-w-md rounded-[4px] border border-hairline bg-white p-8 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+      <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+        <Lock size={20} className="text-stamp" />
       </div>
-      <h2 className="text-xl font-bold text-white mb-2">Sign in to continue</h2>
-      <p className="text-slate-400 text-sm mb-6">
+      <h2 className="mb-2 font-serif text-[22px] leading-tight text-ink">Sign in to continue</h2>
+      <p className="mb-6 font-body text-sm text-support">
         Create a free account or sign in to run the Student Visa Readiness Checker.
         Your check stays tied to your secure session.
       </p>
-      <div className="flex flex-col sm:flex-row gap-3 justify-center">
+      <div className="flex flex-col justify-center gap-3 sm:flex-row">
         <SignInButton mode="modal">
-          <button className="btn-secondary justify-center text-sm">Sign in</button>
+          <button className="btn-secondary text-sm">Sign in</button>
         </SignInButton>
         <SignUpButton mode="modal">
-          <button className="btn-primary justify-center text-sm">Create account — it&apos;s free</button>
+          <button className="btn-primary text-sm">Create account — it&apos;s free</button>
         </SignUpButton>
       </div>
     </div>
@@ -31,9 +31,9 @@ function SignInWall() {
 
 function Loading() {
   return (
-    <div className="flex flex-col items-center justify-center py-24 gap-4">
-      <Loader2 size={32} className="text-brand-400 animate-spin" />
-      <p className="text-slate-500 text-sm">Checking your session…</p>
+    <div className="flex flex-col items-center justify-center gap-4 py-24">
+      <Loader2 size={32} className="animate-spin text-stamp" />
+      <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-support">Checking your session…</p>
     </div>
   )
 }
@@ -54,11 +54,11 @@ function ClerkGate({ children }: { children: ReactNode }) {
 export function AuthGate({ children }: { children: ReactNode }) {
   if (!CLERK_ENABLED) {
     return (
-      <div className="glass rounded-2xl p-8 text-center border border-amber-700/30 bg-amber-900/10 max-w-md mx-auto">
-        <Lock size={22} className="text-amber-400 mx-auto mb-3" />
-        <h2 className="text-lg font-bold text-white mb-2">Authentication not configured</h2>
-        <p className="text-slate-400 text-sm">
-          This tool requires sign-in. Set <code className="text-amber-300">NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY</code> to enable it.
+      <div className="mx-auto max-w-md rounded-[4px] border border-seal-text/40 bg-white p-8 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+        <Lock size={22} className="mx-auto mb-3 text-seal-text" />
+        <h2 className="mb-2 font-serif text-[19px] leading-tight text-ink">Authentication not configured</h2>
+        <p className="font-body text-sm text-support">
+          This tool requires sign-in. Set <code className="font-mono text-seal-text">NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY</code> to enable it.
         </p>
       </div>
     )

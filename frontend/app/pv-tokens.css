@@ -14,26 +14,31 @@
 :root {
   /* ── Color ─────────────────────────────────────────────────────────────
      parchi = a slip of paper (Urdu). Ink, paper, stamps.
-     stamp-green is the dominant accent; seal-orange is budgeted to
-     ≤3 semantic "attention" uses on the landing page. */
-  --pv-paper: #FAF8F4;
-  --pv-paper-deep: #F3EEE4;
+     The ground is a warm manila / document-paper tone (not cream — cream reads
+     as the default "trustworthy" palette). Green is an ACCENT only — CTA,
+     stamp, positive status rows; seal-orange is budgeted to ≤3 semantic
+     "attention" uses on the landing page. */
+  --pv-paper: #F5EBD6;
+  --pv-paper-deep: #F0E6CF;
   --pv-ink: #14213D;
   --pv-stamp: #1F6B4A;
   --pv-stamp-deep: color-mix(in oklab, #1F6B4A 80%, #14213D);
   --pv-seal: #E8590C;
-  /* #E8590C is only AA-safe for LARGE text. These are the small-text variants:
-     seal-text 5.26:1 on white / 4.96 on paper / 4.55 on paper-deep;
+  /* #E8590C is only AA-safe for LARGE text. These are the small-text variants,
+     re-verified against the manila ground (WCAG contrast, small-text floor
+     4.5:1): seal-text 6.21:1 on white / 5.25 on paper / 5.01 on paper-deep;
      seal-bright 5.11:1 on ink. Use them for anything under 24px. */
-  --pv-seal-text: #BA470A;
+  --pv-seal-text: #A83F07;
   --pv-seal-bright: #EE6A1E;
+  /* support 4.85 on paper / 4.63 on paper-deep; stamp 5.44 / 5.19; ink 13.5 /
+     12.5 — all AA on the manila ground. */
   --pv-support: #6B6560;
-  --pv-hairline: #E5E0D8;
+  --pv-hairline: #E8DFC8;
 
   /* ── Type scale ────────────────────────────────────────────────────────
      Families come from next/font variables set on the landing wrapper
-     (app/pv-fonts.ts): Newsreader serif display, Public Sans body/UI,
-     JetBrains Mono form print. Sizes are semantic — the html root
+     (app/pv-fonts.ts): Libre Caslon Display serif display, Public Sans
+     body/UI, IBM Plex Mono form print. Sizes are semantic — the html root
      font-size is untouched. */
   --type-display:    clamp(3.25rem, 4.4vw, 4rem);       /* 52→64px */
   --type-title:      clamp(2.125rem, 2.8vw, 2.5rem);    /* 34→40px, section h2 */
@@ -115,21 +120,19 @@
 }
 
 /* ── Serif fallback metrics (CLS) ────────────────────────────────────────
-   next/font auto-generates size-adjusted fallbacks for Public Sans and
-   JetBrains Mono, but ships no metrics table for Newsreader, so the display
-   headline — the largest text and the likely LCP element — had no adjusted
-   fallback and could reflow when the webfont swapped in. These two faces
-   supply it.
+   Unlike Newsreader (the previous display serif, for which next/font had no
+   metrics table and logged "Failed to find font override values"), next/font
+   DOES have metrics for Libre Caslon Display: it auto-generates a size-adjusted
+   fallback and injects it into --font-pv-serif AHEAD of this face. So CLS on
+   the display headline — the largest text and likely LCP element — is now
+   handled automatically by next/font.
 
-   96% on Times New Roman is measured, not derived. Matching advance width
-   exactly (the naive 111.18% for Times, 102.87% for Georgia) leaves the
-   headline with zero wrapping headroom and actually ADDS a line at 375 and
-   1280. Sweeping real line counts across 375/768/1024/1280/1440/1920 showed
-   Times holds the webfont's 2-line wrap at 92-98% — 96% is the middle of that
-   band. Georgia was rejected: it wraps to 3 lines at 375 at every adjustment
-   value, because text-balance resolves its metrics differently.
-   line-gap-override:0% because the headline sets its own line-height, so only
-   advance width can move the wrap. Consumed via `serif` in tailwind.config. */
+   This 'PV Serif Fallback' is kept only as a deep backstop (third in the
+   tailwind `serif` stack, after next's generated fallback) for the rare case
+   where next's fallback face is unavailable. The 96% Times size-adjust was
+   measured against the OLD Newsreader headline and is approximate for Caslon;
+   because it now sits behind next's own adjusted fallback it effectively never
+   renders, so it is left as-is rather than re-measured. */
 @font-face {
   font-family: 'PV Serif Fallback';
   src: local('Times New Roman'), local('Tinos'), local('Liberation Serif');

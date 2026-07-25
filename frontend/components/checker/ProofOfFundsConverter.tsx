@@ -41,15 +41,15 @@ export function ProofOfFundsConverter({ country, requiredAmount }: Props) {
     shortfall != null && data && data.rate > 0 ? shortfall / data.rate : null
 
   return (
-    <section className="glass mt-6 rounded-2xl p-6" aria-labelledby="pof-heading">
+    <section className="mt-6 rounded-[4px] border border-hairline bg-white p-6 shadow-[6px_6px_0_0] shadow-ink/10" aria-labelledby="pof-heading">
       <div className="mb-4 flex items-center gap-2.5">
-        <Wallet size={18} className="text-brand-300" aria-hidden="true" />
-        <h3 id="pof-heading" className="text-sm font-semibold text-white">
+        <Wallet size={18} className="text-stamp" aria-hidden="true" />
+        <h3 id="pof-heading" className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">
           Proof-of-funds converter
         </h3>
       </div>
 
-      <label htmlFor="pof-amount" className="mb-1.5 block text-xs text-slate-400">
+      <label htmlFor="pof-amount" className="mb-1.5 block font-mono text-[10.5px] uppercase tracking-[0.12em] text-support">
         Your available funds (PKR)
       </label>
       <input
@@ -65,44 +65,44 @@ export function ProofOfFundsConverter({ country, requiredAmount }: Props) {
       {/* Result area */}
       <div className="mt-4 min-h-[2.5rem]" aria-live="polite">
         {loading && (
-          <p className="flex items-center gap-2 text-sm text-slate-400">
-            <Loader2 size={14} className="animate-spin text-brand-400" aria-hidden="true" />
+          <p className="flex items-center gap-2 font-body text-sm text-support">
+            <Loader2 size={14} className="animate-spin text-stamp" aria-hidden="true" />
             Converting…
           </p>
         )}
 
         {!loading && error && (
-          <div className="flex items-start gap-2 rounded-xl border border-line-1 bg-tint-1 p-3">
-            <AlertCircle size={14} className="mt-0.5 flex-shrink-0 text-readiness-mid" aria-hidden="true" />
-            <p className="text-xs text-slate-300">Currency conversion is temporarily unavailable.</p>
+          <div className="flex items-start gap-2 rounded-[3px] border border-hairline bg-paper-deep p-3">
+            <AlertCircle size={14} className="mt-0.5 flex-shrink-0 text-seal-text" aria-hidden="true" />
+            <p className="font-body text-xs text-ink">Currency conversion is temporarily unavailable.</p>
           </div>
         )}
 
         {!loading && !error && converted != null && amount != null && (
-          <dl className="space-y-2 text-sm">
+          <dl className="space-y-2 font-body text-sm">
             <div className="flex items-center justify-between gap-3">
-              <dt className="text-slate-400">Your entered funds</dt>
-              <dd className="font-medium text-slate-200">{formatMoney(amount, 'PKR')}</dd>
+              <dt className="text-support">Your entered funds</dt>
+              <dd className="font-mono font-medium text-ink">{formatMoney(amount, 'PKR')}</dd>
             </div>
             <div className="flex items-center justify-between gap-3">
-              <dt className="text-slate-400">Approximate converted value</dt>
-              <dd className="font-semibold text-white">{formatMoney(converted, target)}</dd>
+              <dt className="text-support">Approximate converted value</dt>
+              <dd className="font-mono font-semibold text-ink">{formatMoney(converted, target)}</dd>
             </div>
 
             {requiredAmount != null && (
-              <div className="flex items-center justify-between gap-3 border-t border-line-1 pt-2">
-                <dt className="text-slate-400">Required estimated funds</dt>
-                <dd className="font-medium text-slate-200">{formatMoney(requiredAmount, target)}</dd>
+              <div className="flex items-center justify-between gap-3 border-t border-hairline pt-2">
+                <dt className="text-support">Required estimated funds</dt>
+                <dd className="font-mono font-medium text-ink">{formatMoney(requiredAmount, target)}</dd>
               </div>
             )}
 
             {shortfall != null && (
               <div className="flex items-center justify-between gap-3">
-                <dt className="text-readiness-mid">Estimated shortfall</dt>
-                <dd className="text-right font-semibold text-readiness-mid">
+                <dt className="text-seal-text">Estimated shortfall</dt>
+                <dd className="text-right font-mono font-semibold text-seal-text">
                   {formatMoney(shortfall, target)}
                   {shortfallPkr != null && (
-                    <span className="block text-xs font-normal text-slate-500">
+                    <span className="block text-xs font-normal text-support">
                       ≈ {formatMoney(shortfallPkr, 'PKR')}
                     </span>
                   )}
@@ -113,7 +113,7 @@ export function ProofOfFundsConverter({ country, requiredAmount }: Props) {
         )}
       </div>
 
-      <p id="pof-disclaimer" className="mt-4 text-xs leading-relaxed text-slate-600">
+      <p id="pof-disclaimer" className="mt-4 font-body text-xs leading-relaxed text-support">
         {DISCLAIMER}
       </p>
     </section>

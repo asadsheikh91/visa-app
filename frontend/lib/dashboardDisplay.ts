@@ -84,22 +84,24 @@ export const STATUS_ORDER: ChecklistStatus[] = [
   'needs_review',
 ]
 
-/** Pill/border classes for a status chip. */
+/** Pill/border classes for a status chip ("Official Document" paper tones).
+    Only genuine attention states (missing / critical) spend the orange seal
+    budget; positive = stamp green; everything else stays quiet ink/support. */
 export const STATUS_CLASSES: Record<ChecklistStatus, string> = {
-  missing:        'text-red-300 bg-red-500/10 border-red-500/25',
-  in_progress:    'text-amber-300 bg-amber-500/10 border-amber-500/25',
-  available:      'text-emerald-300 bg-emerald-500/10 border-emerald-500/25',
-  not_applicable: 'text-slate-400 bg-white/5 border-white/10',
-  needs_review:   'text-brand-300 bg-brand-500/10 border-brand-500/25',
+  missing:        'text-seal-text bg-seal/[0.06] border-seal-text/40',
+  in_progress:    'text-support bg-paper-deep border-hairline',
+  available:      'text-stamp bg-stamp/[0.06] border-stamp/40',
+  not_applicable: 'text-support bg-paper-deep border-hairline',
+  needs_review:   'text-ink bg-white border-hairline',
 }
 
 /** A small dot colour for a status, used in the select trigger. */
 export const STATUS_DOT: Record<ChecklistStatus, string> = {
-  missing:        'bg-red-400',
-  in_progress:    'bg-amber-400',
-  available:      'bg-emerald-400',
-  not_applicable: 'bg-slate-500',
-  needs_review:   'bg-brand-400',
+  missing:        'bg-seal-text',
+  in_progress:    'bg-support',
+  available:      'bg-stamp',
+  not_applicable: 'bg-support',
+  needs_review:   'bg-ink',
 }
 
 // ── Checklist priority ───────────────────────────────────────────────────────
@@ -111,9 +113,9 @@ export const PRIORITY_LABELS: Record<ChecklistPriority, string> = {
 }
 
 export const PRIORITY_CLASSES: Record<ChecklistPriority, string> = {
-  critical: 'text-red-300 bg-red-500/10 border-red-500/20',
-  high:     'text-amber-300 bg-amber-500/10 border-amber-500/20',
-  standard: 'text-slate-400 bg-white/5 border-white/10',
+  critical: 'text-seal-text bg-seal/[0.06] border-seal-text/40',
+  high:     'text-ink bg-paper-deep border-hairline',
+  standard: 'text-support bg-paper-deep border-hairline',
 }
 
 // ── Date ─────────────────────────────────────────────────────────────────────

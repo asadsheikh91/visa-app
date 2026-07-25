@@ -15,8 +15,8 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import type { HistoryItem } from '@/types/visa'
-import { tierFromScore } from '@/types/visa'
 import { countryName, countryFlag, countryRoute, formatDate } from '@/lib/dashboardDisplay'
+import { toneFromScore, toneTextClass } from '@/components/ui/StatusPill'
 import { GenerateReportButton } from '@/components/report/GenerateReportButton'
 
 interface Props {
@@ -33,11 +33,7 @@ interface Props {
 // ── Score colour ─────────────────────────────────────────────────────────────
 
 function scoreColor(score: number): string {
-  const t = tierFromScore(score)
-  if (t === 'ready') return 'text-emerald-400'
-  if (t === 'mostly_ready') return 'text-brand-400'
-  if (t === 'needs_work') return 'text-amber-400'
-  return 'text-red-400'
+  return toneTextClass(toneFromScore(score))
 }
 
 // ── One row ──────────────────────────────────────────────────────────────────
@@ -64,36 +60,36 @@ function CheckRow({
 
   return (
     <li
-      className={`rounded-xl border bg-white/[0.02] overflow-hidden transition-colors ${
-        active ? 'border-brand-500/40' : 'border-white/10'
+      className={`overflow-hidden rounded-[4px] border bg-white transition-colors ${
+        active ? 'border-l-2 border-l-stamp border-y-hairline border-r-hairline' : 'border-hairline'
       }`}
     >
       <div className="flex items-center gap-3 p-3 sm:p-3.5">
         {/* Country */}
-        <span className="text-xl flex-shrink-0">{countryFlag(item.country)}</span>
+        <span className="flex-shrink-0 text-xl">{countryFlag(item.country)}</span>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-white truncate">{countryName(item.country)}</p>
-          <p className="text-xs text-slate-500 truncate">{countryRoute(item.country)}</p>
+          <p className="truncate font-body text-sm font-semibold text-ink">{countryName(item.country)}</p>
+          <p className="truncate font-mono text-[10.5px] uppercase tracking-[0.1em] text-support">{countryRoute(item.country)}</p>
         </div>
 
         {/* Score + result */}
-        <div className="text-right flex-shrink-0">
-          <span className={`text-base font-extrabold leading-none ${scoreColor(item.score)}`}>
+        <div className="flex-shrink-0 text-right">
+          <span className={`font-mono text-base font-bold leading-none tabular-nums ${scoreColor(item.score)}`}>
             {item.score}
           </span>
-          <p className="text-[11px] text-slate-400 leading-tight">{item.result}</p>
+          <p className="font-body text-[11px] leading-tight text-support">{item.result}</p>
         </div>
 
         {/* Date — hide on small screens */}
-        <p className="hidden sm:block text-xs text-slate-500 w-20 text-right flex-shrink-0">
+        <p className="hidden w-20 flex-shrink-0 text-right font-mono text-[10.5px] text-support sm:block">
           {formatDate(item.created_at)}
         </p>
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-2 px-3 sm:px-3.5 pb-3 flex-wrap">
+      <div className="flex flex-wrap items-center gap-2 px-3 pb-3 sm:px-3.5">
         {active ? (
-          <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-300 px-2.5 py-1.5">
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1.5 font-body text-xs font-semibold text-stamp">
             <CheckCircle2 size={13} />
             Active file
           </span>
@@ -102,7 +98,7 @@ function CheckRow({
             type="button"
             onClick={() => onBuildFile(item.id)}
             disabled={building}
-            className="btn-secondary text-xs py-1.5 px-3"
+            className="btn-secondary px-3 py-1.5 text-xs"
           >
             <FolderPlus size={12} />
             Build file from this check
@@ -111,7 +107,7 @@ function CheckRow({
 
         <Link
           href={`/tools/student-visa/countries/${item.country}`}
-          className="text-xs font-medium text-slate-400 hover:text-slate-200 px-2 py-1.5 transition-colors"
+          className="px-2 py-1.5 font-body text-xs font-medium text-support transition-colors hover:text-ink"
         >
           Retake
         </Link>
@@ -123,7 +119,7 @@ function CheckRow({
             type="button"
             onClick={() => setOpen(o => !o)}
             aria-expanded={open}
-            className="ml-auto inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200 px-2 py-1.5 transition-colors"
+            className="ml-auto inline-flex items-center gap-1 px-2 py-1.5 font-body text-xs text-support transition-colors hover:text-ink"
           >
             {open ? 'Hide' : 'View result'}
             {open ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
@@ -133,15 +129,15 @@ function CheckRow({
 
       {/* Detail */}
       {open && hasDetail && (
-        <div className="px-3 sm:px-3.5 pb-3.5 border-t border-white/10 pt-3 space-y-2">
+        <div className="space-y-2 border-t border-hairline px-3 pb-3.5 pt-3 sm:px-3.5">
           {item.result_description && (
-            <p className="text-xs text-slate-400">{item.result_description}</p>
+            <p className="font-body text-xs text-support">{item.result_description}</p>
           )}
           {issues.length > 0 && (
             <ul className="space-y-1.5">
               {issues.map((iss, i) => (
-                <li key={iss.question_id || i} className="flex items-start gap-2 text-xs text-slate-300">
-                  <span className="mt-1.5 w-1 h-1 rounded-full bg-red-400 flex-shrink-0" />
+                <li key={iss.question_id || i} className="flex items-start gap-2 font-body text-xs text-ink">
+                  <span className="mt-1.5 h-1 w-1 flex-shrink-0 rounded-full bg-seal-text" />
                   {iss.message}
                 </li>
               ))}
@@ -150,8 +146,8 @@ function CheckRow({
           {recs.length > 0 && (
             <ul className="space-y-1.5">
               {recs.slice(0, 2).map((r, i) => (
-                <li key={i} className="flex items-start gap-2 text-xs text-brand-200">
-                  <span className="mt-1.5 w-1 h-1 rounded-full bg-brand-400 flex-shrink-0" />
+                <li key={i} className="flex items-start gap-2 font-body text-xs text-ink">
+                  <span className="mt-1.5 h-1 w-1 flex-shrink-0 rounded-full bg-stamp" />
                   {r}
                 </li>
               ))}
@@ -176,30 +172,30 @@ export function PreviousChecks({
 }: Props) {
   return (
     <section>
-      <div className="flex items-center gap-2 mb-3">
-        <History size={15} className="text-slate-500" />
-        <h2 className="text-sm font-semibold text-slate-400 uppercase tracking-wider">
+      <div className="mb-3 flex items-center gap-2">
+        <History size={15} className="text-support" />
+        <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-support">
           Previous checks
         </h2>
         {!loading && !error && checks.length > 0 && (
-          <span className="text-xs text-slate-600">({checks.length})</span>
+          <span className="font-mono text-xs text-support">({checks.length})</span>
         )}
       </div>
 
       {/* Loading */}
       {loading && (
-        <div className="flex items-center justify-center py-8 gap-3">
-          <Loader2 size={18} className="text-brand-400 animate-spin" />
-          <span className="text-slate-500 text-sm">Loading your checks…</span>
+        <div className="flex items-center justify-center gap-3 py-8">
+          <Loader2 size={18} className="animate-spin text-stamp" />
+          <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-support">Loading your checks…</span>
         </div>
       )}
 
       {/* Error */}
       {!loading && error && (
-        <div className="glass rounded-2xl p-5 text-center border border-red-500/20">
-          <AlertCircle size={20} className="text-red-400 mx-auto mb-2" />
-          <p className="text-red-300 text-sm mb-3">{error}</p>
-          <button onClick={onRetry} className="btn-secondary text-xs inline-flex items-center gap-2 justify-center">
+        <div className="rounded-[4px] border border-seal-text/40 bg-white p-5 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+          <AlertCircle size={20} className="mx-auto mb-2 text-seal-text" />
+          <p className="mb-3 font-body text-sm text-ink">{error}</p>
+          <button onClick={onRetry} className="btn-secondary inline-flex items-center justify-center gap-2 text-xs">
             <RefreshCw size={12} />
             Try again
           </button>
@@ -208,15 +204,15 @@ export function PreviousChecks({
 
       {/* Empty */}
       {!loading && !error && checks.length === 0 && (
-        <div className="glass rounded-2xl p-6 text-center border border-white/10">
-          <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-3">
-            <ClipboardCheck size={22} className="text-slate-500" />
+        <div className="rounded-[4px] border border-hairline bg-white p-6 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+            <ClipboardCheck size={22} className="text-stamp" />
           </div>
-          <p className="text-white font-medium text-sm mb-1">No checks yet</p>
-          <p className="text-slate-500 text-xs mb-5 max-w-xs mx-auto">
+          <p className="mb-1 font-serif text-[17px] leading-tight text-ink">No checks yet</p>
+          <p className="mx-auto mb-5 max-w-xs font-body text-xs text-support">
             Run your first Student Visa Readiness Check to see your score and history here.
           </p>
-          <Link href="/tools/student-visa/countries" className="btn-primary text-sm justify-center">
+          <Link href="/tools/student-visa/countries" className="btn-primary text-sm">
             Start readiness check <ArrowRight size={14} />
           </Link>
         </div>

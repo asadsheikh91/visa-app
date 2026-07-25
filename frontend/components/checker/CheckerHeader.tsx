@@ -10,22 +10,24 @@ interface Props {
 
 export function CheckerHeader({ title, subtitle, backHref, backLabel }: Props) {
   return (
-    <div className="relative">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 relative">
+    <div className="border-b border-hairline bg-paper">
+      <div className="mx-auto max-w-4xl px-gutter py-10">
         <Link
           href={backHref}
-          className="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-slate-300 transition-colors mb-6"
+          className="mb-6 inline-flex items-center gap-2 font-body text-sm text-support transition-colors hover:text-ink"
         >
           <ArrowLeft size={14} />
           {backLabel}
         </Link>
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-brand-600 to-accent-600 flex items-center justify-center shadow-lg shadow-brand-900/40">
-            <GraduationCap size={22} className="text-white" />
+          <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-[4px] border border-hairline bg-white">
+            <GraduationCap size={22} className="text-stamp" />
           </div>
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">{title}</h1>
-            <p className="text-slate-400 text-sm mt-0.5">{subtitle}</p>
+            <h1 className="font-serif text-[28px] leading-tight tracking-[-0.01em] text-ink sm:text-[34px]">
+              {title}
+            </h1>
+            <p className="mt-1 font-body text-sm text-support">{subtitle}</p>
           </div>
         </div>
       </div>

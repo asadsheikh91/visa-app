@@ -24,27 +24,30 @@ export default function StudentVisaOverview() {
         backLabel="Back to tools"
       />
 
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12">
-        <p className="text-slate-300 text-base leading-relaxed">
+      <div className="mx-auto max-w-3xl px-gutter py-12">
+        <p className="max-w-measure font-body text-[17px] leading-relaxed text-support">
           ParchiVisa reviews your profile and documents against the destination&apos;s requirements,
           then shows how ready your application looks — with the specific gaps to fix before you apply.
           This is an informational readiness check, not legal advice or a guarantee of approval.
         </p>
 
-        <div className="grid sm:grid-cols-3 gap-4 mt-10">
-          {steps.map(({ icon: Icon, title, body }) => (
-            <div key={title} className="glass rounded-2xl p-5">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-600 to-accent-600 flex items-center justify-center mb-4">
-                <Icon size={18} className="text-white" />
+        <div className="mt-10 grid gap-4 sm:grid-cols-3">
+          {steps.map(({ icon: Icon, title, body }, i) => (
+            <div key={title} className="rounded-[4px] border border-hairline bg-white p-5">
+              <div className="mb-4 flex items-center gap-2">
+                <span className="font-mono text-[11px] font-bold text-support">{String(i + 1).padStart(2, '0')}</span>
+                <div className="flex h-9 w-9 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+                  <Icon size={17} className="text-stamp" />
+                </div>
               </div>
-              <h3 className="font-semibold text-white text-sm mb-1.5">{title}</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">{body}</p>
+              <h3 className="mb-1.5 font-serif text-[17px] leading-tight text-ink">{title}</h3>
+              <p className="font-body text-[13px] leading-relaxed text-support">{body}</p>
             </div>
           ))}
         </div>
 
         <div className="mt-10">
-          <Link href="/tools/student-visa/countries" className="btn-primary justify-center">
+          <Link href="/tools/student-visa/countries" className="btn-primary">
             Choose your country
             <ArrowRight size={16} />
           </Link>

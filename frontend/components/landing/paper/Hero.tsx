@@ -10,6 +10,14 @@ import { Section } from './Section'
 const CHECKER_HREF = '/tools/student-visa/countries'
 const SCORE = 82
 
+// TODO(content): confirm the exact figures before launch — these are the
+// brief's example values, not verified numbers. VISA_FEE names the money the
+// applicant stands to lose (UK Student visa application fee); FULL_REPORT_PRICE
+// is the paid tier shown above the fold so pricing is never hidden behind
+// signup. Do not ship without confirming both.
+const VISA_FEE = '£490'
+const FULL_REPORT_PRICE = 'PKR 1,500'
+
 const trust = ['Free readiness score', 'Answer in 2 minutes', 'Rules from official sources']
 
 const fileRows: [string, string][] = [
@@ -19,10 +27,14 @@ const fileRows: [string, string][] = [
   ['Intake', 'September 2026'],
 ]
 
-const checkRows: { doc: string; state: 'verified' | 'action' }[] = [
-  { doc: 'Financial evidence', state: 'verified' },
-  { doc: 'CAS + offer letter', state: 'verified' },
-  { doc: 'TB certificate', state: 'action' },
+// The card describes what the tool actually does — it scores self-reported
+// answers against published rules. It does NOT verify documents, so no row may
+// read "verified". States: meets = clears the published threshold; onfile =
+// the applicant reports holding it; missing = absent, needs action.
+const checkRows: { doc: string; state: 'meets' | 'onfile' | 'missing'; label: string }[] = [
+  { doc: 'Financial evidence', state: 'meets', label: 'Meets threshold' },
+  { doc: 'CAS + offer letter', state: 'onfile', label: 'On file' },
+  { doc: 'TB certificate', state: 'missing', label: 'Missing' },
 ]
 
 const rise = (reduced: boolean, delay: number) => ({
@@ -64,23 +76,18 @@ export function Hero() {
             Student visa readiness&ensp;·&ensp;PK → UK · AUS · CAN · USA
           </motion.p>
 
-          {/* Sizes are derived from the measured width of the longer line
-              ("before the embassy does." = 9.86x font-size) against the copy
-              column, so each line fits on one line and the headline is never
-              more than two. The lg dip is real, not a typo: the two-column
-              grid starts at 1024 and cuts the copy column to ~509px, which is
-              narrower than the single-column layout at 768. Below sm the two
-              lines run inline and balance, which buys ~4px of size over
-              forcing the designed break. */}
+          {/* One declarative line. No em-dash, no italic second line — those
+              read as generated. Sizes are conservative because the headline now
+              wraps 2–3 lines naturally rather than to a designed two-line break;
+              text-balance evens the ragged edge. NOTE(CLS): the serif fallback
+              metrics in pv-tokens.css were tuned to the previous headline's wrap
+              counts and may need re-measuring for this longer string. */}
           <h1
             id="hero-heading"
-            className="mt-6 text-balance font-serif text-[34px] font-medium leading-[1.04] tracking-[-0.015em] text-ink sm:text-[52px] md:text-[60px] lg:text-[46px] xl:text-[60px] 2xl:text-[64px]"
+            className="mt-6 text-balance font-serif text-[32px] font-medium leading-[1.08] tracking-[-0.015em] text-ink sm:text-[44px] md:text-[52px] lg:text-[42px] xl:text-[52px] 2xl:text-[56px]"
           >
-            <motion.span {...rise(reduced, 0.08)} className="sm:block">
-              Know you&rsquo;re ready&thinsp;—{' '}
-            </motion.span>
-            <motion.span {...rise(reduced, 0.16)} className="italic sm:block">
-              before the embassy does.
+            <motion.span {...rise(reduced, 0.08)} className="block">
+              Don&rsquo;t lose {VISA_FEE} finding out your file was incomplete.
             </motion.span>
           </h1>
 
@@ -88,9 +95,8 @@ export function Hero() {
             {...rise(reduced, 0.26)}
             className="measure mt-6 font-body text-[17px] leading-relaxed text-support"
           >
-            ParchiVisa reads your file the way a visa officer will — it checks every document
-            against the official rules, scores your readiness, and tells you exactly what to fix
-            before you pay the application fee.
+            ParchiVisa checks every document against the official rules, scores your readiness, and
+            tells you exactly what to fix before you apply.
           </motion.p>
 
           <motion.div {...rise(reduced, 0.34)} className="mt-9 flex flex-wrap items-center gap-6">
@@ -100,13 +106,35 @@ export function Hero() {
             >
               Check my readiness — free
             </Link>
+            {/* TODO(content): point at the real, ungated sample report once the
+                sample asset exists; brief requires it not be hidden behind
+                signup. Anchored to how-it-works as an interim, honest target. */}
             <Link
               href="/#how-it-works"
               className="font-body text-[15px] font-medium text-ink underline decoration-hairline underline-offset-[6px] transition-colors hover:decoration-stamp"
             >
-              See how it works
+              See a sample report
             </Link>
           </motion.div>
+
+          {/* Pricing is visible in the first scroll — hiding it behind signup
+              reads as bait-and-switch in this market. */}
+          <motion.p
+            {...rise(reduced, 0.38)}
+            className="mt-6 font-mono text-[12px] uppercase tracking-[0.1em] text-support"
+          >
+            Free readiness score. Full report {FULL_REPORT_PRICE}.
+          </motion.p>
+
+          {/* Persistent disclaimer, repeated directly under the CTA (also in the
+              footer on every page). Keeps every claim inside what the tool does. */}
+          <motion.p
+            {...rise(reduced, 0.44)}
+            className="measure mt-3 font-body text-[12px] leading-relaxed text-support"
+          >
+            ParchiVisa is an independent tool. Not affiliated with, endorsed by, or acting on behalf
+            of any government, embassy, or high commission. This is not immigration advice.
+          </motion.p>
 
           <motion.ul
             {...rise(reduced, 0.42)}
@@ -143,7 +171,7 @@ export function Hero() {
               so the rotated bounding box never crops the ink. */}
           <div className="absolute right-0 top-0 z-20 -translate-y-[37%] translate-x-[16%] overflow-visible xl:translate-x-[26%] 2xl:translate-x-[37%]">
             <div className="-rotate-[8deg] overflow-visible p-[14px]">
-              <RubberStamp label="Ready ✓" sublabel="PV · 23 Jul 2026" rotate={0} delay={1.15} />
+              <RubberStamp label="Assessed" sublabel="PV · 23 Jul 2026" rotate={0} delay={1.15} />
             </div>
           </div>
         </motion.div>
@@ -236,30 +264,31 @@ function DocumentCard({ reduced }: { reduced: boolean }) {
         </div>
 
         <ul className="mt-5 space-y-2 border-t border-hairline pt-4">
-          {checkRows.map(({ doc, state }) => (
+          {checkRows.map(({ doc, state, label }) => (
             <li key={doc} className="flex items-baseline justify-between gap-4">
               <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink">
                 {doc}
               </span>
-              {state === 'verified' ? (
-                <span className="font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-stamp">
-                  Verified ✓
-                </span>
-              ) : (
-                /* seal-orange budget use 1 of 3: a genuine action-required
-                   state. seal-text (not seal) because 10.5px needs AA 4.5:1. */
-                <span className="font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-seal-text">
-                  Action required
-                </span>
-              )}
+              <span
+                className={`font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] ${
+                  state === 'meets'
+                    ? 'text-stamp'
+                    : state === 'missing'
+                      ? // seal-orange budget: a genuine attention state.
+                        // seal-text (not seal) because 10.5px needs AA 4.5:1.
+                        'text-seal-text'
+                      : 'text-support'
+                }`}
+              >
+                {label}
+              </span>
             </li>
           ))}
         </ul>
 
-        <div className="mt-5 flex items-end justify-between gap-4 border-t border-hairline pt-4">
-          <Barcode />
+        <div className="mt-5 flex items-end justify-end gap-4 border-t border-hairline pt-4">
           <span className="flex items-baseline gap-3 font-mono text-[10px] uppercase tracking-[0.18em] text-support">
-            <span>Form PV-01</span>
+            <span>ParchiVisa Readiness Report</span>
             <span aria-hidden="true" className="text-hairline">
               ·
             </span>
@@ -268,20 +297,5 @@ function DocumentCard({ reduced }: { reduced: boolean }) {
         </div>
       </div>
     </div>
-  )
-}
-
-const BAR_WIDTHS = [2, 1, 3, 1, 2, 4, 1, 2, 1, 3, 2, 1, 4, 1, 2, 3, 1, 1, 2, 1, 3, 1, 2, 4, 1, 2, 1, 1, 3, 2]
-
-function Barcode() {
-  let x = 0
-  return (
-    <svg aria-hidden="true" className="h-7 w-[132px] text-ink opacity-80" viewBox="0 0 100 28">
-      {BAR_WIDTHS.map((w, i) => {
-        const rect = <rect key={i} x={x} y={0} width={w} height={28} fill="currentColor" />
-        x += w + 1.4
-        return rect
-      })}
-    </svg>
   )
 }

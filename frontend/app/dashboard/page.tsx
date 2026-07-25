@@ -218,16 +218,16 @@ function DashboardContent({ profile }: { profile: UserProfile }) {
         return <TimelineCard />
       case 'documents':
         return (
-          <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
-            <div className="flex items-center gap-2 mb-3">
-              <FileStack size={16} className="text-brand-400" />
-              <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Document guide</h2>
+          <section className="rounded-[4px] border border-hairline bg-white p-5 shadow-[6px_6px_0_0] shadow-ink/10 sm:p-6">
+            <div className="mb-3 flex items-center gap-2">
+              <FileStack size={16} className="text-stamp" />
+              <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">Document guide</h2>
             </div>
-            <p className="text-slate-400 text-sm mb-1">
+            <p className="mb-1 font-body text-sm text-support">
               Get the exact documents you need — in order, from the official source, with the
               legal fast-track for each.
             </p>
-            <p className="text-slate-500 text-xs mb-4">No agents, no shortcuts — just the official path.</p>
+            <p className="mb-4 font-body text-xs text-support">No agents, no shortcuts — just the official path.</p>
             <Link href="/tools/document-guide" className="btn-primary text-sm">
               Map my documents <ArrowRight size={14} />
             </Link>
@@ -251,17 +251,17 @@ function DashboardContent({ profile }: { profile: UserProfile }) {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+    <div className="mx-auto max-w-content px-gutter py-10">
       {/* Header */}
-      <div className="flex items-start justify-between gap-4 mb-6">
+      <div className="mb-8 flex items-start justify-between gap-4 border-b border-hairline pb-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">Welcome back, {name}.</h1>
-          <p className="text-slate-400 mt-1 text-sm">Every fixable risk in your application, in one place — let&apos;s close the gaps.</p>
+          <h1 className="font-serif text-[30px] leading-tight tracking-[-0.01em] text-ink sm:text-[36px]">Welcome back, {name}.</h1>
+          <p className="mt-2 font-body text-[15px] text-support">Every fixable risk in your application, in one place — let&apos;s close the gaps.</p>
         </div>
         {!historyLoading && (
           <button
             onClick={loadHistory}
-            className="flex-shrink-0 p-2 rounded-lg text-slate-500 hover:text-slate-300 hover:bg-white/5 transition-all"
+            className="flex-shrink-0 rounded-[3px] p-2 text-support transition-colors hover:bg-white hover:text-ink"
             aria-label="Refresh dashboard"
           >
             <RefreshCw size={16} />
@@ -269,9 +269,9 @@ function DashboardContent({ profile }: { profile: UserProfile }) {
         )}
       </div>
 
-      <div className="flex flex-col lg:flex-row gap-6">
+      <div className="flex flex-col gap-6 lg:flex-row">
         {/* Sidebar */}
-        <aside className="lg:w-56 flex-shrink-0">
+        <aside className="flex-shrink-0 lg:w-56">
           <DashboardSidebar
             items={navItems}
             active={section}
@@ -280,8 +280,8 @@ function DashboardContent({ profile }: { profile: UserProfile }) {
         </aside>
 
         {/* Main content */}
-        <main className="flex-1 min-w-0">
-          <h2 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-4 lg:hidden">
+        <main className="min-w-0 flex-1">
+          <h2 className="mb-4 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-support lg:hidden">
             {SECTION_TITLES[section]}
           </h2>
           {renderSection()}

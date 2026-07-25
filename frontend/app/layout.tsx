@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { ClerkProvider } from '@clerk/nextjs'
 import './globals.css'
+import { pvSerif, pvSans, pvMono } from './pv-fonts'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 
@@ -20,23 +21,22 @@ export const viewport: Viewport = {
   initialScale: 1,
 }
 
+// "Official Document" light appearance — paper ground, ink text, stamp-green
+// primary. Matches the landing/app paper theme (see app/pv-tokens.css).
 const clerkAppearance = {
   variables: {
-    colorBackground: '#0a0908',
-    colorInputBackground: '#161311',
-    colorInputText: '#f1f5f9',
-    colorText: '#f1f5f9',
-    colorTextSecondary: '#cbd5e1',
-    // Lightens the menu action labels/icons, which derive from the neutral color.
-    colorNeutral: '#ffffff',
-    colorPrimary: '#ff5a1f',
-    colorDanger: '#ef4444',
-    borderRadius: '0.75rem',
+    colorBackground: '#F5EBD6',
+    colorInputBackground: '#ffffff',
+    colorInputText: '#14213D',
+    colorText: '#14213D',
+    colorTextSecondary: '#6B6560',
+    colorNeutral: '#14213D',
+    colorPrimary: '#1F6B4A',
+    colorDanger: '#A83F07',
+    borderRadius: '3px',
   },
   elements: {
-    userButtonPopoverActionButton: { color: '#e2e8f0' },
-    userButtonPopoverActionButtonIcon: { color: '#e2e8f0' },
-    userButtonPopoverActionButton__signOut: { color: '#e2e8f0' },
+    card: { boxShadow: 'none', border: '1px solid #E8DFC8' },
   },
 }
 
@@ -44,7 +44,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
 
   const body = (
-    <html lang="en" suppressHydrationWarning className="font-sans">
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${pvSerif.variable} ${pvSans.variable} ${pvMono.variable} font-body`}
+    >
       <body>
         <Navbar />
         <main>{children}</main>

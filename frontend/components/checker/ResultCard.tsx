@@ -1,7 +1,10 @@
 import { AlertTriangle, CheckCircle2, Info, ArrowRight, RefreshCw, ShieldAlert } from 'lucide-react'
-import { ScoreRing } from './ScoreRing'
+import type { LucideIcon } from 'lucide-react'
 import type { CheckResult, ResultIssue } from '@/types/visa'
 import Link from 'next/link'
+import { DocCard } from '@/components/ui/DocCard'
+import { ScoreBlock } from '@/components/ui/ScoreBlock'
+import { StatusPill, type StatusTone, toneTextClass } from '@/components/ui/StatusPill'
 import { SourcesUsedList } from '@/components/checker/SourcesUsedList'
 
 interface Props {
@@ -20,12 +23,45 @@ function IssueList({ items }: { items: ResultIssue[] }) {
   return (
     <ul className="space-y-2">
       {items.map((item, i) => (
-        <li key={item.question_id || i} className="flex items-start gap-2.5 text-sm">
-          <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-current flex-shrink-0 opacity-60" />
+        <li key={item.question_id || i} className="flex items-start gap-2.5 font-body text-[14px] text-ink">
+          <span className="mt-[7px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-support" />
           <span>{item.message}</span>
         </li>
       ))}
     </ul>
+  )
+}
+
+/** A titled findings block — mono header row with a tone-coloured count stamp. */
+function FindingsBlock({
+  title,
+  tone,
+  count,
+  note,
+  icon: Icon,
+  children,
+}: {
+  title: string
+  tone: StatusTone
+  count: number
+  note?: string
+  icon: LucideIcon
+  children: React.ReactNode
+}) {
+  return (
+    <DocCard padded={false}>
+      <div className="flex items-center justify-between gap-3 border-b border-hairline px-6 py-3.5">
+        <span className="flex items-center gap-2">
+          <Icon size={15} className={toneTextClass(tone)} aria-hidden={true} />
+          <span className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">{title}</span>
+        </span>
+        <StatusPill tone={tone}>{count}</StatusPill>
+      </div>
+      <div className="px-6 py-5">
+        {note && <p className="mb-3 font-body text-[12.5px] leading-relaxed text-support">{note}</p>}
+        {children}
+      </div>
+    </DocCard>
   )
 }
 
@@ -43,20 +79,40 @@ export function ResultCard({ result, onRetry }: Props) {
   return (
     <div className="space-y-6">
       {/* Score header */}
-      <div className="glass rounded-2xl p-7 text-center border border-white/10">
-        <p className="section-label mb-4">Your Readiness Score</p>
-        <ScoreRing score={result.score} label={result.result} size={150} />
-        <h3 className="text-xl font-bold text-white mt-5 mb-2">
-          {countryName} · {visaTypeLabel}
-        </h3>
-        <p className="text-slate-400 text-sm max-w-md mx-auto">{result.result_description}</p>
-      </div>
+      <DocCard perforated>
+        <div className="border-b border-hairline pb-3">
+          <span className="font-mono text-[11px] font-bold uppercase tracking-[0.2em] text-ink">
+            Readiness assessment
+          </span>
+        </div>
+
+        <dl className="mt-4 space-y-2">
+          <div className="flex items-baseline justify-between gap-4">
+            <dt className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-support">Route</dt>
+            <dd className="text-right font-mono text-[12px] font-medium text-ink">{countryName}</dd>
+          </div>
+          <div className="flex items-baseline justify-between gap-4">
+            <dt className="font-mono text-[10.5px] uppercase tracking-[0.14em] text-support">Program</dt>
+            <dd className="text-right font-mono text-[12px] font-medium text-ink">{visaTypeLabel}</dd>
+          </div>
+        </dl>
+
+        <div className="mt-5 border-t border-hairline pt-5">
+          <ScoreBlock score={result.score} label={result.result} />
+        </div>
+
+        {result.result_description && (
+          <p className="mt-5 border-t border-hairline pt-4 font-body text-[14px] leading-relaxed text-support">
+            {result.result_description}
+          </p>
+        )}
+      </DocCard>
 
       {result.id === null && (
-        <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-4">
+        <div className="rounded-[3px] border border-seal-text/40 bg-seal/[0.06] p-4">
           <div className="flex items-start gap-3">
-            <AlertTriangle size={16} className="text-amber-400 mt-0.5 flex-shrink-0" aria-hidden="true" />
-            <p className="text-sm text-amber-200">
+            <AlertTriangle size={16} className="mt-0.5 flex-shrink-0 text-seal-text" aria-hidden="true" />
+            <p className="font-body text-[13.5px] text-ink">
               Your score was calculated, but it was not saved to your dashboard. Please try again in a moment.
             </p>
           </div>
@@ -65,80 +121,56 @@ export function ResultCard({ result, onRetry }: Props) {
 
       {/* Critical blockers */}
       {blockers.length > 0 && (
-        <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-5 text-red-200">
-          <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle size={16} className="text-red-400" aria-hidden="true" />
-            <h4 className="text-sm font-bold text-red-300">
-              Critical Blockers ({blockers.length})
-            </h4>
-          </div>
-          <p className="text-xs text-red-400/70 mb-3">
-            These issues will likely cause a visa refusal. Fix them before applying.
-          </p>
+        <FindingsBlock
+          title="Critical blockers"
+          tone="blocker"
+          count={blockers.length}
+          icon={AlertTriangle}
+          note="These issues will likely cause a visa refusal. Fix them before applying."
+        >
           <IssueList items={blockers} />
-        </div>
+        </FindingsBlock>
       )}
 
       {/* High-risk flags */}
       {highRiskFlags.length > 0 && (
-        <div className="rounded-2xl border border-orange-500/20 bg-orange-500/5 p-5 text-orange-200">
-          <div className="flex items-center gap-2 mb-3">
-            <ShieldAlert size={16} className="text-orange-400" aria-hidden="true" />
-            <h4 className="text-sm font-bold text-orange-300">
-              High-Risk Flags ({highRiskFlags.length})
-            </h4>
-          </div>
-          <p className="text-xs text-orange-400/70 mb-3">
-            These factors increase refusal risk. Resolve them before lodging.
-          </p>
+        <FindingsBlock
+          title="High-risk flags"
+          tone="risk"
+          count={highRiskFlags.length}
+          icon={ShieldAlert}
+          note="These factors increase refusal risk. Resolve them before lodging."
+        >
           <IssueList items={highRiskFlags} />
-        </div>
+        </FindingsBlock>
       )}
 
       {/* Soft warnings */}
       {softWarnings.length > 0 && (
-        <div className="rounded-2xl border border-yellow-500/20 bg-yellow-500/5 p-5 text-yellow-200">
-          <div className="flex items-center gap-2 mb-3">
-            <Info size={16} className="text-yellow-400" aria-hidden="true" />
-            <h4 className="text-sm font-bold text-yellow-300">
-              Advisory Notices ({softWarnings.length})
-            </h4>
-          </div>
+        <FindingsBlock title="Advisory notices" tone="advisory" count={softWarnings.length} icon={Info}>
           <IssueList items={softWarnings} />
-        </div>
+        </FindingsBlock>
       )}
 
       {/* Auto-computed per-question warnings */}
       {warnings.length > 0 && (
-        <div className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-5 text-amber-200">
-          <div className="flex items-center gap-2 mb-3">
-            <Info size={16} className="text-amber-400" aria-hidden="true" />
-            <h4 className="text-sm font-bold text-amber-300">
-              Warnings ({warnings.length})
-            </h4>
-          </div>
+        <FindingsBlock title="Warnings" tone="advisory" count={warnings.length} icon={Info}>
           <IssueList items={warnings} />
-        </div>
+        </FindingsBlock>
       )}
 
       {/* Recommendations */}
       {recs.length > 0 && (
-        <div className="rounded-2xl border border-brand-500/20 bg-brand-500/5 p-5 text-brand-200">
-          <div className="flex items-center gap-2 mb-3">
-            <CheckCircle2 size={16} className="text-brand-400" aria-hidden="true" />
-            <h4 className="text-sm font-bold text-brand-300">
-              Recommendations ({recs.length})
-            </h4>
-          </div>
+        <FindingsBlock title="Recommendations" tone="positive" count={recs.length} icon={CheckCircle2}>
           <ul className="space-y-2">
             {recs.map((item, i) => (
-              <li key={i} className="flex items-start gap-2.5 text-sm text-brand-200">
-                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand-400 flex-shrink-0" />
+              <li key={i} className="flex items-start gap-2.5 font-body text-[14px] text-ink">
+                <span className="mt-[7px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-stamp" />
                 {item}
               </li>
             ))}
           </ul>
-        </div>
+        </FindingsBlock>
       )}
 
       {/* Sources / citations */}
@@ -147,18 +179,18 @@ export function ResultCard({ result, onRetry }: Props) {
       )}
 
       {/* Actions */}
-      <div className="flex flex-col sm:flex-row gap-3 pt-2">
-        <button onClick={onRetry} className="btn-secondary flex-1 justify-center">
+      <div className="flex flex-col gap-3 pt-2 sm:flex-row">
+        <button onClick={onRetry} className="btn-secondary flex-1">
           <RefreshCw size={15} aria-hidden="true" />
           Retake this check
         </button>
-        <Link href="/tools/student-visa/countries" className="btn-primary flex-1 justify-center">
+        <Link href="/tools/student-visa/countries" className="btn-primary flex-1">
           Check another country
           <ArrowRight size={15} aria-hidden="true" />
         </Link>
       </div>
 
-      <p className="text-center text-xs text-slate-700">
+      <p className="text-center font-body text-[12px] leading-relaxed text-support">
         This is an informational readiness check, not legal advice. Requirements may change — always verify with the official visa authority.
       </p>
     </div>

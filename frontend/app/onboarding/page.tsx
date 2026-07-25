@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { GraduationCap, Loader2 } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { AuthGate } from '@/components/auth/AuthGate'
 import { OnboardingWizard } from '@/components/onboarding/OnboardingWizard'
+import { BrandSeal } from '@/components/BrandSeal'
 import { useProfileApi } from '@/lib/useProfileApi'
 import { ApiError } from '@/lib/api'
 import type { UserProfile } from '@/types/visa'
@@ -45,9 +46,9 @@ function OnboardingContent() {
 
   if (state.status === 'loading' || state.status === 'redirecting') {
     return (
-      <div className="flex flex-col items-center justify-center py-32 gap-4">
-        <Loader2 size={28} className="text-brand-400 animate-spin" />
-        <p className="text-slate-500 text-sm">
+      <div className="flex flex-col items-center justify-center gap-4 py-32">
+        <Loader2 size={28} className="animate-spin text-stamp" />
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-support">
           {state.status === 'redirecting' ? 'Taking you to your dashboard…' : 'Getting things ready…'}
         </p>
       </div>
@@ -64,21 +65,21 @@ function OnboardingContent() {
 
 export default function OnboardingPage() {
   return (
-    <div className="min-h-screen pt-20 pb-16">
-      <div className="container-inner px-4 max-w-xl mx-auto">
+    <div className="min-h-screen px-gutter pb-16 pt-24">
+      <div className="mx-auto max-w-xl">
         {/* Brand header */}
-        <div className="flex items-center gap-2 mb-8">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-600 to-accent-600 flex items-center justify-center shadow-lg shadow-brand-900/40">
-            <GraduationCap size={18} className="text-white" />
-          </div>
-          <span className="font-bold text-white text-lg tracking-tight">ParchiVisa</span>
+        <div className="mb-8 flex items-center gap-2.5">
+          <BrandSeal className="h-10 w-10" />
+          <span className="font-serif text-[19px] leading-none tracking-tight text-ink">
+            Parchi<em className="italic">Visa</em>
+          </span>
         </div>
 
         <div className="mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white mb-2">
+          <h1 className="mb-2 font-serif text-[28px] leading-tight tracking-[-0.01em] text-ink sm:text-[34px]">
             Set up your profile
           </h1>
-          <p className="text-slate-400 text-sm">
+          <p className="font-body text-sm text-support">
             A few quick questions so we can personalise your dashboard and readiness checks.
           </p>
         </div>

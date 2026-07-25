@@ -1,7 +1,14 @@
 'use client'
 
-import { useRef } from 'react'
-import { motion, useReducedMotion, useScroll, useSpring, useTransform } from 'framer-motion'
+import { useEffect, useRef, useState } from 'react'
+import {
+  motion,
+  useMotionValueEvent,
+  useReducedMotion,
+  useScroll,
+  useSpring,
+  useTransform,
+} from 'framer-motion'
 import { RubberStamp } from './RubberStamp'
 import { Section } from './Section'
 

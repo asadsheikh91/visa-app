@@ -36,16 +36,16 @@ export function DashboardSidebar({ items, active, onSelect }: Props) {
             onClick={() => onSelect(it.id)}
             aria-current={isActive ? 'page' : undefined}
             className={clsx(
-              'flex items-center gap-2.5 rounded-xl px-3.5 py-2.5 text-sm font-medium whitespace-nowrap transition-all flex-shrink-0 border',
+              'flex flex-shrink-0 items-center gap-2.5 whitespace-nowrap rounded-[3px] border-l-2 px-3.5 py-2.5 font-body text-sm font-medium transition-colors',
               isActive
-                ? 'bg-brand-500/15 text-white border-brand-500/30'
-                : 'text-slate-400 hover:text-white hover:bg-white/5 border-transparent'
+                ? 'border-l-stamp bg-white text-ink'
+                : 'border-l-transparent text-support hover:bg-white hover:text-ink'
             )}
           >
-            <Icon size={16} className={isActive ? 'text-brand-400' : 'text-slate-500'} />
+            <Icon size={16} className={isActive ? 'text-stamp' : 'text-support'} />
             <span>{it.label}</span>
             {it.badge !== undefined && it.badge !== 0 && (
-              <span className="ml-auto text-[10px] font-semibold px-1.5 py-0.5 rounded-full bg-brand-500/20 text-brand-300">
+              <span className="ml-auto rounded-[3px] bg-stamp/15 px-1.5 py-0.5 font-mono text-[10px] font-bold text-stamp">
                 {it.badge}
               </span>
             )}

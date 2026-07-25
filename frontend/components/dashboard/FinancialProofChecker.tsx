@@ -60,9 +60,9 @@ const EMPTY_INPUTS: FinancialProofInputs = {
 // ---------------------------------------------------------------------------
 
 const RULE_STATUS_CONFIG = {
-  pass: { icon: CheckCircle2,  color: 'text-emerald-400', border: 'border-emerald-500/20 bg-emerald-500/5' },
-  warn: { icon: AlertTriangle, color: 'text-amber-400',   border: 'border-amber-500/20 bg-amber-500/5' },
-  fail: { icon: AlertCircle,   color: 'text-red-400',     border: 'border-red-500/20 bg-red-500/5' },
+  pass: { icon: CheckCircle2,  color: 'text-stamp',     border: 'border-stamp/30 bg-stamp/[0.06]' },
+  warn: { icon: AlertTriangle, color: 'text-support',   border: 'border-hairline bg-paper-deep' },
+  fail: { icon: AlertCircle,   color: 'text-seal-text', border: 'border-seal-text/40 bg-seal/[0.06]' },
 } as const
 
 // ---------------------------------------------------------------------------
@@ -70,16 +70,16 @@ const RULE_STATUS_CONFIG = {
 // ---------------------------------------------------------------------------
 
 const STRENGTH_CONFIG = {
-  strong:   { label: 'Strong',   color: 'text-emerald-300', bg: 'bg-emerald-500/15 border-emerald-500/30', icon: CheckCircle2 },
-  moderate: { label: 'Moderate', color: 'text-amber-300',   bg: 'bg-amber-500/15 border-amber-500/30',   icon: AlertTriangle },
-  weak:     { label: 'Weak',     color: 'text-red-300',     bg: 'bg-red-500/15 border-red-500/30',       icon: AlertCircle },
+  strong:   { label: 'Strong',   color: 'text-stamp',     bg: 'bg-stamp/[0.06] border-stamp/40',        icon: CheckCircle2 },
+  moderate: { label: 'Moderate', color: 'text-support',   bg: 'bg-paper-deep border-hairline',          icon: AlertTriangle },
+  weak:     { label: 'Weak',     color: 'text-seal-text', bg: 'bg-seal/[0.06] border-seal-text/40',     icon: AlertCircle },
 } as const
 
 function StrengthBadge({ strength }: { strength: 'weak' | 'moderate' | 'strong' }) {
   const cfg = STRENGTH_CONFIG[strength]
   const Icon = cfg.icon
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-semibold ${cfg.bg} ${cfg.color}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-[3px] border px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.1em] ${cfg.bg} ${cfg.color}`}>
       <Icon size={12} />
       {cfg.label}
     </span>
@@ -91,7 +91,7 @@ function StrengthBadge({ strength }: { strength: 'weak' | 'moderate' | 'strong' 
 // ---------------------------------------------------------------------------
 
 function Label({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs font-medium text-slate-300 mb-1.5">{children}</p>
+  return <p className="mb-1.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.1em] text-support">{children}</p>
 }
 
 function NumberField({
@@ -103,7 +103,7 @@ function NumberField({
     <div>
       <Label>{label}</Label>
       <div className="relative">
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 pointer-events-none">
+        <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 font-mono text-xs text-support">
           {prefix}
         </span>
         <input
@@ -112,7 +112,7 @@ function NumberField({
           value={value || ''}
           placeholder={placeholder ?? '0'}
           onChange={e => onChange(parseFloat(e.target.value) || 0)}
-          className="w-full bg-white/5 border border-white/10 rounded-lg pl-8 pr-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20"
+          className="w-full rounded-[3px] border border-hairline bg-white py-2 pl-8 pr-3 font-body text-sm text-ink placeholder-support focus:border-stamp focus:outline-none"
         />
       </div>
     </div>
@@ -134,11 +134,11 @@ function SelectField({
       <select
         value={value}
         onChange={e => onChange(e.target.value)}
-        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 appearance-none"
+        className="w-full appearance-none rounded-[3px] border border-hairline bg-white px-3 py-2 font-body text-sm text-ink focus:border-stamp focus:outline-none"
       >
-        {placeholder && <option value="" className="bg-surface-900">{placeholder}</option>}
+        {placeholder && <option value="" className="bg-white text-ink">{placeholder}</option>}
         {options.map(o => (
-          <option key={o.value} value={o.value} className="bg-surface-900">{o.label}</option>
+          <option key={o.value} value={o.value} className="bg-white text-ink">{o.label}</option>
         ))}
       </select>
     </div>
@@ -154,32 +154,32 @@ function ResultPanel({ result, sym }: { result: FinancialProofResult; sym: strin
   const Icon = cfg.icon
 
   return (
-    <div className="space-y-4 pt-4 border-t border-white/10">
+    <div className="space-y-4 border-t border-hairline pt-4">
       {/* Strength + numbers */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
           <Icon size={18} className={cfg.color} />
-          <span className="text-sm font-semibold text-white">Financial Proof Strength</span>
+          <span className="font-body text-sm font-semibold text-ink">Financial Proof Strength</span>
           <StrengthBadge strength={result.strength} />
         </div>
       </div>
 
       <div className="grid grid-cols-3 gap-3">
-        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Required estimate</p>
-          <p className="text-sm font-bold text-white">
+        <div className="rounded-[3px] border border-hairline bg-paper-deep p-3 text-center">
+          <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.1em] text-support">Required estimate</p>
+          <p className="font-mono text-sm font-bold text-ink">
             {sym}{result.required_estimate.toLocaleString(undefined, { maximumFractionDigits: 0 })}
           </p>
         </div>
-        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Available funds</p>
-          <p className="text-sm font-bold text-white">
+        <div className="rounded-[3px] border border-hairline bg-paper-deep p-3 text-center">
+          <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.1em] text-support">Available funds</p>
+          <p className="font-mono text-sm font-bold text-ink">
             {sym}{result.available_funds.toLocaleString(undefined, { maximumFractionDigits: 0 })}
           </p>
         </div>
-        <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
-          <p className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Shortfall</p>
-          <p className={`text-sm font-bold ${result.shortfall > 0 ? 'text-red-400' : 'text-emerald-400'}`}>
+        <div className="rounded-[3px] border border-hairline bg-paper-deep p-3 text-center">
+          <p className="mb-1 font-mono text-[10px] uppercase tracking-[0.1em] text-support">Shortfall</p>
+          <p className={`font-mono text-sm font-bold ${result.shortfall > 0 ? 'text-seal-text' : 'text-stamp'}`}>
             {result.shortfall > 0
               ? `${sym}${result.shortfall.toLocaleString(undefined, { maximumFractionDigits: 0 })}`
               : 'None'}
@@ -190,7 +190,7 @@ function ResultPanel({ result, sym }: { result: FinancialProofResult; sym: strin
       {/* Rule-by-rule validation (Module B) */}
       {(result.rule_checks?.length ?? 0) > 0 && (
         <div>
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+          <p className="mb-2 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
             Official rule checks
           </p>
           <ul className="space-y-2">
@@ -198,17 +198,17 @@ function ResultPanel({ result, sym }: { result: FinancialProofResult; sym: strin
               const cfg = RULE_STATUS_CONFIG[rc.status]
               const Icon = cfg.icon
               return (
-                <li key={rc.rule_id} className={`rounded-xl border px-3 py-2.5 ${cfg.border}`}>
+                <li key={rc.rule_id} className={`rounded-[3px] border px-3 py-2.5 ${cfg.border}`}>
                   <div className="flex items-start gap-2.5">
-                    <Icon size={14} className={`${cfg.color} flex-shrink-0 mt-0.5`} />
+                    <Icon size={14} className={`${cfg.color} mt-0.5 flex-shrink-0`} />
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-xs font-semibold text-white">{rc.label}</p>
+                        <p className="font-body text-xs font-semibold text-ink">{rc.label}</p>
                         {rc.threshold && (
-                          <span className="text-[10px] text-slate-500 flex-shrink-0">{rc.threshold}</span>
+                          <span className="flex-shrink-0 font-mono text-[10px] text-support">{rc.threshold}</span>
                         )}
                       </div>
-                      <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">{rc.detail}</p>
+                      <p className="mt-0.5 font-body text-[11px] leading-relaxed text-support">{rc.detail}</p>
                       {rc.source?.url && (
                         <div className="mt-1">
                           <SourceCitation label={rc.source.label} url={rc.source.url} />
@@ -225,9 +225,9 @@ function ResultPanel({ result, sym }: { result: FinancialProofResult; sym: strin
 
       {/* Bank statement warning banner */}
       {!result.bank_statement_ready && (
-        <div className="flex items-start gap-2.5 rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3">
-          <AlertTriangle size={15} className="text-amber-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-amber-300">
+        <div className="flex items-start gap-2.5 rounded-[3px] border border-seal-text/40 bg-seal/[0.06] px-4 py-3">
+          <AlertTriangle size={15} className="mt-0.5 flex-shrink-0 text-seal-text" />
+          <p className="font-body text-xs text-ink">
             Financial proof is not ready yet — your bank statement is missing or uncertain.
             Visa officers will not accept an application without a complete bank statement.
           </p>
@@ -237,13 +237,13 @@ function ResultPanel({ result, sym }: { result: FinancialProofResult; sym: strin
       {/* Critical issues */}
       {result.critical_issues.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+          <p className="mb-2 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
             Critical issues
           </p>
           <ul className="space-y-1.5">
             {result.critical_issues.map((issue, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-red-300 rounded-lg bg-red-500/5 border border-red-500/15 px-3 py-2">
-                <AlertCircle size={12} className="flex-shrink-0 mt-0.5" />
+              <li key={i} className="flex items-start gap-2 rounded-[3px] border border-seal-text/30 bg-seal/[0.06] px-3 py-2 font-body text-xs text-seal-text">
+                <AlertCircle size={12} className="mt-0.5 flex-shrink-0" />
                 {issue}
               </li>
             ))}
@@ -253,13 +253,13 @@ function ResultPanel({ result, sym }: { result: FinancialProofResult; sym: strin
 
       {/* Documents to prepare */}
       <div>
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+        <p className="mb-2 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
           Documents to prepare
         </p>
         <ul className="space-y-1.5">
           {result.documents_to_prepare.map((doc, i) => (
-            <li key={i} className="flex items-start gap-2 text-xs text-slate-300">
-              <FileText size={12} className="flex-shrink-0 mt-0.5 text-brand-400" />
+            <li key={i} className="flex items-start gap-2 font-body text-xs text-ink">
+              <FileText size={12} className="mt-0.5 flex-shrink-0 text-stamp" />
               {doc}
             </li>
           ))}
@@ -342,16 +342,16 @@ export function FinancialProofChecker({ file, locked, onFileUpdate }: Props) {
   // ── Locked ────────────────────────────────────────────────────────────────
   if (locked) {
     return (
-      <section className="glass rounded-2xl border border-white/10 p-6 text-center">
-        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-3">
-          <Lock size={20} className="text-slate-500" />
+      <section className="rounded-[4px] border border-hairline bg-white p-6 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+          <Lock size={20} className="text-support" />
         </div>
-        <h2 className="text-white font-semibold text-sm mb-1">Financial Proof Checker</h2>
-        <p className="text-slate-500 text-xs max-w-sm mx-auto mb-5">
+        <h2 className="mb-1 font-serif text-[17px] leading-tight text-ink">Financial Proof Checker</h2>
+        <p className="mx-auto mb-5 max-w-sm font-body text-xs text-support">
           Run your first readiness check and we&apos;ll build your visa file — then this checker
           tests your funds against the official financial rules.
         </p>
-        <Link href="/tools/student-visa/countries" className="btn-primary text-sm justify-center">
+        <Link href="/tools/student-visa/countries" className="btn-primary text-sm">
           <Sparkles size={14} />
           Start a readiness check
         </Link>
@@ -361,29 +361,29 @@ export function FinancialProofChecker({ file, locked, onFileUpdate }: Props) {
 
   // ── Main ──────────────────────────────────────────────────────────────────
   return (
-    <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6 space-y-0">
+    <section className="space-y-0 rounded-[4px] border border-hairline bg-white p-5 shadow-[6px_6px_0_0] shadow-ink/10 sm:p-6">
       {/* Header — only toggleable once a result exists */}
       <button
         type="button"
         onClick={() => result && setFormOpen(o => !o)}
-        className={`w-full flex items-center justify-between gap-3 group ${result ? 'cursor-pointer' : 'cursor-default'}`}
+        className={`group flex w-full items-center justify-between gap-3 ${result ? 'cursor-pointer' : 'cursor-default'}`}
       >
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center flex-shrink-0">
-            <ShieldCheck size={15} className="text-brand-400" />
+          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+            <ShieldCheck size={15} className="text-stamp" />
           </div>
           <div className="text-left">
-            <h2 className="text-sm font-bold text-white">Financial Proof Checker</h2>
-            <p className="text-[11px] text-slate-500">
+            <h2 className="font-serif text-[16px] leading-tight text-ink">Financial Proof Checker</h2>
+            <p className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-support">
               {result ? 'Strength assessed — tap to update inputs' : 'Evaluate the strength of your financial evidence'}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex flex-shrink-0 items-center gap-2">
           {result && <StrengthBadge strength={result.strength} />}
           {result && (formOpen
-            ? <ChevronUp size={14} className="text-slate-500" />
-            : <ChevronDown size={14} className="text-slate-500" />)}
+            ? <ChevronUp size={14} className="text-support" />
+            : <ChevronDown size={14} className="text-support" />)}
         </div>
       </button>
 
@@ -392,7 +392,7 @@ export function FinancialProofChecker({ file, locked, onFileUpdate }: Props) {
         <div className="mt-5 space-y-5">
           {/* Financial figures */}
           <div>
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+            <p className="mb-3 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
               Financial figures
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -412,7 +412,7 @@ export function FinancialProofChecker({ file, locked, onFileUpdate }: Props) {
               />
               <div>
                 <Label>Remaining tuition (auto)</Label>
-                <div className="w-full bg-white/[0.03] border border-white/10 rounded-lg px-3 py-2 text-sm text-slate-400">
+                <div className="w-full rounded-[3px] border border-hairline bg-paper-deep px-3 py-2 font-mono text-sm text-support">
                   {sym}{remainingTuition.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                 </div>
               </div>
@@ -429,7 +429,7 @@ export function FinancialProofChecker({ file, locked, onFileUpdate }: Props) {
           {/* UK course details — drive location/length-aware maintenance */}
           {isUK && (
             <div>
-              <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+              <p className="mb-3 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
                 Course details (UK maintenance)
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -456,7 +456,7 @@ export function FinancialProofChecker({ file, locked, onFileUpdate }: Props) {
 
           {/* Funding & account */}
           <div>
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+            <p className="mb-3 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
               Funding & account holder
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -508,7 +508,7 @@ export function FinancialProofChecker({ file, locked, onFileUpdate }: Props) {
 
           {/* Bank statement */}
           <div>
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+            <p className="mb-3 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
               Bank statement & holding period
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -538,7 +538,7 @@ export function FinancialProofChecker({ file, locked, onFileUpdate }: Props) {
 
           {/* Risk flags */}
           <div>
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+            <p className="mb-3 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
               Risk flags
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -574,7 +574,7 @@ export function FinancialProofChecker({ file, locked, onFileUpdate }: Props) {
           </div>
 
           {error && (
-            <div className="flex items-center gap-2 text-xs text-red-300 rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2">
+            <div className="flex items-center gap-2 rounded-[3px] border border-seal-text/30 bg-seal/[0.06] px-3 py-2 font-body text-xs text-seal-text">
               <AlertCircle size={13} />
               {error}
             </div>
@@ -584,7 +584,7 @@ export function FinancialProofChecker({ file, locked, onFileUpdate }: Props) {
             type="button"
             onClick={onSubmit}
             disabled={loading}
-            className="btn-primary w-full justify-center text-sm"
+            className="btn-primary w-full text-sm"
           >
             {loading ? (
               <>

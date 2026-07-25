@@ -41,19 +41,19 @@ export function CountrySelector() {
 
   if (status === 'loading') {
     return (
-      <div className="flex flex-col items-center justify-center py-24 gap-4">
-        <Loader2 size={32} className="text-brand-400 animate-spin" />
-        <p className="text-slate-500 text-sm">Loading countries…</p>
+      <div className="flex flex-col items-center justify-center gap-4 py-24">
+        <Loader2 size={32} className="animate-spin text-stamp" />
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-support">Loading countries…</p>
       </div>
     )
   }
 
   if (status === 'error') {
     return (
-      <div className="glass rounded-2xl p-8 text-center border border-red-500/20">
-        <AlertCircle size={32} className="text-red-400 mx-auto mb-3" />
-        <p className="text-red-300 font-medium mb-4">{error}</p>
-        <button onClick={load} className="btn-secondary text-sm justify-center">
+      <div className="rounded-[4px] border border-hairline bg-white p-8 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+        <AlertCircle size={32} className="mx-auto mb-3 text-seal-text" />
+        <p className="mb-4 font-body font-medium text-ink">{error}</p>
+        <button onClick={load} className="btn-secondary text-sm">
           <RefreshCw size={14} /> Try again
         </button>
       </div>
@@ -62,46 +62,46 @@ export function CountrySelector() {
 
   if (status === 'empty') {
     return (
-      <div className="glass rounded-2xl p-8 text-center border border-white/10">
-        <Globe size={28} className="text-slate-500 mx-auto mb-3" />
-        <p className="text-slate-300 font-medium mb-1">No countries available yet</p>
-        <p className="text-slate-500 text-sm">Please check back soon.</p>
+      <div className="rounded-[4px] border border-hairline bg-white p-8 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+        <Globe size={28} className="mx-auto mb-3 text-support" />
+        <p className="mb-1 font-body font-medium text-ink">No countries available yet</p>
+        <p className="font-body text-sm text-support">Please check back soon.</p>
       </div>
     )
   }
 
   return (
     <div className="space-y-6">
-      <div className="glass rounded-2xl p-7 border border-white/10">
-        <div className="flex items-center gap-3 mb-6">
-          <Globe size={20} className="text-brand-400" />
-          <h2 className="text-xl font-bold text-white">Select your destination country</h2>
+      <div className="rounded-[4px] border border-hairline bg-white p-7 shadow-[6px_6px_0_0] shadow-ink/10">
+        <div className="mb-2 flex items-center gap-3">
+          <Globe size={20} className="text-stamp" />
+          <h2 className="font-serif text-[22px] leading-tight text-ink">Select your destination country</h2>
         </div>
-        <p className="text-slate-400 text-sm mb-6">
+        <p className="mb-6 font-body text-sm text-support">
           Pick the country you&apos;re applying to. We&apos;ll load that country&apos;s specific questions and scoring criteria.
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
           {countries.map(({ slug, country, visa_route }) => (
             <Link
               key={slug}
               href={`/tools/student-visa/countries/${slug}`}
-              className="group text-left p-4 rounded-xl border border-white/10 bg-white/4 hover:bg-white/8 hover:border-brand-500/40 transition-all duration-150"
+              className="group rounded-[3px] border border-hairline bg-paper p-4 text-left transition-colors duration-150 hover:border-stamp"
             >
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{COUNTRY_FLAGS[slug] || '🌍'}</span>
                 <div>
-                  <p className="font-semibold text-white text-sm">{country}</p>
-                  <p className="text-xs text-slate-500">{visa_route}</p>
+                  <p className="font-body text-sm font-semibold text-ink">{country}</p>
+                  <p className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-support">{visa_route}</p>
                 </div>
-                <ArrowRight size={14} className="text-slate-600 ml-auto group-hover:text-brand-400 group-hover:translate-x-0.5 transition-all" />
+                <ArrowRight size={14} className="ml-auto text-support transition-transform group-hover:translate-x-0.5 group-hover:text-stamp" />
               </div>
             </Link>
           ))}
         </div>
       </div>
 
-      <p className="text-center text-xs text-slate-700">
+      <p className="text-center font-mono text-[10.5px] uppercase tracking-[0.14em] text-support">
         More countries coming soon.
       </p>
     </div>

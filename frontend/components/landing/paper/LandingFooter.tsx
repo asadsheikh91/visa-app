@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { Instagram, Linkedin } from 'lucide-react'
-import { StampMark } from './StampMark'
+import { BrandSeal } from '@/components/BrandSeal'
 
 /**
  * Landing-scoped footer — quiet paper-deep close. Link inventory mirrors the
@@ -42,7 +42,7 @@ export function LandingFooter() {
         <div className="grid grid-cols-1 gap-12 md:grid-cols-12">
           <div className="md:col-span-5">
             <Link href="/" className="flex items-center gap-2.5" aria-label="ParchiVisa home">
-              <StampMark className="h-8 w-8 -rotate-[8deg] text-stamp" />
+              <BrandSeal className="h-11 w-11" />
               <span className="font-serif text-[20px] leading-none tracking-tight text-ink">
                 Parchi<em className="italic">Visa</em>
               </span>
@@ -94,13 +94,20 @@ export function LandingFooter() {
           ))}
         </div>
 
-        <div className="mt-14 flex flex-col gap-2 border-t border-hairline pt-6 sm:flex-row sm:items-baseline sm:justify-between">
+        {/* Persistent disclaimer — full text, on every page (also repeated
+            directly under the hero CTA). Every claim on the site stays inside
+            what the tool actually does. */}
+        <p className="mt-14 max-w-[70ch] border-t border-hairline pt-6 font-body text-[12px] leading-relaxed text-support">
+          ParchiVisa is an independent tool. Not affiliated with, endorsed by, or acting on behalf
+          of any government, embassy, or high commission. This is not immigration advice.
+        </p>
+
+        <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">
           <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-support">
             © 2026 ParchiVisa · All rights reserved
           </p>
-          <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-support">
-            Not affiliated with any government visa authority
-          </p>
+          {/* TODO(content): add a full WhatsApp click-to-chat contact line here
+              (real number) — required trust signal for this market. */}
         </div>
       </div>
     </footer>

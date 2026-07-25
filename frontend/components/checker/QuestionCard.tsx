@@ -42,26 +42,26 @@ export function QuestionCard({ question, answer, onAnswer, questionNumber, total
   return (
     <div className="space-y-6">
       {/* Progress */}
-      <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
+      <div className="mb-2 flex items-center justify-between font-mono text-[10.5px] uppercase tracking-[0.14em] text-support">
         <span>Question {questionNumber} of {totalQuestions}</span>
-        <span className="badge">{pct}% done</span>
+        <span>{pct}% done</span>
       </div>
-      <div className="h-1 bg-white/8 rounded-full overflow-hidden">
+      <div className="h-[6px] overflow-hidden rounded-[2px] bg-paper-deep">
         <div
-          className="h-full bg-gradient-to-r from-brand-500 to-accent-500 rounded-full transition-all duration-500"
+          className="h-full bg-stamp transition-all duration-500"
           style={{ width: `${pct}%` }}
         />
       </div>
 
       {/* Question text + help */}
       <div className="pt-2">
-        <h3 className="text-lg sm:text-xl font-semibold text-white leading-snug mb-2">
+        <h3 className="mb-2 font-serif text-[22px] leading-snug tracking-[-0.01em] text-ink sm:text-[26px]">
           {question.question}
         </h3>
         {question.help_text && (
-          <div className="flex items-start gap-2 mt-3 p-3 rounded-xl bg-brand-900/20 border border-brand-700/20">
-            <HelpCircle size={14} className="text-brand-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
-            <p className="text-xs text-slate-400 leading-relaxed">{question.help_text}</p>
+          <div className="mt-3 flex items-start gap-2 rounded-[3px] border border-hairline bg-paper-deep p-3">
+            <HelpCircle size={14} className="mt-0.5 flex-shrink-0 text-stamp" aria-hidden="true" />
+            <p className="font-body text-[13px] leading-relaxed text-support">{question.help_text}</p>
           </div>
         )}
       </div>
@@ -108,14 +108,14 @@ export function QuestionCard({ question, answer, onAnswer, questionNumber, total
                 onClick={() => onAnswer(opt.value)}
                 aria-pressed={sel}
                 className={clsx(
-                  'w-full text-left px-4 py-3.5 rounded-xl border transition-all duration-150 text-sm font-medium',
+                  'w-full rounded-[3px] border px-4 py-3.5 text-left font-body text-sm font-medium transition-colors duration-150',
                   sel
-                    ? 'bg-brand-600/20 border-brand-500/50 text-brand-200'
-                    : 'bg-white/4 border-white/10 text-slate-300 hover:bg-white/8 hover:border-white/20'
+                    ? 'border-stamp bg-stamp/[0.06] text-ink'
+                    : 'border-hairline bg-white text-support hover:border-support hover:text-ink'
                 )}
               >
-                <span className={clsx('inline-block w-5 h-5 rounded-full border-2 mr-3 align-middle',
-                  sel ? 'bg-brand-500 border-brand-400' : 'border-slate-600')} />
+                <span className={clsx('mr-3 inline-block h-4 w-4 rounded-full border-2 align-middle',
+                  sel ? 'border-stamp bg-stamp' : 'border-support')} />
                 {opt.label}
               </button>
             )
@@ -136,23 +136,23 @@ export function QuestionCard({ question, answer, onAnswer, questionNumber, total
                 aria-checked={sel}
                 onClick={() => onAnswer(opt.value)}
                 className={clsx(
-                  'w-full text-left px-4 py-3.5 rounded-xl border transition-all duration-150 text-sm font-medium flex items-center gap-3',
+                  'flex w-full items-center gap-3 rounded-[3px] border px-4 py-3.5 text-left font-body text-sm font-medium transition-colors duration-150',
                   sel
-                    ? 'bg-brand-600/20 border-brand-500/50 text-brand-200'
-                    : 'bg-white/4 border-white/10 text-slate-300 hover:bg-white/8 hover:border-white/20'
+                    ? 'border-stamp bg-stamp/[0.06] text-ink'
+                    : 'border-hairline bg-white text-support hover:border-support hover:text-ink'
                 )}
               >
                 <span className={clsx(
-                  'w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center',
-                  sel ? 'bg-brand-500 border-brand-400' : 'border-slate-600'
+                  'flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-[2px] border-2',
+                  sel ? 'border-stamp bg-stamp' : 'border-support'
                 )}>
-                  {sel && <CheckCircle size={12} className="text-white" aria-hidden="true" />}
+                  {sel && <CheckCircle size={11} className="text-white" aria-hidden="true" />}
                 </span>
                 {opt.label}
               </button>
             )
           })}
-          <p className="text-xs text-slate-500 pt-1">Select all that apply.</p>
+          <p className="pt-1 font-mono text-[10.5px] uppercase tracking-[0.12em] text-support">Select all that apply.</p>
         </div>
       )}
 
@@ -240,22 +240,24 @@ function YesNoButton({ val, label, selected, onAnswer }: YesNoButtonProps) {
   const isNo      = val === 'no'
   const isUnknown = val === 'unknown'
 
+  // The document system keeps plain Yes/No/Not-sure answers neutral — a chosen
+  // "No" is a valid answer, not an error, so it reads in ink, not seal-orange.
   const colourCls = selected && isYes
-    ? 'bg-emerald-500/15 border-emerald-500/60 text-emerald-300'
+    ? 'border-stamp bg-stamp/[0.06] text-ink'
     : selected && isNo
-    ? 'bg-red-500/10 border-red-500/40 text-red-300'
+    ? 'border-ink bg-ink/[0.04] text-ink'
     : selected && isUnknown
-    ? 'bg-amber-500/10 border-amber-500/40 text-amber-300'
-    : 'bg-white/4 border-white/10 text-slate-300 hover:bg-white/8 hover:border-white/20'
+    ? 'border-support bg-support/[0.06] text-ink'
+    : 'border-hairline bg-white text-support hover:border-support hover:text-ink'
 
   const Icon = isYes ? CheckCircle : isNo ? XCircle : CircleHelp
   const iconCls = selected && isYes
-    ? 'text-emerald-400'
+    ? 'text-stamp'
     : selected && isNo
-    ? 'text-red-400'
+    ? 'text-ink'
     : selected && isUnknown
-    ? 'text-amber-400'
-    : 'text-slate-600'
+    ? 'text-support'
+    : 'text-support'
 
   return (
     <button
@@ -263,7 +265,7 @@ function YesNoButton({ val, label, selected, onAnswer }: YesNoButtonProps) {
       aria-pressed={selected}
       onClick={() => onAnswer(val)}
       className={clsx(
-        'flex items-center justify-center gap-3 py-4 rounded-2xl border-2 font-semibold text-base transition-all duration-200 active:scale-95',
+        'flex items-center justify-center gap-3 rounded-[3px] border-2 py-4 font-body text-base font-semibold transition-colors duration-200',
         colourCls
       )}
     >

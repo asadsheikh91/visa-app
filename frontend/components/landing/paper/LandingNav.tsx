@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
-import { StampMark } from './StampMark'
+import { BrandSeal } from '@/components/BrandSeal'
 
 const CHECKER_HREF = '/tools/student-visa/countries'
 
@@ -11,7 +11,6 @@ const navLinks = [
   { label: 'Why visas fail', href: '/#failures' },
   { label: 'Coverage', href: '/#coverage' },
   { label: 'How it works', href: '/#how-it-works' },
-  { label: 'For agencies', href: '/consultant' },
   { label: 'About', href: '/about' },
 ]
 
@@ -26,25 +25,33 @@ export function LandingNav() {
   return (
     <header className="sticky top-0 z-50 border-t-[3px] border-t-ink border-b border-b-hairline bg-paper">
       <div className="mx-auto flex h-16 max-w-content items-center justify-between px-gutter">
-        <Link href="/" className="flex items-center gap-2.5" aria-label="ParchiVisa home">
-          <StampMark className="h-8 w-8 -rotate-[8deg] text-stamp" />
-          <span className="font-serif text-[21px] leading-none tracking-tight text-ink">
-            Parchi<em className="italic">Visa</em>
-          </span>
-        </Link>
+        {/* Logo + nav grouped on the left. The nav is NOT centred — a centred
+            five-item nav with Sign in + filled CTA on the right is the generic
+            SaaS pattern the brief rules out. */}
+        <div className="flex items-center gap-9">
+          <Link href="/" className="flex items-center gap-2.5" aria-label="ParchiVisa home">
+            <BrandSeal className="h-10 w-10" />
+            <span className="font-serif text-[21px] leading-none tracking-tight text-ink">
+              Parchi<em className="italic">Visa</em>
+            </span>
+          </Link>
 
-        <nav className="hidden items-center gap-7 lg:flex" aria-label="Main navigation">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="font-body text-sm font-medium text-support transition-colors hover:text-ink"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+          <nav className="hidden items-center gap-7 lg:flex" aria-label="Main navigation">
+            {navLinks.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="font-body text-sm font-medium text-support transition-colors hover:text-ink"
+              >
+                {link.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
 
+        {/* TODO(content): add a WhatsApp click-to-chat icon here once a real
+            number is supplied — its absence is a scam signal in this market.
+            Placeholder omitted rather than shipping a dead/wrong number. */}
         <div className="hidden items-center gap-6 lg:flex">
           <Link
             href="/sign-in"

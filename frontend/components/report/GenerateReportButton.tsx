@@ -50,12 +50,12 @@ export function GenerateReportButton({
         type="button"
         onClick={onClick}
         disabled={loading}
-        className={className ?? 'btn-secondary text-xs py-1.5 px-3'}
+        className={className ?? 'btn-secondary px-3 py-1.5 text-xs'}
       >
         {loading ? <Loader2 size={12} className="animate-spin" /> : <FileText size={12} />}
         {loading ? 'Generating…' : 'Get readiness report'}
       </button>
-      {error && <span className="mt-1 text-[11px] text-red-400">{error}</span>}
+      {error && <span className="mt-1 font-body text-[11px] text-seal-text">{error}</span>}
     </span>
   )
 }

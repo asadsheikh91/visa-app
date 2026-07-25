@@ -32,25 +32,25 @@ const SEVERITY_META: Record<
   ActionSeverity,
   { label: string; icon: typeof AlertTriangle; color: string; chip: string }
 > = {
-  critical: { label: 'Fix before applying', icon: AlertTriangle, color: 'text-red-400',    chip: 'bg-red-500/10 text-red-300 border-red-500/30' },
-  high:     { label: 'High risk',           icon: ShieldAlert,   color: 'text-orange-400', chip: 'bg-orange-500/10 text-orange-300 border-orange-500/30' },
-  soft:     { label: 'Recommended',         icon: Info,          color: 'text-yellow-400', chip: 'bg-yellow-500/10 text-yellow-300 border-yellow-500/30' },
-  todo:     { label: 'To prepare',          icon: ClipboardList, color: 'text-slate-400',  chip: 'bg-white/5 text-slate-300 border-white/10' },
+  critical: { label: 'Fix before applying', icon: AlertTriangle, color: 'text-seal-text', chip: 'bg-seal/[0.06] text-seal-text border-seal-text/40' },
+  high:     { label: 'High risk',           icon: ShieldAlert,   color: 'text-seal-text', chip: 'bg-seal/[0.04] text-seal-text border-seal-text/30' },
+  soft:     { label: 'Recommended',         icon: Info,          color: 'text-support',   chip: 'bg-paper-deep text-support border-hairline' },
+  todo:     { label: 'To prepare',          icon: ClipboardList, color: 'text-support',   chip: 'bg-paper-deep text-support border-hairline' },
 }
 
 function StepRow({ step }: { step: ActionStep }) {
   const meta = SEVERITY_META[step.severity]
   const Icon = meta.icon
   return (
-    <li className="rounded-xl border border-white/10 bg-white/[0.02] p-4">
+    <li className="rounded-[3px] border border-hairline bg-white p-4">
       <div className="flex items-start gap-3">
-        <Icon size={16} className={`${meta.color} flex-shrink-0 mt-0.5`} />
+        <Icon size={16} className={`${meta.color} mt-0.5 flex-shrink-0`} />
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-white leading-snug">{step.title}</p>
-          {step.why && <p className="text-xs text-slate-400 mt-1 leading-relaxed">{step.why}</p>}
+          <p className="font-body text-sm font-semibold leading-snug text-ink">{step.title}</p>
+          {step.why && <p className="mt-1 font-body text-xs leading-relaxed text-support">{step.why}</p>}
           {step.how && (
-            <p className="text-xs text-slate-300 mt-2 leading-relaxed">
-              <span className="font-semibold text-slate-400">Do this: </span>
+            <p className="mt-2 font-body text-xs leading-relaxed text-ink">
+              <span className="font-semibold text-support">Do this: </span>
               {step.how}
             </p>
           )}
@@ -109,9 +109,9 @@ export function ActionPlan({ checkId }: Props) {
   }, [plan?.country, visaApi])
 
   const header = (
-    <div className="flex items-center gap-2 mb-4">
-      <ListChecks size={16} className="text-slate-400" />
-      <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
+    <div className="mb-4 flex items-center gap-2">
+      <ListChecks size={16} className="text-stamp" />
+      <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">
         Your action plan
       </h2>
     </div>
@@ -120,15 +120,15 @@ export function ActionPlan({ checkId }: Props) {
   // ── Locked (no check yet) ──────────────────────────────────────────────────
   if (!checkId) {
     return (
-      <section className="glass rounded-2xl border border-white/10 p-6">
+      <section className="rounded-[4px] border border-hairline bg-white p-6 shadow-[6px_6px_0_0] shadow-ink/10">
         {header}
-        <div className="text-center py-4">
-          <p className="text-white font-medium text-sm mb-1">No action plan yet</p>
-          <p className="text-slate-500 text-xs mb-5 max-w-xs mx-auto">
+        <div className="py-4 text-center">
+          <p className="mb-1 font-serif text-[17px] leading-tight text-ink">No action plan yet</p>
+          <p className="mx-auto mb-5 max-w-xs font-body text-xs text-support">
             Run the readiness checker and we&apos;ll turn your result into a ranked, step-by-step
             plan of exactly what to fix.
           </p>
-          <Link href="/tools/student-visa/countries" className="btn-primary text-sm justify-center">
+          <Link href="/tools/student-visa/countries" className="btn-primary text-sm">
             Start readiness check <ArrowRight size={14} />
           </Link>
         </div>
@@ -139,11 +139,11 @@ export function ActionPlan({ checkId }: Props) {
   // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <section className="glass rounded-2xl border border-white/10 p-6">
+      <section className="rounded-[4px] border border-hairline bg-white p-6 shadow-[6px_6px_0_0] shadow-ink/10">
         {header}
         <div className="space-y-3">
           {[0, 1, 2].map(i => (
-            <div key={i} className="h-16 rounded-xl bg-white/5 animate-pulse" />
+            <div key={i} className="h-16 animate-pulse rounded-[3px] bg-paper-deep" />
           ))}
         </div>
       </section>
@@ -153,10 +153,10 @@ export function ActionPlan({ checkId }: Props) {
   // ── Error ──────────────────────────────────────────────────────────────────
   if (error) {
     return (
-      <section className="glass rounded-2xl border border-white/10 p-6">
+      <section className="rounded-[4px] border border-hairline bg-white p-6 shadow-[6px_6px_0_0] shadow-ink/10">
         {header}
-        <p className="text-sm text-red-300 mb-3">{error}</p>
-        <button onClick={() => setNonce(n => n + 1)} className="btn-secondary text-xs py-2 px-3.5">
+        <p className="mb-3 font-body text-sm text-seal-text">{error}</p>
+        <button onClick={() => setNonce(n => n + 1)} className="btn-secondary px-3.5 py-2 text-xs">
           <RefreshCw size={13} /> Try again
         </button>
       </section>
@@ -168,10 +168,10 @@ export function ActionPlan({ checkId }: Props) {
   // ── All clear ──────────────────────────────────────────────────────────────
   if (plan.steps.length === 0) {
     return (
-      <section className="glass rounded-2xl border border-white/10 p-6">
+      <section className="rounded-[4px] border border-hairline bg-white p-6 shadow-[6px_6px_0_0] shadow-ink/10">
         {header}
-        <p className="text-sm text-emerald-300/90 flex items-start gap-2">
-          <ListChecks size={15} className="flex-shrink-0 mt-0.5 text-emerald-400" />
+        <p className="flex items-start gap-2 font-body text-sm text-ink">
+          <ListChecks size={15} className="mt-0.5 flex-shrink-0 text-stamp" />
           Nothing outstanding — no blockers, flags, or pending documents. Keep everything ready.
         </p>
       </section>
@@ -182,24 +182,24 @@ export function ActionPlan({ checkId }: Props) {
   const activeSeverities = SEVERITY_ORDER.filter(s => (plan.counts[s] ?? 0) > 0)
 
   return (
-    <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
-      <div className="flex items-center justify-between gap-2 mb-4">
+    <section className="rounded-[4px] border border-hairline bg-white p-5 shadow-[6px_6px_0_0] shadow-ink/10 sm:p-6">
+      <div className="mb-4 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <ListChecks size={16} className="text-slate-400" />
-          <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
+          <ListChecks size={16} className="text-stamp" />
+          <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">
             Your action plan
           </h2>
         </div>
-        <div className="flex flex-wrap gap-1.5 justify-end">
+        <div className="flex flex-wrap justify-end gap-1.5">
           {activeSeverities.map(s => (
-            <span key={s} className={`text-[11px] px-2 py-0.5 rounded-full border ${SEVERITY_META[s].chip}`}>
+            <span key={s} className={`rounded-[3px] border px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.08em] ${SEVERITY_META[s].chip}`}>
               {plan.counts[s]} {SEVERITY_META[s].label.toLowerCase()}
             </span>
           ))}
         </div>
       </div>
 
-      <p className="text-xs text-slate-500 mb-4">
+      <p className="mb-4 font-mono text-[10.5px] uppercase tracking-[0.1em] text-support">
         {plan.steps.length} step{plan.steps.length > 1 ? 's' : ''}, ordered by what matters most.
       </p>
 
@@ -210,7 +210,7 @@ export function ActionPlan({ checkId }: Props) {
       </ul>
 
       {meta && (
-        <div className="mt-4 pt-3 border-t border-white/5">
+        <div className="mt-4 border-t border-hairline pt-3">
           <SourceCitation
             label={`Guidance: ${meta.authority}`}
             url={meta.official_url}

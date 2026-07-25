@@ -12,8 +12,8 @@ import {
   ClipboardCheck,
 } from 'lucide-react'
 import type { HistoryItem, ResultIssue } from '@/types/visa'
-import { tierFromScore } from '@/types/visa'
 import { countryName, countryFlag, formatDate } from '@/lib/dashboardDisplay'
+import { toneFromScore, toneTextClass } from '@/components/ui/StatusPill'
 
 interface Props {
   latestCheck: HistoryItem | null
@@ -25,19 +25,13 @@ interface Props {
 // ── Score colour (band-derived, mirrors HistoryResultCard) ───────────────────
 
 function scoreColor(score: number): string {
-  const t = tierFromScore(score)
-  if (t === 'ready') return 'text-emerald-400'
-  if (t === 'mostly_ready') return 'text-brand-400'
-  if (t === 'needs_work') return 'text-amber-400'
-  return 'text-red-400'
+  return toneTextClass(toneFromScore(score))
 }
 
 function scoreRingBg(score: number): string {
-  const t = tierFromScore(score)
-  if (t === 'ready') return 'border-emerald-500/30 bg-emerald-500/5'
-  if (t === 'mostly_ready') return 'border-brand-500/30 bg-brand-500/5'
-  if (t === 'needs_work') return 'border-amber-500/30 bg-amber-500/5'
-  return 'border-red-500/30 bg-red-500/5'
+  return toneFromScore(score) === 'positive'
+    ? 'border-stamp/40 bg-stamp/[0.06]'
+    : 'border-seal-text/40 bg-seal/[0.06]'
 }
 
 // Collect the top issues across blocker → high-risk → soft, capped at 3.
@@ -55,9 +49,9 @@ const KIND_ICON = {
   soft: Info,
 }
 const KIND_COLOR = {
-  blocker: 'text-red-400',
-  flag: 'text-orange-400',
-  soft: 'text-yellow-400',
+  blocker: 'text-seal-text',
+  flag: 'text-seal-text',
+  soft: 'text-support',
 }
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -66,25 +60,25 @@ export function ReadinessStatus({ latestCheck, onBuildFile, building }: Props) {
   // ── Empty state ────────────────────────────────────────────────────────────
   if (!latestCheck) {
     return (
-      <section className="glass rounded-2xl border border-white/10 p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Gauge size={16} className="text-slate-400" />
-          <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
+      <section className="rounded-[4px] border border-hairline bg-white p-6 shadow-[6px_6px_0_0] shadow-ink/10">
+        <div className="mb-4 flex items-center gap-2">
+          <Gauge size={16} className="text-stamp" />
+          <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">
             Readiness status
           </h2>
         </div>
-        <div className="text-center py-6">
-          <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-3">
-            <ClipboardCheck size={22} className="text-slate-500" />
+        <div className="py-6 text-center">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+            <ClipboardCheck size={22} className="text-stamp" />
           </div>
-          <p className="text-white font-medium text-sm mb-1">
+          <p className="mb-1 font-serif text-[17px] leading-tight text-ink">
             You haven&apos;t checked your visa readiness yet
           </p>
-          <p className="text-slate-500 text-xs mb-5 max-w-xs mx-auto">
+          <p className="mx-auto mb-5 max-w-xs font-body text-xs text-support">
             Run the Student Visa Readiness Checker to get a score, see your blockers, and
             unlock your personalised visa file.
           </p>
-          <Link href="/tools/student-visa/countries" className="btn-primary text-sm justify-center">
+          <Link href="/tools/student-visa/countries" className="btn-primary text-sm">
             Start readiness check
             <ArrowRight size={14} />
           </Link>
@@ -101,31 +95,31 @@ export function ReadinessStatus({ latestCheck, onBuildFile, building }: Props) {
     (latestCheck.soft_warnings?.length ?? 0)
 
   return (
-    <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
-      <div className="flex items-center justify-between gap-2 mb-4">
+    <section className="rounded-[4px] border border-hairline bg-white p-5 shadow-[6px_6px_0_0] shadow-ink/10 sm:p-6">
+      <div className="mb-4 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Gauge size={16} className="text-slate-400" />
-          <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
+          <Gauge size={16} className="text-stamp" />
+          <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">
             Latest readiness status
           </h2>
         </div>
-        <span className="text-xs text-slate-500">{formatDate(latestCheck.created_at)}</span>
+        <span className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-support">{formatDate(latestCheck.created_at)}</span>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-5">
+      <div className="flex flex-col gap-5 sm:flex-row">
         {/* Score block */}
-        <div className="flex sm:flex-col items-center gap-4 sm:gap-2 sm:w-32 flex-shrink-0">
+        <div className="flex flex-shrink-0 items-center gap-4 sm:w-32 sm:flex-col sm:gap-2">
           <div
-            className={`w-24 h-24 rounded-2xl border-2 flex flex-col items-center justify-center ${scoreRingBg(latestCheck.score)}`}
+            className={`flex h-24 w-24 flex-col items-center justify-center rounded-[4px] border-2 ${scoreRingBg(latestCheck.score)}`}
           >
-            <span className={`text-3xl font-extrabold leading-none ${scoreColor(latestCheck.score)}`}>
+            <span className={`font-mono text-3xl font-bold leading-none tabular-nums ${scoreColor(latestCheck.score)}`}>
               {latestCheck.score}
             </span>
-            <span className="text-[10px] text-slate-500 font-medium mt-0.5">/ 100</span>
+            <span className="mt-0.5 font-mono text-[10px] font-medium text-support">/ 100</span>
           </div>
           <div className="text-center">
-            <p className="text-sm font-bold text-white">{latestCheck.result}</p>
-            <p className="text-xs text-slate-500 flex items-center gap-1 justify-center mt-0.5">
+            <p className="font-body text-sm font-bold text-ink">{latestCheck.result}</p>
+            <p className="mt-0.5 flex items-center justify-center gap-1 font-body text-xs text-support">
               <span>{countryFlag(latestCheck.country)}</span>
               {countryName(latestCheck.country)}
             </p>
@@ -133,27 +127,27 @@ export function ReadinessStatus({ latestCheck, onBuildFile, building }: Props) {
         </div>
 
         {/* Issues + actions */}
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0 flex-1">
           {issues.length > 0 ? (
             <>
-              <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
-                Top issues to resolve {issueCount > 3 && <span className="text-slate-600">(+{issueCount - 3} more)</span>}
+              <p className="mb-2 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
+                Top issues to resolve {issueCount > 3 && <span className="text-support">(+{issueCount - 3} more)</span>}
               </p>
-              <ul className="space-y-2 mb-4">
+              <ul className="mb-4 space-y-2">
                 {issues.map(({ issue, kind }, i) => {
                   const Icon = KIND_ICON[kind]
                   return (
-                    <li key={issue.question_id || i} className="flex items-start gap-2 text-sm">
-                      <Icon size={14} className={`${KIND_COLOR[kind]} flex-shrink-0 mt-0.5`} />
-                      <span className="text-slate-300 leading-snug">{issue.message}</span>
+                    <li key={issue.question_id || i} className="flex items-start gap-2 font-body text-sm">
+                      <Icon size={14} className={`${KIND_COLOR[kind]} mt-0.5 flex-shrink-0`} />
+                      <span className="leading-snug text-ink">{issue.message}</span>
                     </li>
                   )
                 })}
               </ul>
             </>
           ) : (
-            <p className="text-sm text-emerald-300/90 mb-4 flex items-start gap-2">
-              <ClipboardCheck size={15} className="flex-shrink-0 mt-0.5 text-emerald-400" />
+            <p className="mb-4 flex items-start gap-2 font-body text-sm text-ink">
+              <ClipboardCheck size={15} className="mt-0.5 flex-shrink-0 text-stamp" />
               No blockers or high-risk flags were raised — keep your documents ready.
             </p>
           )}
@@ -164,14 +158,14 @@ export function ReadinessStatus({ latestCheck, onBuildFile, building }: Props) {
               type="button"
               onClick={() => onBuildFile(latestCheck.id)}
               disabled={building}
-              className="btn-primary text-xs py-2 px-3.5"
+              className="btn-primary px-3.5 py-2 text-xs"
             >
               <FolderPlus size={13} />
               Build visa file from this result
             </button>
             <Link
               href={`/tools/student-visa/countries/${latestCheck.country}`}
-              className="btn-secondary text-xs py-2 px-3.5"
+              className="btn-secondary px-3.5 py-2 text-xs"
             >
               <RefreshCw size={13} />
               Retake check

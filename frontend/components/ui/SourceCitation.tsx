@@ -27,7 +27,7 @@ function formatReviewed(iso?: string): string | null {
 export function SourceCitation({ label, url, lastReviewed, className = '' }: Props) {
   const text = label ?? 'Official guidance'
   const reviewed = formatReviewed(lastReviewed)
-  const base = 'inline-flex items-center gap-1 text-[10px] text-slate-500'
+  const base = 'inline-flex items-center gap-1 font-mono text-[10px] text-support'
 
   return (
     <span className={`${base} ${className}`}>
@@ -36,14 +36,14 @@ export function SourceCitation({ label, url, lastReviewed, className = '' }: Pro
           href={url}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-brand-400 hover:text-brand-300"
+          className="inline-flex items-center gap-1 text-stamp hover:text-stamp-deep"
         >
           {text} <ExternalLink size={10} />
         </a>
       ) : (
         <span>{text}</span>
       )}
-      {reviewed && <span className="text-slate-600">· reviewed {reviewed}</span>}
+      {reviewed && <span className="text-support">· reviewed {reviewed}</span>}
     </span>
   )
 }

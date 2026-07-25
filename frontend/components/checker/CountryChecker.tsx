@@ -10,6 +10,7 @@ import {
   getVisibleQuestions,
   pruneHiddenAnswers,
 } from '@/lib/visibility'
+import { DocCard } from '@/components/ui/DocCard'
 import { QuestionCard } from './QuestionCard'
 import { ResultCard } from './ResultCard'
 import type { Question, CheckResult, AnswerValue } from '@/types/visa'
@@ -201,34 +202,34 @@ export function CountryChecker({ country }: Props) {
 
   if (phase === 'loading') {
     return (
-      <div className="flex flex-col items-center justify-center py-24 gap-4">
-        <Loader2 size={32} className="text-brand-400 animate-spin" />
-        <p className="text-slate-500 text-sm">Loading {country.toUpperCase()} questions…</p>
+      <div className="flex flex-col items-center justify-center gap-4 py-24">
+        <Loader2 size={32} className="animate-spin text-stamp" />
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-support">Loading {country.toUpperCase()} questions…</p>
       </div>
     )
   }
 
   if (phase === 'submitting') {
     return (
-      <div className="flex flex-col items-center justify-center py-24 gap-4">
-        <Loader2 size={32} className="text-brand-400 animate-spin" />
-        <p className="text-slate-500 text-sm">Calculating your readiness score…</p>
+      <div className="flex flex-col items-center justify-center gap-4 py-24">
+        <Loader2 size={32} className="animate-spin text-stamp" />
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-support">Calculating your readiness score…</p>
       </div>
     )
   }
 
   if (phase === 'error') {
     return (
-      <div className="glass rounded-2xl p-8 text-center border border-red-500/20">
-        <AlertCircle size={32} className="text-red-400 mx-auto mb-3" />
-        <p className="text-red-300 font-medium mb-4">{error.message}</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+      <div className="rounded-[4px] border border-hairline bg-white p-8 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+        <AlertCircle size={32} className="mx-auto mb-3 text-seal-text" />
+        <p className="mb-4 font-body font-medium text-ink">{error.message}</p>
+        <div className="flex flex-col justify-center gap-3 sm:flex-row">
           {!error.unsupported && (
-            <button onClick={loadQuestions} className="btn-secondary text-sm justify-center">
+            <button onClick={loadQuestions} className="btn-secondary text-sm">
               <RefreshCw size={14} /> Try again
             </button>
           )}
-          <Link href="/tools/student-visa/countries" className="btn-primary text-sm justify-center">
+          <Link href="/tools/student-visa/countries" className="btn-primary text-sm">
             Choose another country
           </Link>
         </div>
@@ -242,10 +243,10 @@ export function CountryChecker({ country }: Props) {
 
   if (visibleQuestions.length === 0) {
     return (
-      <div className="glass rounded-2xl p-8 text-center border border-white/10">
-        <Globe size={28} className="text-slate-500 mx-auto mb-3" />
-        <p className="text-slate-300 font-medium mb-1">No questions configured for this country yet</p>
-        <Link href="/tools/student-visa/countries" className="btn-secondary text-sm justify-center mt-4 inline-flex">
+      <div className="rounded-[4px] border border-hairline bg-white p-8 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+        <Globe size={28} className="mx-auto mb-3 text-support" />
+        <p className="mb-1 font-body font-medium text-ink">No questions configured for this country yet</p>
+        <Link href="/tools/student-visa/countries" className="mt-4 inline-flex btn-secondary text-sm">
           Choose another country
         </Link>
       </div>
@@ -256,7 +257,7 @@ export function CountryChecker({ country }: Props) {
 
   return (
     <div className="space-y-5">
-      <div className="glass rounded-2xl p-7 border border-white/10">
+      <DocCard perforated>
         <QuestionCard
           question={currentQ!}
           answer={currentAnswer}
@@ -269,28 +270,28 @@ export function CountryChecker({ country }: Props) {
         {fieldError && (
           <div
             role="alert"
-            className="mt-4 flex items-start gap-2 rounded-xl bg-red-500/10 border border-red-500/30 p-3"
+            className="mt-4 flex items-start gap-2 rounded-[3px] border border-seal-text/40 bg-seal/[0.06] p-3"
           >
-            <AlertCircle size={14} className="text-red-400 flex-shrink-0 mt-0.5" aria-hidden="true" />
-            <p className="text-xs text-red-300">{fieldError}</p>
+            <AlertCircle size={14} className="mt-0.5 flex-shrink-0 text-seal-text" aria-hidden="true" />
+            <p className="font-body text-[13px] text-seal-text">{fieldError}</p>
           </div>
         )}
-      </div>
+      </DocCard>
 
       <div className="flex items-center justify-between gap-3">
         {visibleIdx === 0 ? (
-          <Link href="/tools/student-visa/countries" className="btn-secondary text-sm py-2.5 px-5">
+          <Link href="/tools/student-visa/countries" className="btn-secondary px-5 py-2.5 text-sm">
             <ArrowLeft size={14} /> Countries
           </Link>
         ) : (
-          <button onClick={goBack} className="btn-secondary text-sm py-2.5 px-5">
+          <button onClick={goBack} className="btn-secondary px-5 py-2.5 text-sm">
             <ArrowLeft size={14} /> Back
           </button>
         )}
 
         <button
           onClick={goNext}
-          className="btn-primary text-sm py-2.5 px-5 ml-auto"
+          className="btn-primary ml-auto px-5 py-2.5 text-sm"
         >
           {isLast ? 'See results' : 'Next'}
           <ArrowRight size={14} />

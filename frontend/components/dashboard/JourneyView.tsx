@@ -5,10 +5,10 @@ import { CheckCircle2, Circle, AlertTriangle, ArrowRight, Trophy, Dot } from 'lu
 import type { Journey, JourneyStep, JourneyStepStatus } from '@/types/visa'
 
 const STATUS_ICON: Record<JourneyStepStatus, { Icon: typeof Circle; cls: string }> = {
-  done:    { Icon: CheckCircle2,  cls: 'text-emerald-400' },
-  current: { Icon: Dot,           cls: 'text-brand-400' },
-  blocked: { Icon: AlertTriangle, cls: 'text-red-400' },
-  todo:    { Icon: Circle,        cls: 'text-slate-600' },
+  done:    { Icon: CheckCircle2,  cls: 'text-stamp' },
+  current: { Icon: Dot,           cls: 'text-stamp' },
+  blocked: { Icon: AlertTriangle, cls: 'text-seal-text' },
+  todo:    { Icon: Circle,        cls: 'text-support' },
 }
 
 /** Parse "/dashboard?section=action_plan" → "action_plan", else null. */
@@ -29,17 +29,17 @@ function StepRow({ step, onNavigateSection, interactive }: {
   const clickable = interactive && active && (!!step.href || !!section)
 
   const body = (
-    <div className={`flex items-start gap-3 rounded-xl border p-3.5 transition-colors ${
-      active ? 'border-brand-500/30 bg-brand-500/[0.04]' : 'border-white/8 bg-white/[0.02]'
-    } ${clickable ? 'hover:border-brand-500/50 cursor-pointer' : ''}`}>
-      <Icon size={18} className={`flex-shrink-0 mt-0.5 ${cls}`} />
+    <div className={`flex items-start gap-3 rounded-[3px] border p-3.5 transition-colors ${
+      active ? 'border-l-2 border-l-stamp border-y-hairline border-r-hairline bg-white' : 'border-hairline bg-paper-deep'
+    } ${clickable ? 'cursor-pointer hover:border-support' : ''}`}>
+      <Icon size={18} className={`mt-0.5 flex-shrink-0 ${cls}`} />
       <div className="min-w-0 flex-1">
-        <p className={`text-sm font-semibold ${step.status === 'todo' ? 'text-slate-400' : 'text-white'}`}>
+        <p className={`font-body text-sm font-semibold ${step.status === 'todo' ? 'text-support' : 'text-ink'}`}>
           {step.label}
         </p>
-        <p className="text-xs text-slate-400 mt-0.5 leading-relaxed">{step.detail}</p>
+        <p className="mt-0.5 font-body text-xs leading-relaxed text-support">{step.detail}</p>
       </div>
-      {clickable && <ArrowRight size={15} className="text-brand-400 flex-shrink-0 mt-1" />}
+      {clickable && <ArrowRight size={15} className="mt-1 flex-shrink-0 text-stamp" />}
     </div>
   )
 
@@ -63,26 +63,26 @@ export function JourneyView({ journey, onNavigateSection, interactive = true }: 
 }) {
   return (
     <div>
-      <div className="flex items-center justify-between gap-4 mb-1">
-        <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-2">
-          {journey.complete ? <Trophy size={16} className="text-emerald-400" /> : null}
+      <div className="mb-1 flex items-center justify-between gap-4">
+        <h2 className="flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">
+          {journey.complete ? <Trophy size={16} className="text-stamp" /> : null}
           Ready to apply
         </h2>
-        <span className={`text-2xl font-extrabold ${journey.complete ? 'text-emerald-400' : 'text-brand-400'}`}>
+        <span className="font-mono text-2xl font-bold tabular-nums text-stamp">
           {journey.overall_pct}%
         </span>
       </div>
 
-      <div className="h-2 w-full rounded-full bg-white/8 overflow-hidden mt-2 mb-4">
+      <div className="mb-4 mt-2 h-2 w-full overflow-hidden rounded-[2px] bg-paper-deep">
         <div
-          className={`h-full rounded-full transition-all duration-500 ${journey.complete ? 'bg-emerald-400' : 'bg-gradient-to-r from-brand-500 to-brand-400'}`}
+          className="h-full bg-stamp transition-all duration-500"
           style={{ width: `${journey.overall_pct}%` }}
         />
       </div>
 
       {!journey.complete && (
-        <p className="text-xs text-slate-400 mb-4">
-          Next: <span className="text-white font-medium">{journey.next_action_label}</span>
+        <p className="mb-4 font-body text-xs text-support">
+          Next: <span className="font-medium text-ink">{journey.next_action_label}</span>
         </p>
       )}
 

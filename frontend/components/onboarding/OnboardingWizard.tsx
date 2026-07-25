@@ -166,18 +166,18 @@ function OptionCard({
       type="button"
       onClick={onClick}
       className={[
-        'relative flex items-center gap-2 rounded-xl border px-3.5 py-3 text-sm text-left transition-all duration-150 w-full',
+        'relative flex w-full items-center gap-2 rounded-[3px] border px-3.5 py-3 text-left font-body text-sm transition-colors duration-150',
         selected
-          ? 'border-brand-500 bg-brand-900/40 text-white shadow-sm shadow-brand-900/30'
-          : 'border-white/10 bg-white/5 text-slate-300 hover:border-white/20 hover:bg-white/8',
+          ? 'border-stamp bg-stamp/[0.06] text-ink'
+          : 'border-hairline bg-white text-support hover:border-support hover:text-ink',
       ].join(' ')}
     >
       {selected && (
-        <span className="flex-shrink-0 w-4 h-4 rounded-full bg-brand-500 flex items-center justify-center">
+        <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-stamp">
           <Check size={10} className="text-white" strokeWidth={3} />
         </span>
       )}
-      {!selected && <span className="flex-shrink-0 w-4 h-4 rounded-full border border-white/20" />}
+      {!selected && <span className="h-4 w-4 flex-shrink-0 rounded-full border border-support" />}
       <span>{label}</span>
     </button>
   )
@@ -197,10 +197,10 @@ function Chip({
       type="button"
       onClick={onClick}
       className={[
-        'flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs transition-all duration-150',
+        'flex items-center gap-1.5 rounded-[3px] border px-3 py-1.5 font-body text-xs transition-colors duration-150',
         selected
-          ? 'border-brand-500 bg-brand-900/40 text-white'
-          : 'border-white/10 bg-white/5 text-slate-400 hover:border-white/20',
+          ? 'border-stamp bg-stamp/[0.06] text-ink'
+          : 'border-hairline bg-white text-support hover:border-support hover:text-ink',
       ].join(' ')}
     >
       {selected && <Check size={10} strokeWidth={3} />}
@@ -211,7 +211,7 @@ function Chip({
 
 function FieldLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-sm font-medium text-slate-200 mb-2.5">{children}</p>
+    <p className="mb-2.5 font-body text-sm font-medium text-ink">{children}</p>
   )
 }
 
@@ -231,16 +231,16 @@ function StyledSelect({
       <select
         value={value}
         onChange={e => onChange(e.target.value)}
-        className="w-full appearance-none bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-brand-500 transition-colors cursor-pointer"
+        className="w-full cursor-pointer appearance-none rounded-[3px] border border-hairline bg-white px-4 py-3 font-body text-sm text-ink transition-colors focus:border-stamp focus:outline-none"
       >
         {placeholder && <option value="">{placeholder}</option>}
         {options.map(o => (
-          <option key={o.value} value={o.value} className="bg-surface-900">
+          <option key={o.value} value={o.value} className="bg-white text-ink">
             {o.label}
           </option>
         ))}
       </select>
-      <ChevronRight size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 rotate-90 pointer-events-none" />
+      <ChevronRight size={14} className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 rotate-90 text-support" />
     </div>
   )
 }
@@ -372,14 +372,14 @@ export function OnboardingWizard({ initialData, onComplete }: Props) {
       <div className="space-y-5">
         {/* Preferred name */}
         <div>
-          <FieldLabel>What should we call you? <span className="text-red-400">*</span></FieldLabel>
+          <FieldLabel>What should we call you? <span className="text-seal-text">*</span></FieldLabel>
           <input
             type="text"
             value={form.preferred_name}
             onChange={e => setField('preferred_name', e.target.value)}
             placeholder="e.g. Ahmed"
             maxLength={80}
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-brand-500 transition-colors"
+            className="w-full rounded-[3px] border border-hairline bg-white px-4 py-3 font-body text-sm text-ink placeholder-support transition-colors focus:border-stamp focus:outline-none"
           />
         </div>
 
@@ -443,7 +443,7 @@ export function OnboardingWizard({ initialData, onComplete }: Props) {
 
         {/* Primary country */}
         <div>
-          <FieldLabel>Your main target country <span className="text-red-400">*</span></FieldLabel>
+          <FieldLabel>Your main target country <span className="text-seal-text">*</span></FieldLabel>
           <div className="grid grid-cols-2 gap-2">
             {STUDY_COUNTRIES.map(o => (
               <OptionCard
@@ -509,7 +509,7 @@ export function OnboardingWizard({ initialData, onComplete }: Props) {
       <div className="space-y-5">
         {/* Funding source */}
         <div>
-          <FieldLabel>How are you funding your studies? <span className="text-red-400">*</span></FieldLabel>
+          <FieldLabel>How are you funding your studies? <span className="text-seal-text">*</span></FieldLabel>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {FUNDING_SOURCES.map(o => (
               <OptionCard
@@ -647,13 +647,13 @@ export function OnboardingWizard({ initialData, onComplete }: Props) {
       {/* Step header */}
       <div className="mb-6">
         {/* Progress dots */}
-        <div className="flex items-center gap-1.5 mb-4">
+        <div className="mb-4 flex items-center gap-1.5">
           {Array.from({ length: TOTAL_STEPS }, (_, i) => (
             <div
               key={i}
               className={[
-                'h-1 rounded-full transition-all duration-300',
-                i + 1 <= step ? 'bg-brand-500 flex-1' : 'bg-white/10 flex-1',
+                'h-1 flex-1 rounded-[1px] transition-all duration-300',
+                i + 1 <= step ? 'bg-stamp' : 'bg-paper-deep',
               ].join(' ')}
             />
           ))}
@@ -661,17 +661,17 @@ export function OnboardingWizard({ initialData, onComplete }: Props) {
 
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-xs font-medium text-brand-400 uppercase tracking-widest mb-1">
+            <p className="mb-1 font-mono text-[10.5px] font-bold uppercase tracking-[0.16em] text-stamp">
               Step {step} of {TOTAL_STEPS}
             </p>
-            <h2 className="text-xl font-bold text-white">{STEP_TITLES[step - 1]}</h2>
+            <h2 className="font-serif text-[22px] leading-tight text-ink">{STEP_TITLES[step - 1]}</h2>
           </div>
-          <span className="text-xs text-slate-500">{step === 1 ? '~2 min total' : ''}</span>
+          <span className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-support">{step === 1 ? '~2 min total' : ''}</span>
         </div>
       </div>
 
       {/* Step content */}
-      <div className="glass rounded-2xl border border-white/10 p-6 mb-4">
+      <div className="mb-4 rounded-[4px] border border-hairline bg-white p-6 shadow-[6px_6px_0_0] shadow-ink/10">
         {step === 1 && renderStep1()}
         {step === 2 && renderStep2()}
         {step === 3 && renderStep3()}
@@ -679,18 +679,18 @@ export function OnboardingWizard({ initialData, onComplete }: Props) {
 
         {/* Inline field error */}
         {fieldError && (
-          <div className="mt-4 flex items-start gap-2 rounded-xl bg-red-500/10 border border-red-500/30 p-3">
-            <AlertCircle size={14} className="text-red-400 flex-shrink-0 mt-0.5" />
-            <p className="text-xs text-red-300">{fieldError}</p>
+          <div className="mt-4 flex items-start gap-2 rounded-[3px] border border-seal-text/40 bg-seal/[0.06] p-3">
+            <AlertCircle size={14} className="mt-0.5 flex-shrink-0 text-seal-text" />
+            <p className="font-body text-xs text-seal-text">{fieldError}</p>
           </div>
         )}
       </div>
 
       {/* Submit error */}
       {submitError && (
-        <div className="mb-4 flex items-start gap-2 rounded-xl bg-red-500/10 border border-red-500/30 p-3">
-          <AlertCircle size={14} className="text-red-400 flex-shrink-0 mt-0.5" />
-          <p className="text-xs text-red-300">{submitError}</p>
+        <div className="mb-4 flex items-start gap-2 rounded-[3px] border border-seal-text/40 bg-seal/[0.06] p-3">
+          <AlertCircle size={14} className="mt-0.5 flex-shrink-0 text-seal-text" />
+          <p className="font-body text-xs text-seal-text">{submitError}</p>
         </div>
       )}
 
@@ -701,7 +701,7 @@ export function OnboardingWizard({ initialData, onComplete }: Props) {
             type="button"
             onClick={goBack}
             disabled={submitting}
-            className="btn-secondary text-sm py-2.5 px-5"
+            className="btn-secondary px-5 py-2.5 text-sm"
           >
             <ChevronLeft size={14} />
             Back
@@ -714,7 +714,7 @@ export function OnboardingWizard({ initialData, onComplete }: Props) {
           type="button"
           onClick={goNext}
           disabled={submitting}
-          className="btn-primary text-sm py-2.5 px-6 ml-auto"
+          className="btn-primary ml-auto px-6 py-2.5 text-sm"
         >
           {submitting ? (
             <>

@@ -1,16 +1,18 @@
 /**
- * ParchiVisa wordmark — orange "PV" ring + wordmark, tuned for the site's dark
- * background (white wordmark). Font matches the project's Inter body font.
+ * ParchiVisa wordmark — "The Official Document" paper theme.
+ * Stamp-green "PV" ring + ink serif wordmark, tuned for the paper ground.
+ * (The nav/footer use the StampMark + serif lockup directly; this SVG mark is
+ * kept paper-safe for anywhere a single self-contained wordmark is needed.)
  */
 export function BrandLogo({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 250 60" role="img" aria-label="ParchiVisa" className={className}>
-      <circle cx="30" cy="30" r="22" fill="none" stroke="#FF5A1F" strokeWidth="4" />
+      <circle cx="30" cy="30" r="22" fill="none" stroke="#1F6B4A" strokeWidth="4" />
       <text
         x="30"
         y="30"
-        fill="#FF5A1F"
-        fontFamily="Inter, sans-serif"
+        fill="#1F6B4A"
+        fontFamily="var(--font-pv-serif, Georgia, serif)"
         fontSize="20"
         fontWeight="700"
         textAnchor="middle"
@@ -22,10 +24,10 @@ export function BrandLogo({ className }: { className?: string }) {
       <text
         x="64"
         y="30"
-        fill="#FFFFFF"
-        fontFamily="Inter, sans-serif"
+        fill="#14213D"
+        fontFamily="var(--font-pv-serif, Georgia, serif)"
         fontSize="26"
-        fontWeight="700"
+        fontWeight="500"
         dominantBaseline="central"
       >
         ParchiVisa

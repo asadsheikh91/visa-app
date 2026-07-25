@@ -43,12 +43,12 @@ function PlanFact({
 }) {
   return (
     <div className="flex items-start gap-2.5">
-      <div className="w-7 h-7 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-        <Icon size={14} className="text-slate-400" />
+      <div className="mt-0.5 flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+        <Icon size={14} className="text-stamp" />
       </div>
       <div className="min-w-0">
-        <p className="text-[11px] uppercase tracking-wider text-slate-500 font-medium">{label}</p>
-        <p className="text-sm text-white font-medium truncate">{value}</p>
+        <p className="font-mono text-[10px] font-medium uppercase tracking-[0.12em] text-support">{label}</p>
+        <p className="truncate font-body text-sm font-medium text-ink">{value}</p>
       </div>
     </div>
   )
@@ -102,25 +102,25 @@ export function ActiveVisaPlan({ profile, hasCheck, onContinue }: Props) {
   })()
 
   return (
-    <section className="glass rounded-2xl border border-white/10 overflow-hidden">
+    <section className="overflow-hidden rounded-[4px] border border-hairline bg-white shadow-[6px_6px_0_0] shadow-ink/10">
       {/* Header band */}
-      <div className="bg-gradient-to-br from-brand-900/40 to-accent-900/20 px-5 sm:px-6 py-5 border-b border-white/10">
+      <div className="border-b border-hairline bg-paper-deep px-5 py-5 sm:px-6">
         <div className="flex items-start justify-between gap-4">
-          <div className="flex items-center gap-3 min-w-0">
-            <span className="text-3xl leading-none flex-shrink-0">
+          <div className="flex min-w-0 items-center gap-3">
+            <span className="flex-shrink-0 text-3xl leading-none">
               {countryFlag(profile.primary_country)}
             </span>
             <div className="min-w-0">
-              <p className="text-[11px] uppercase tracking-widest text-brand-300 font-semibold mb-0.5">
+              <p className="mb-0.5 font-mono text-[10.5px] font-bold uppercase tracking-[0.16em] text-stamp">
                 Active visa plan
               </p>
-              <h2 className="text-lg sm:text-xl font-bold text-white truncate">
+              <h2 className="truncate font-serif text-[19px] leading-tight text-ink sm:text-[22px]">
                 {profile.primary_country
                   ? `${countryName(profile.primary_country)} — Student Visa`
                   : 'Your student visa journey'}
               </h2>
               {others.length > 0 && (
-                <p className="text-xs text-slate-400 mt-0.5 truncate">
+                <p className="mt-0.5 truncate font-body text-xs text-support">
                   Also considering: {others.map(countryName).join(', ')}
                 </p>
               )}
@@ -128,7 +128,7 @@ export function ActiveVisaPlan({ profile, hasCheck, onContinue }: Props) {
           </div>
           <Link
             href="/onboarding"
-            className="flex-shrink-0 inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-white px-2.5 py-1.5 rounded-lg hover:bg-white/5 transition-all"
+            className="inline-flex flex-shrink-0 items-center gap-1.5 rounded-[3px] px-2.5 py-1.5 font-body text-xs text-support transition-colors hover:bg-white hover:text-ink"
           >
             <Pencil size={12} />
             <span className="hidden sm:inline">Edit</span>
@@ -187,19 +187,19 @@ export function ActiveVisaPlan({ profile, hasCheck, onContinue }: Props) {
         {(profile.previous_refusal === 'yes' ||
           profile.study_gap === 'yes' ||
           profile.dependants === 'yes') && (
-          <div className="flex flex-wrap gap-2 mt-5 pt-4 border-t border-white/10">
+          <div className="mt-5 flex flex-wrap gap-2 border-t border-hairline pt-4">
             {profile.previous_refusal === 'yes' && (
-              <span className="text-xs px-2.5 py-1 rounded-full border border-orange-500/25 bg-orange-500/10 text-orange-300">
+              <span className="rounded-[3px] border border-seal-text/50 px-2.5 py-1 font-mono text-[10.5px] font-bold uppercase tracking-[0.1em] text-seal-text">
                 Previous refusal
               </span>
             )}
             {profile.study_gap === 'yes' && (
-              <span className="text-xs px-2.5 py-1 rounded-full border border-amber-500/25 bg-amber-500/10 text-amber-300">
+              <span className="rounded-[3px] border border-seal-text/40 px-2.5 py-1 font-mono text-[10.5px] font-bold uppercase tracking-[0.1em] text-seal-text">
                 Study gap
               </span>
             )}
             {profile.dependants === 'yes' && (
-              <span className="text-xs px-2.5 py-1 rounded-full border border-white/15 bg-white/5 text-slate-300">
+              <span className="rounded-[3px] border border-hairline px-2.5 py-1 font-mono text-[10.5px] font-bold uppercase tracking-[0.1em] text-support">
                 Bringing dependants
               </span>
             )}
@@ -209,7 +209,7 @@ export function ActiveVisaPlan({ profile, hasCheck, onContinue }: Props) {
         {/* State-driven primary action */}
         <div className="mt-5">
           {cta.href ? (
-            <Link href={cta.href} className="btn-primary text-sm w-full sm:w-auto justify-center">
+            <Link href={cta.href} className="btn-primary w-full text-sm sm:w-auto">
               <cta.icon size={14} />
               {cta.label}
             </Link>
@@ -217,7 +217,7 @@ export function ActiveVisaPlan({ profile, hasCheck, onContinue }: Props) {
             <button
               type="button"
               onClick={cta.onClick}
-              className="btn-primary text-sm w-full sm:w-auto justify-center"
+              className="btn-primary w-full text-sm sm:w-auto"
             >
               <cta.icon size={14} />
               {cta.label}

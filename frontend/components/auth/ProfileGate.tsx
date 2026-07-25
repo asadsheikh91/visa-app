@@ -56,21 +56,21 @@ export function ProfileGate({ children }: Props) {
 
   if (state.status === 'loading') {
     return (
-      <div className="flex flex-col items-center justify-center py-24 gap-4">
-        <Loader2 size={28} className="text-brand-400 animate-spin" />
-        <p className="text-slate-500 text-sm">Loading your profile…</p>
+      <div className="flex flex-col items-center justify-center gap-4 py-24">
+        <Loader2 size={28} className="animate-spin text-stamp" />
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-support">Loading your profile…</p>
       </div>
     )
   }
 
   if (state.status === 'error') {
     return (
-      <div className="glass rounded-2xl p-8 text-center border border-red-500/20 max-w-md mx-auto">
-        <AlertCircle size={28} className="text-red-400 mx-auto mb-3" />
-        <p className="text-red-300 text-sm mb-4">{state.message}</p>
+      <div className="mx-auto max-w-md rounded-[4px] border border-seal-text/40 bg-white p-8 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+        <AlertCircle size={28} className="mx-auto mb-3 text-seal-text" />
+        <p className="mb-4 font-body text-sm text-ink">{state.message}</p>
         <button
           onClick={checkProfile}
-          className="btn-secondary text-sm inline-flex items-center gap-2 justify-center"
+          className="btn-secondary inline-flex items-center justify-center gap-2 text-sm"
         >
           <RefreshCw size={14} />
           Try again

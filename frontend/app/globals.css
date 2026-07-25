@@ -85,28 +85,30 @@
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    @apply font-sans;
+    @apply font-body;
   }
 
+  /* "The Official Document" is now the app-wide ground: warm manila paper,
+     navy ink text. The landing route re-applies its own pv tokens on top
+     (harmless) and still swaps in its own chrome via the :has() rule below. */
   body {
-    @apply font-sans bg-background text-foreground;
+    @apply font-body;
     min-height: 100vh;
-    background-color: #0a0908;
-    background-image: radial-gradient(circle at 72% 44%, rgba(255, 90, 31, 0.14), transparent 36%);
-    background-attachment: fixed;
+    background-color: var(--pv-paper);
+    color: var(--pv-ink);
   }
 
-  ::selection { background: #ff5a1f; color: #fff; }
+  ::selection { background: var(--pv-stamp); color: #fff; }
 
   :where(a, button, [role='button'], input, [tabindex]):focus-visible {
-    outline: 2px solid var(--accent-orange);
+    outline: 2px solid var(--pv-ink);
     outline-offset: 2px;
   }
 
-  ::-webkit-scrollbar { width: 6px; }
-  ::-webkit-scrollbar-track { background: #0a0908; }
-  ::-webkit-scrollbar-thumb { background: #333; border-radius: 9999px; }
-  ::-webkit-scrollbar-thumb:hover { background: #444; }
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: var(--pv-paper-deep); }
+  ::-webkit-scrollbar-thumb { background: var(--pv-hairline); border-radius: 9999px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--pv-support); }
 
   .dark {
     --background: oklch(0.145 0 0);
@@ -139,137 +141,139 @@
 }
 
 @layer components {
+  /* ── Document card ("glass" repointed to paper) ──
+     The whole app used .glass / .glass-strong for its translucent dark cards.
+     Repointed to the landing's white document card so those components reskin
+     without per-file edits: white ground, hairline border, offset ink shadow. */
   .glass {
-    background: var(--surface-3);
-    @apply backdrop-blur-md border;
-    border-color: var(--line-1);
+    background: #ffffff;
+    @apply border rounded-[4px];
+    border-color: var(--pv-hairline);
   }
 
   .glass-strong {
-    background:
-      linear-gradient(145deg, rgba(255, 255, 255, 0.065), rgba(255, 255, 255, 0.025)),
-      rgba(14, 13, 12, 0.82);
-    @apply backdrop-blur-xl border;
-    border-color: var(--white-15);
+    background: #ffffff;
+    @apply border rounded-[4px];
+    border-color: var(--pv-hairline);
+    box-shadow: 6px 6px 0 0 color-mix(in oklab, var(--pv-ink) 10%, transparent);
   }
 
+  /* No gradients in the document system — flatten to solid ink so any leftover
+     .gradient-text renders as plain ink rather than an off-palette orange. */
   .gradient-text {
-    background-image: linear-gradient(90deg, var(--accent-orange) 0%, var(--accent-amber) 100%);
-    @apply bg-clip-text text-transparent;
+    background-image: none;
+    color: var(--pv-ink);
+    -webkit-text-fill-color: currentColor;
   }
 
-  /* ── Primary button — orange pill ── */
+  /* ── Primary button — stamp-green document button ──
+     Squared corners (3px), solid stamp green, paper text, no glow/lift. */
   .btn-primary {
-    @apply inline-flex items-center gap-2.5 px-6 py-3 rounded-full font-semibold text-white
-           transition-all duration-200 active:scale-95;
-    background: #ff5a1f;
-    box-shadow: 0 6px 22px -6px rgba(255, 90, 31, 0.55);
+    @apply inline-flex items-center justify-center gap-2 rounded-[3px] px-6 py-3
+           font-body font-semibold transition-colors duration-200;
+    background: var(--pv-stamp);
+    color: var(--pv-paper);
   }
-  .btn-primary:hover {
-    background: #ff7a3c;
-    box-shadow: 0 8px 28px -6px rgba(255, 90, 31, 0.72);
-    transform: translateY(-1px);
-  }
+  .btn-primary:hover { background: var(--pv-stamp-deep); }
 
   .btn-primary-lg {
-    @apply btn-primary px-8 py-4 text-base sm:text-lg rounded-full;
+    @apply btn-primary px-8 py-4 text-base sm:text-lg;
   }
 
-  /* ── Orange button (alias, same as primary) ── */
+  /* ── "Orange" button — alias, now the same stamp-green document button ── */
   .btn-orange {
-    @apply inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-white
-           transition-all duration-200 active:scale-95;
-    background: #ff5a1f;
-    box-shadow: 0 6px 22px -6px rgba(255, 90, 31, 0.55);
+    @apply inline-flex items-center justify-center gap-2 rounded-[3px] px-5 py-2.5
+           font-body text-sm font-semibold transition-colors duration-200;
+    background: var(--pv-stamp);
+    color: var(--pv-paper);
   }
-  .btn-orange:hover {
-    background: #ff7a3c;
-    box-shadow: 0 8px 28px -6px rgba(255, 90, 31, 0.72);
-    transform: translateY(-1px);
-  }
+  .btn-orange:hover { background: var(--pv-stamp-deep); }
 
   .btn-orange-lg {
-    @apply btn-orange px-7 py-3.5 text-base rounded-full;
+    @apply btn-orange px-7 py-3.5 text-base;
   }
 
-  /* ── Secondary button — ghost pill ── */
+  /* ── Secondary button — ink-outline ghost on paper ── */
   .btn-secondary {
-    @apply inline-flex items-center gap-2.5 px-6 py-3 rounded-full font-semibold
-           text-slate-200 border border-white/[0.14]
-           bg-transparent transition-all duration-200 active:scale-95;
+    @apply inline-flex items-center justify-center gap-2 rounded-[3px] px-6 py-3
+           font-body font-semibold bg-transparent transition-colors duration-200;
+    color: var(--pv-ink);
+    border: 1px solid var(--pv-ink);
   }
   .btn-secondary:hover {
-    border-color: rgba(255, 255, 255, 0.22);
-    background: rgba(255, 255, 255, 0.05);
+    background: color-mix(in oklab, var(--pv-ink) 6%, transparent);
   }
 
+  /* Glows/lifts belonged to the dark theme — neutralize to a quiet hairline
+     emphasis so leftover usages don't re-introduce orange. */
   .hover-glow:hover {
-    box-shadow:
-      0 0 0 1px rgba(255, 90, 31, 0.20),
-      0 18px 42px rgba(255, 90, 31, 0.18);
-    transform: translateY(-1px);
+    border-color: var(--pv-support);
   }
 
   .hover-lift {
-    @apply transition-all duration-300;
+    @apply transition-colors duration-200;
   }
   .hover-lift:hover {
-    transform: translateY(-4px);
-    border-color: rgba(255, 90, 31, 0.25);
-    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.52);
+    border-color: var(--pv-support);
   }
 
   .section { @apply py-20 px-4; }
   .container-inner { @apply max-w-6xl mx-auto; }
 
   .card {
-    @apply backdrop-blur-md border rounded-2xl p-6 transition-all duration-300
-           hover:shadow-xl hover:-translate-y-0.5;
-    background: var(--surface-3);
-    border-color: var(--line-1);
+    @apply border rounded-[4px] p-6 transition-colors duration-200;
+    background: #ffffff;
+    border-color: var(--pv-hairline);
   }
   .card:hover {
-    background: var(--surface-4);
-    border-color: var(--line-3);
+    border-color: var(--pv-support);
   }
 
+  /* Mono uppercase document pills. Default = attention (budgeted seal), green =
+     positive/status-clear, orange = alias of default. */
   .badge {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold;
-    background: rgba(255, 90, 31, 0.12);
-    color: #ff7a3c;
-    border: 1px solid rgba(255, 90, 31, 0.3);
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[3px]
+           font-mono text-[11px] font-bold uppercase tracking-[0.12em];
+    color: var(--pv-seal-text);
+    border: 1px solid color-mix(in oklab, var(--pv-seal-text) 45%, transparent);
+    background: color-mix(in oklab, var(--pv-seal) 8%, transparent);
   }
 
   .badge-green {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold
-           bg-emerald-900/40 text-emerald-300 border border-emerald-700/30;
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[3px]
+           font-mono text-[11px] font-bold uppercase tracking-[0.12em];
+    color: var(--pv-stamp);
+    border: 1px solid color-mix(in oklab, var(--pv-stamp) 45%, transparent);
+    background: color-mix(in oklab, var(--pv-stamp) 8%, transparent);
   }
 
   .badge-orange {
-    @apply inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold
-           bg-orange-900/40 text-orange-300 border border-orange-700/30;
+    @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[3px]
+           font-mono text-[11px] font-bold uppercase tracking-[0.12em];
+    color: var(--pv-seal-text);
+    border: 1px solid color-mix(in oklab, var(--pv-seal-text) 45%, transparent);
+    background: color-mix(in oklab, var(--pv-seal) 8%, transparent);
   }
 
   .input-base {
-    @apply w-full rounded-xl px-4 py-3
-           text-slate-100 placeholder-slate-500
-           focus:outline-none
-           transition-all duration-200;
-    background: var(--white-6);
-    border: 1px solid var(--white-15);
+    @apply w-full rounded-[3px] px-4 py-3 font-body
+           focus:outline-none transition-colors duration-200;
+    background: #ffffff;
+    color: var(--pv-ink);
+    border: 1px solid var(--pv-hairline);
   }
+  .input-base::placeholder { color: var(--pv-support); }
   .input-base:focus {
-    border-color: rgba(255, 90, 31, 0.5);
-    background: var(--white-8);
+    border-color: var(--pv-stamp);
   }
 
   .section-label {
-    @apply text-sm font-semibold uppercase tracking-widest;
-    color: #ff7a3c;
+    @apply font-mono text-[0.78rem] font-medium uppercase tracking-[0.09em];
+    color: var(--pv-support);
   }
 
   .divider {
-    border-top: 1px solid var(--white-8);
+    border-top: 1px solid var(--pv-hairline);
   }
 }
 

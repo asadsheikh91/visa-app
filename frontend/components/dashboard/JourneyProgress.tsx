@@ -27,15 +27,15 @@ export function JourneyProgress({ onNavigateSection }: { onNavigateSection?: (se
 
   if (loading) {
     return (
-      <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6 flex items-center gap-2 text-slate-400">
-        <Loader2 size={16} className="animate-spin" /> Building your application plan…
+      <section className="flex items-center gap-2 rounded-[4px] border border-hairline bg-white p-5 font-body text-sm text-support shadow-[6px_6px_0_0] shadow-ink/10 sm:p-6">
+        <Loader2 size={16} className="animate-spin text-stamp" /> Building your application plan…
       </section>
     )
   }
   if (!journey) return null
 
   return (
-    <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
+    <section className="rounded-[4px] border border-hairline bg-white p-5 shadow-[6px_6px_0_0] shadow-ink/10 sm:p-6">
       <JourneyView journey={journey} onNavigateSection={onNavigateSection} />
     </section>
   )

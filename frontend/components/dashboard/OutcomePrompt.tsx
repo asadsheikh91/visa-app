@@ -60,15 +60,15 @@ export function OutcomePrompt() {
   if (mode === 'done') {
     const band = stats?.bands.find(b => !b.insufficient_data && b.approval_rate != null)
     return (
-      <section className="glass rounded-2xl border border-emerald-500/20 bg-emerald-500/5 p-5 sm:p-6">
-        <p className="text-sm font-semibold text-white flex items-center gap-2">
-          <PartyPopper size={16} className="text-emerald-400" /> Thank you for sharing your result
+      <section className="rounded-[4px] border-l-2 border-l-stamp border-y border-r border-y-hairline border-r-hairline bg-white p-5 sm:p-6">
+        <p className="flex items-center gap-2 font-body text-sm font-semibold text-ink">
+          <PartyPopper size={16} className="text-stamp" /> Thank you for sharing your result
         </p>
-        <p className="text-xs text-slate-400 mt-1">
+        <p className="mt-1 font-body text-xs text-support">
           It helps us prove what works and improve our scoring for the next applicant.
         </p>
         {band && (
-          <p className="text-xs text-emerald-300 mt-3">
+          <p className="mt-3 font-body text-xs text-stamp">
             Applicants in the “{band.label}” band were approved ~{band.approval_rate}% of the time
             ({band.total_range} reported decisions).
           </p>
@@ -78,26 +78,26 @@ export function OutcomePrompt() {
   }
 
   return (
-    <section className="glass rounded-2xl border border-brand-500/20 bg-brand-500/[0.04] p-5 sm:p-6">
-      <p className="text-sm font-semibold text-white">How did your visa application go?</p>
-      <p className="text-xs text-slate-400 mt-1">
+    <section className="rounded-[4px] border-l-2 border-l-stamp border-y border-r border-y-hairline border-r-hairline bg-white p-5 sm:p-6">
+      <p className="font-body text-sm font-semibold text-ink">How did your visa application go?</p>
+      <p className="mt-1 font-body text-xs text-support">
         Your answer is private and helps every future applicant. Takes 5 seconds.
       </p>
 
-      {error && <p className="text-xs text-red-300 mt-2">{error}</p>}
+      {error && <p className="mt-2 font-body text-xs text-seal-text">{error}</p>}
 
       {mode === 'ask' && (
-        <div className="flex flex-wrap gap-2 mt-4">
+        <div className="mt-4 flex flex-wrap gap-2">
           <button type="button" disabled={submitting} onClick={() => submit('approved')}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25 transition-colors">
+            className="inline-flex items-center gap-2 rounded-[3px] border border-stamp bg-stamp px-4 py-2 font-body text-sm font-semibold text-paper transition-colors hover:bg-stamp-deep">
             <CheckCircle2 size={15} /> Approved
           </button>
           <button type="button" disabled={submitting} onClick={() => setMode('refused-reasons')}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-red-500/15 text-red-300 border border-red-500/30 hover:bg-red-500/25 transition-colors">
+            className="inline-flex items-center gap-2 rounded-[3px] border border-seal-text/50 bg-seal/[0.06] px-4 py-2 font-body text-sm font-semibold text-seal-text transition-colors hover:bg-seal/[0.12]">
             <XCircle size={15} /> Refused
           </button>
           <button type="button" disabled={submitting} onClick={() => submit('withdrawn')}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 transition-colors">
+            className="inline-flex items-center gap-2 rounded-[3px] border border-hairline bg-white px-4 py-2 font-body text-sm font-semibold text-support transition-colors hover:border-support hover:text-ink">
             <MinusCircle size={15} /> Didn’t apply / withdrew
           </button>
         </div>
@@ -105,16 +105,16 @@ export function OutcomePrompt() {
 
       {mode === 'refused-reasons' && (
         <div className="mt-4">
-          <p className="text-xs text-slate-300 mb-2">What was the main reason? (optional, select any)</p>
+          <p className="mb-2 font-body text-xs text-ink">What was the main reason? (optional, select any)</p>
           <div className="flex flex-wrap gap-2">
             {REFUSAL_REASONS.map(r => {
               const on = reasons.includes(r)
               return (
                 <button key={r} type="button"
                   onClick={() => setReasons(p => on ? p.filter(x => x !== r) : [...p, r])}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${
-                    on ? 'bg-red-500/20 text-red-200 border-red-500/40'
-                       : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}>
+                  className={`rounded-[3px] border px-3 py-1.5 font-body text-xs font-medium transition-colors ${
+                    on ? 'border-seal-text/50 bg-seal/[0.1] text-seal-text'
+                       : 'border-hairline bg-white text-support hover:border-support hover:text-ink'}`}>
                   {r}
                 </button>
               )

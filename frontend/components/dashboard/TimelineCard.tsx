@@ -29,13 +29,13 @@ export function TimelineCard() {
   }, [api])
 
   if (!loaded) {
-    return <section className="glass rounded-2xl border border-white/10 p-6 h-24 animate-pulse" />
+    return <section className="h-24 animate-pulse rounded-[4px] border border-hairline bg-white" />
   }
 
   const header = (
-    <div className="flex items-center gap-2 mb-3">
-      <CalendarClock size={16} className="text-slate-400" />
-      <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
+    <div className="mb-3 flex items-center gap-2">
+      <CalendarClock size={16} className="text-stamp" />
+      <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">
         Deadline planner
       </h2>
     </div>
@@ -44,12 +44,12 @@ export function TimelineCard() {
   // No timeline yet → CTA.
   if (!timeline) {
     return (
-      <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
+      <section className="rounded-[4px] border border-hairline bg-white p-5 shadow-[6px_6px_0_0] shadow-ink/10 sm:p-6">
         {header}
-        <p className="text-slate-500 text-xs mb-4">
+        <p className="mb-4 font-body text-xs text-support">
           Set your course intake and get a backward plan of every key deadline.
         </p>
-        <Link href="/timeline" className="btn-primary text-xs py-2 px-3.5">
+        <Link href="/timeline" className="btn-primary px-3.5 py-2 text-xs">
           Plan my deadlines <ArrowRight size={13} />
         </Link>
       </section>
@@ -58,28 +58,28 @@ export function TimelineCard() {
 
   const next = timeline.next_due
   return (
-    <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
+    <section className="rounded-[4px] border border-hairline bg-white p-5 shadow-[6px_6px_0_0] shadow-ink/10 sm:p-6">
       {header}
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           {next ? (
             <>
-              <p className="text-[11px] text-slate-500 uppercase tracking-wide">Next up</p>
-              <p className="text-sm font-semibold text-white truncate">{next.label}</p>
-              <p className="text-xs text-slate-400 mt-0.5">{formatDue(next.due_date)}</p>
+              <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-support">Next up</p>
+              <p className="truncate font-body text-sm font-semibold text-ink">{next.label}</p>
+              <p className="mt-0.5 font-mono text-xs text-support">{formatDue(next.due_date)}</p>
             </>
           ) : (
-            <p className="text-sm text-emerald-300/90">All milestones complete 🎉</p>
+            <p className="font-body text-sm text-stamp">All milestones complete 🎉</p>
           )}
         </div>
-        <div className="text-right flex-shrink-0">
-          <p className="text-lg font-bold text-white">{timeline.stats.completion_pct}%</p>
-          <p className="text-[11px] text-slate-500">{timeline.stats.done}/{timeline.stats.total} done</p>
+        <div className="flex-shrink-0 text-right">
+          <p className="font-mono text-lg font-bold tabular-nums text-ink">{timeline.stats.completion_pct}%</p>
+          <p className="font-mono text-[10.5px] text-support">{timeline.stats.done}/{timeline.stats.total} done</p>
         </div>
       </div>
       <Link
         href="/timeline"
-        className="inline-flex items-center gap-1 text-xs text-brand-400 hover:text-brand-300 mt-4"
+        className="mt-4 inline-flex items-center gap-1 font-body text-xs text-stamp hover:text-stamp-deep"
       >
         Open planner <ArrowRight size={12} />
       </Link>

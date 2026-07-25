@@ -38,23 +38,23 @@ export function InvitationsBanner() {
   if (invites.length === 0) return null
 
   return (
-    <section className="glass rounded-2xl border border-brand-500/20 bg-brand-500/[0.04] p-5 space-y-3">
+    <section className="space-y-3 rounded-[4px] border-l-2 border-l-stamp border-y border-r border-y-hairline border-r-hairline bg-white p-5">
       {invites.map(inv => (
         <div key={inv.id} className="flex items-center justify-between gap-4">
-          <p className="text-sm text-white flex items-center gap-2 min-w-0">
-            <UserPlus size={15} className="text-brand-400 flex-shrink-0" />
+          <p className="flex min-w-0 items-center gap-2 font-body text-sm text-ink">
+            <UserPlus size={15} className="flex-shrink-0 text-stamp" />
             <span className="truncate">
               <span className="font-semibold">{inv.org_name}</span> wants to help manage your
               application. Share your progress with them?
             </span>
           </p>
-          <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex flex-shrink-0 items-center gap-2">
             <button type="button" disabled={busyId === inv.id} onClick={() => respond(inv.id, true)}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-500/25">
+              className="inline-flex items-center gap-1 rounded-[3px] border border-stamp bg-stamp px-3 py-1.5 font-body text-xs font-semibold text-paper hover:bg-stamp-deep">
               {busyId === inv.id ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />} Accept
             </button>
             <button type="button" disabled={busyId === inv.id} onClick={() => respond(inv.id, false)}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10">
+              className="inline-flex items-center gap-1 rounded-[3px] border border-hairline bg-white px-3 py-1.5 font-body text-xs font-semibold text-support hover:border-support hover:text-ink">
               <X size={13} /> Decline
             </button>
           </div>

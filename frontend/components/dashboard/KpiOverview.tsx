@@ -12,8 +12,8 @@ import {
   Sparkles,
 } from 'lucide-react'
 import type { HistoryItem, VisaFile } from '@/types/visa'
-import { tierFromScore } from '@/types/visa'
 import { countryName, countryFlag } from '@/lib/dashboardDisplay'
+import { toneFromScore, toneTextClass } from '@/components/ui/StatusPill'
 
 interface Props {
   latestCheck: HistoryItem | null
@@ -23,11 +23,7 @@ interface Props {
 }
 
 function scoreColor(score: number): string {
-  const t = tierFromScore(score)
-  if (t === 'ready') return 'text-emerald-400'
-  if (t === 'mostly_ready') return 'text-brand-400'
-  if (t === 'needs_work') return 'text-amber-400'
-  return 'text-red-400'
+  return toneTextClass(toneFromScore(score))
 }
 
 // Country-specific "good to know" facts — concise, genuinely useful.
@@ -73,16 +69,16 @@ function KpiTile({
     <button
       type="button"
       onClick={onClick}
-      className="group text-left glass rounded-2xl border border-white/10 p-4 sm:p-5 transition-all hover:-translate-y-0.5 hover:border-white/20"
+      className="group rounded-[4px] border border-hairline bg-white p-4 text-left transition-colors hover:border-support sm:p-5"
     >
-      <div className="flex items-center justify-between mb-2">
+      <div className="mb-2 flex items-center justify-between">
         <Icon size={16} className={accent} />
-        <ArrowRight size={13} className="text-slate-600 group-hover:text-slate-400 transition-colors" />
+        <ArrowRight size={13} className="text-support transition-colors group-hover:text-ink" />
       </div>
-      <p className={`text-2xl font-extrabold leading-none ${accent}`}>
-        {value}<span className="text-sm text-slate-500 font-semibold">{suffix}</span>
+      <p className={`font-mono text-[28px] font-bold leading-none tabular-nums ${accent}`}>
+        {value}<span className="font-mono text-sm font-medium text-support">{suffix}</span>
       </p>
-      <p className="text-[11px] text-slate-500 mt-1.5 leading-tight">{label}</p>
+      <p className="mt-1.5 font-mono text-[10px] uppercase leading-tight tracking-[0.1em] text-support">{label}</p>
     </button>
   )
 }
@@ -90,9 +86,9 @@ function KpiTile({
 export function KpiOverview({ latestCheck, file, loading, onNavigate }: Props) {
   if (loading) {
     return (
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[0, 1, 2, 3].map(i => (
-          <div key={i} className="glass rounded-2xl border border-white/10 h-28 animate-pulse" />
+          <div key={i} className="h-28 animate-pulse rounded-[4px] border border-hairline bg-white" />
         ))}
       </div>
     )
@@ -101,15 +97,15 @@ export function KpiOverview({ latestCheck, file, loading, onNavigate }: Props) {
   // ── No readiness check yet → focused empty state ─────────────────────────────
   if (!latestCheck) {
     return (
-      <section className="glass rounded-2xl border border-white/10 p-8 text-center">
-        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-3">
-          <ClipboardCheck size={22} className="text-slate-500" />
+      <section className="rounded-[4px] border border-hairline bg-white p-8 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+          <ClipboardCheck size={22} className="text-stamp" />
         </div>
-        <p className="text-white font-semibold mb-1">Start your visa journey</p>
-        <p className="text-slate-500 text-sm mb-5 max-w-sm mx-auto">
+        <p className="mb-1 font-serif text-[19px] leading-tight text-ink">Start your visa journey</p>
+        <p className="mx-auto mb-5 max-w-sm font-body text-sm text-support">
           Run the Student Visa Readiness Checker to unlock your score, action plan, and visa file.
         </p>
-        <Link href="/tools/student-visa/countries" className="btn-primary text-sm justify-center">
+        <Link href="/tools/student-visa/countries" className="btn-primary text-sm">
           Start readiness check <ArrowRight size={14} />
         </Link>
       </section>
@@ -142,48 +138,48 @@ export function KpiOverview({ latestCheck, file, loading, onNavigate }: Props) {
   return (
     <div className="space-y-5">
       {/* Status strip */}
-      <div className="flex items-center gap-2 text-sm text-slate-400">
+      <div className="flex items-center gap-2 font-body text-sm text-support">
         <span>{countryFlag(country)}</span>
-        <span className="text-white font-medium">{countryName(country)}</span>
-        <span className="text-slate-600">·</span>
+        <span className="font-medium text-ink">{countryName(country)}</span>
+        <span className="text-hairline">·</span>
         <span>{latestCheck.result}</span>
       </div>
 
       {/* Next best action hint */}
-      <div className="glass rounded-2xl border border-brand-500/25 bg-brand-500/5 p-4 sm:p-5 flex items-start gap-3">
-        <div className="w-9 h-9 rounded-xl bg-brand-500/15 border border-brand-500/25 flex items-center justify-center flex-shrink-0">
-          <Sparkles size={16} className="text-brand-400" />
+      <div className="flex items-start gap-3 rounded-[4px] border-l-2 border-l-stamp border-y border-r border-y-hairline border-r-hairline bg-white p-4 sm:p-5">
+        <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+          <Sparkles size={16} className="text-stamp" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-[11px] font-semibold text-brand-300 uppercase tracking-wider">Next best step</p>
-          <p className="text-sm text-white mt-0.5">{hint.text}</p>
+          <p className="font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-stamp">Next best step</p>
+          <p className="mt-0.5 font-body text-sm text-ink">{hint.text}</p>
         </div>
         <button
           type="button"
           onClick={() => onNavigate(hint.section)}
-          className="btn-primary text-xs py-2 px-3.5 flex-shrink-0 self-center"
+          className="btn-primary flex-shrink-0 self-center px-3.5 py-2 text-xs"
         >
           {hint.cta} <ArrowRight size={13} />
         </button>
       </div>
 
       {/* KPI tiles */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <KpiTile label="Readiness score" value={score} suffix=" / 100" accent={scoreColor(score)} icon={Gauge} onClick={() => onNavigate('readiness')} />
-        <KpiTile label="Visa file complete" value={completion} suffix="%" accent={completion >= 100 ? 'text-emerald-400' : 'text-brand-400'} icon={FolderCheck} onClick={() => onNavigate('visa_file')} />
-        <KpiTile label="Critical items left" value={criticalMissing} accent={criticalMissing > 0 ? 'text-red-400' : 'text-emerald-400'} icon={AlertTriangle} onClick={() => onNavigate('visa_file')} />
-        <KpiTile label="Issues to resolve" value={issues} accent={issues > 0 ? 'text-amber-400' : 'text-emerald-400'} icon={ListChecks} onClick={() => onNavigate('action_plan')} />
+        <KpiTile label="Visa file complete" value={completion} suffix="%" accent={completion >= 100 ? 'text-stamp' : 'text-ink'} icon={FolderCheck} onClick={() => onNavigate('visa_file')} />
+        <KpiTile label="Critical items left" value={criticalMissing} accent={criticalMissing > 0 ? 'text-seal-text' : 'text-stamp'} icon={AlertTriangle} onClick={() => onNavigate('visa_file')} />
+        <KpiTile label="Issues to resolve" value={issues} accent={issues > 0 ? 'text-seal-text' : 'text-stamp'} icon={ListChecks} onClick={() => onNavigate('action_plan')} />
       </div>
 
       {/* Good to know */}
-      <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
-        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 flex items-center gap-2">
-          <Lightbulb size={14} className="text-amber-400" /> Good to know for {countryName(country)}
+      <section className="rounded-[4px] border border-hairline bg-white p-5 shadow-[6px_6px_0_0] shadow-ink/10 sm:p-6">
+        <p className="mb-3 flex items-center gap-2 font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">
+          <Lightbulb size={14} className="text-stamp" /> Good to know for {countryName(country)}
         </p>
         <ul className="space-y-2">
           {tips.map((t, i) => (
-            <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-              <Lightbulb size={13} className="flex-shrink-0 mt-0.5 text-amber-400/70" />
+            <li key={i} className="flex items-start gap-2 font-body text-sm text-ink">
+              <Lightbulb size={13} className="mt-0.5 flex-shrink-0 text-stamp" />
               {t}
             </li>
           ))}

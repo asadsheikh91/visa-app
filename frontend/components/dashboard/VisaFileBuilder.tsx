@@ -31,12 +31,11 @@ interface Props {
 // ── Progress bar ─────────────────────────────────────────────────────────────
 
 function ProgressBar({ pct }: { pct: number }) {
-  const color =
-    pct >= 80 ? 'bg-emerald-500' : pct >= 40 ? 'bg-brand-500' : 'bg-amber-500'
+  const color = pct >= 40 ? 'bg-stamp' : 'bg-seal-text'
   return (
-    <div className="w-full h-2 rounded-full bg-white/10 overflow-hidden">
+    <div className="h-2 w-full overflow-hidden rounded-[2px] bg-paper-deep">
       <div
-        className={`h-full rounded-full transition-all duration-500 ${color}`}
+        className={`h-full transition-all duration-500 ${color}`}
         style={{ width: `${Math.max(2, Math.min(100, pct))}%` }}
       />
     </div>
@@ -46,8 +45,8 @@ function ProgressBar({ pct }: { pct: number }) {
 function StatPill({ value, label, tone }: { value: number; label: string; tone: string }) {
   return (
     <div className="text-center">
-      <p className={`text-xl font-extrabold leading-none ${tone}`}>{value}</p>
-      <p className="text-[10px] text-slate-500 uppercase tracking-wide mt-1">{label}</p>
+      <p className={`font-mono text-xl font-bold leading-none tabular-nums ${tone}`}>{value}</p>
+      <p className="mt-1 font-mono text-[10px] uppercase tracking-[0.1em] text-support">{label}</p>
     </div>
   )
 }
@@ -73,40 +72,40 @@ function CategorySection({
   const allDone = completed === items.length
 
   return (
-    <div className="rounded-2xl border border-white/10 overflow-hidden">
+    <div className="overflow-hidden rounded-[4px] border border-hairline bg-white">
       <button
         type="button"
         onClick={() => setOpen(o => !o)}
         aria-expanded={open}
-        className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-white/[0.03] hover:bg-white/[0.05] transition-colors"
+        className="flex w-full items-center justify-between gap-3 bg-paper-deep px-4 py-3 transition-colors hover:bg-paper"
       >
-        <div className="flex items-center gap-2.5 min-w-0">
+        <div className="flex min-w-0 items-center gap-2.5">
           {allDone ? (
-            <CheckCircle2 size={16} className="text-emerald-400 flex-shrink-0" />
+            <CheckCircle2 size={16} className="flex-shrink-0 text-stamp" />
           ) : (
-            <FolderOpen size={16} className="text-slate-400 flex-shrink-0" />
+            <FolderOpen size={16} className="flex-shrink-0 text-support" />
           )}
-          <span className="text-sm font-semibold text-white truncate">{label}</span>
+          <span className="truncate font-body text-sm font-semibold text-ink">{label}</span>
           {criticalMissing > 0 && (
-            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-full border border-red-500/25 bg-red-500/10 text-red-300 flex-shrink-0">
+            <span className="flex-shrink-0 rounded-[3px] border border-seal-text/40 bg-seal/[0.06] px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-seal-text">
               {criticalMissing} critical
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
-          <span className="text-xs text-slate-500">
+        <div className="flex flex-shrink-0 items-center gap-2">
+          <span className="font-mono text-xs text-support">
             {completed}/{items.length}
           </span>
           {open ? (
-            <ChevronUp size={14} className="text-slate-500" />
+            <ChevronUp size={14} className="text-support" />
           ) : (
-            <ChevronDown size={14} className="text-slate-500" />
+            <ChevronDown size={14} className="text-support" />
           )}
         </div>
       </button>
 
       {open && (
-        <div className="p-3 space-y-2.5">
+        <div className="space-y-2.5 p-3">
           {items.map(item => (
             <ChecklistItemRow
               key={item.id}
@@ -135,16 +134,16 @@ export function VisaFileBuilder({
   // ── Locked (no readiness check yet) ────────────────────────────────────────
   if (locked) {
     return (
-      <section className="glass rounded-2xl border border-white/10 p-6 text-center">
-        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-3">
-          <Lock size={20} className="text-slate-500" />
+      <section className="rounded-[4px] border border-hairline bg-white p-6 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+          <Lock size={20} className="text-support" />
         </div>
-        <h2 className="text-white font-semibold text-sm mb-1">Your visa file is locked</h2>
-        <p className="text-slate-500 text-xs max-w-sm mx-auto mb-5">
+        <h2 className="mb-1 font-serif text-[17px] leading-tight text-ink">Your visa file is locked</h2>
+        <p className="mx-auto mb-5 max-w-sm font-body text-xs text-support">
           Run your first readiness check and we&apos;ll generate a personalised document
           file — every item tailored to your country, funding, and background.
         </p>
-        <Link href="/tools/student-visa/countries" className="btn-primary text-sm justify-center">
+        <Link href="/tools/student-visa/countries" className="btn-primary text-sm">
           <Sparkles size={14} />
           Start a readiness check
         </Link>
@@ -155,9 +154,9 @@ export function VisaFileBuilder({
   // ── Loading ────────────────────────────────────────────────────────────────
   if (loading) {
     return (
-      <section className="glass rounded-2xl border border-white/10 p-10 flex flex-col items-center justify-center gap-3">
-        <Loader2 size={26} className="text-brand-400 animate-spin" />
-        <p className="text-slate-500 text-sm">Building your personalised visa file…</p>
+      <section className="flex flex-col items-center justify-center gap-3 rounded-[4px] border border-hairline bg-white p-10 shadow-[6px_6px_0_0] shadow-ink/10">
+        <Loader2 size={26} className="animate-spin text-stamp" />
+        <p className="font-mono text-[11px] uppercase tracking-[0.14em] text-support">Building your personalised visa file…</p>
       </section>
     )
   }
@@ -165,12 +164,12 @@ export function VisaFileBuilder({
   // ── Error ──────────────────────────────────────────────────────────────────
   if (error || !file) {
     return (
-      <section className="glass rounded-2xl border border-red-500/20 p-6 text-center">
-        <AlertCircle size={24} className="text-red-400 mx-auto mb-3" />
-        <p className="text-red-300 text-sm mb-4">
+      <section className="rounded-[4px] border border-seal-text/40 bg-white p-6 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+        <AlertCircle size={24} className="mx-auto mb-3 text-seal-text" />
+        <p className="mb-4 font-body text-sm text-ink">
           {error || 'Could not load your visa file.'}
         </p>
-        <button onClick={onRetry} className="btn-secondary text-sm inline-flex items-center gap-2 justify-center">
+        <button onClick={onRetry} className="btn-secondary inline-flex items-center justify-center gap-2 text-sm">
           <RefreshCw size={14} />
           Try again
         </button>
@@ -192,44 +191,44 @@ export function VisaFileBuilder({
   return (
     <section className="space-y-4">
       {/* Header / progress */}
-      <div className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
-        <div className="flex items-start justify-between gap-4 mb-4">
-          <div className="flex items-center gap-2.5 min-w-0">
+      <div className="rounded-[4px] border border-hairline bg-white p-5 shadow-[6px_6px_0_0] shadow-ink/10 sm:p-6">
+        <div className="mb-4 flex items-start justify-between gap-4">
+          <div className="flex min-w-0 items-center gap-2.5">
             <span className="text-2xl">{countryFlag(file.country)}</span>
             <div className="min-w-0">
-              <h2 className="text-base sm:text-lg font-bold text-white truncate">
+              <h2 className="truncate font-serif text-[18px] leading-tight text-ink sm:text-[20px]">
                 {countryName(file.country)} Visa File
               </h2>
-              <p className="text-xs text-slate-500">
+              <p className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-support">
                 {stats.total_items} documents · {stats.completion_pct}% complete
               </p>
             </div>
           </div>
-          <div className="text-right flex-shrink-0">
-            <span className="text-2xl font-extrabold text-white">{stats.completion_pct}%</span>
+          <div className="flex-shrink-0 text-right">
+            <span className="font-mono text-2xl font-bold tabular-nums text-ink">{stats.completion_pct}%</span>
           </div>
         </div>
 
         <ProgressBar pct={stats.completion_pct} />
 
         {/* Stat row */}
-        <div className="grid grid-cols-4 gap-2 mt-5">
-          <StatPill value={stats.completed} label="Ready" tone="text-emerald-400" />
-          <StatPill value={stats.missing_total} label="Outstanding" tone="text-amber-400" />
-          <StatPill value={stats.critical_missing} label="Critical left" tone="text-red-400" />
-          <StatPill value={stats.total_items} label="Total" tone="text-white" />
+        <div className="mt-5 grid grid-cols-4 gap-2">
+          <StatPill value={stats.completed} label="Ready" tone="text-stamp" />
+          <StatPill value={stats.missing_total} label="Outstanding" tone="text-ink" />
+          <StatPill value={stats.critical_missing} label="Critical left" tone="text-seal-text" />
+          <StatPill value={stats.total_items} label="Total" tone="text-ink" />
         </div>
 
         {/* Next actions */}
         {next_actions.length > 0 && (
-          <div className="mt-5 pt-4 border-t border-white/10">
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+          <div className="mt-5 border-t border-hairline pt-4">
+            <p className="mb-2 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
               Next actions
             </p>
             <ul className="space-y-1.5">
               {next_actions.map((a, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-brand-400 flex-shrink-0" />
+                <li key={i} className="flex items-start gap-2 font-body text-sm text-ink">
+                  <span className="mt-[7px] h-1.5 w-1.5 flex-shrink-0 rounded-full bg-stamp" />
                   {a}
                 </li>
               ))}

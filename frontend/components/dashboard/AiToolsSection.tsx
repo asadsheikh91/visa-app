@@ -47,49 +47,45 @@ const TOOLS: Tool[] = [
 /** Dashboard entry points for the readiness & coaching tools. */
 export function AiToolsSection() {
   return (
-    <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
-      <div className="flex items-center gap-2 mb-4">
-        <Sparkles size={16} className="text-brand-400" />
-        <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
+    <section className="rounded-[4px] border border-hairline bg-white p-5 shadow-[6px_6px_0_0] shadow-ink/10 sm:p-6">
+      <div className="mb-4 flex items-center gap-2">
+        <Sparkles size={16} className="text-stamp" />
+        <h2 className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">
           Your toolkit
         </h2>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {TOOLS.map(({ href, icon: Icon, title, desc, status }) => {
           const live = status === 'live'
           return (
             <Link
               key={href}
               href={href}
-              className={`group rounded-xl border p-4 transition-all hover:-translate-y-0.5 ${
+              className={`group rounded-[3px] border p-4 transition-colors ${
                 live
-                  ? 'border-white/10 bg-white/[0.02] hover:border-brand-500/30 hover:bg-white/[0.04]'
-                  : 'border-white/8 bg-white/[0.01] hover:border-white/15'
+                  ? 'border-hairline bg-white hover:border-stamp'
+                  : 'border-hairline bg-paper-deep hover:border-support'
               }`}
             >
-              <div className="flex items-center justify-between gap-2 mb-2">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <div
-                    className={`w-8 h-8 rounded-lg border flex items-center justify-center flex-shrink-0 ${
-                      live ? 'bg-brand-500/10 border-brand-500/20' : 'bg-white/[0.03] border-white/10'
-                    }`}
-                  >
-                    <Icon size={15} className={live ? 'text-brand-400' : 'text-slate-400'} />
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <div className="flex min-w-0 items-center gap-2.5">
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+                    <Icon size={15} className={live ? 'text-stamp' : 'text-support'} />
                   </div>
-                  <p className={`text-sm font-bold truncate ${live ? 'text-white' : 'text-slate-300'}`}>{title}</p>
+                  <p className={`truncate font-body text-sm font-bold ${live ? 'text-ink' : 'text-support'}`}>{title}</p>
                 </div>
                 {!live && (
-                  <span className="flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-slate-800/60 text-slate-400 border border-white/6 flex-shrink-0">
+                  <span className="flex flex-shrink-0 items-center gap-1 rounded-[3px] border border-hairline bg-paper px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-support">
                     <Clock size={9} />
                     Soon
                   </span>
                 )}
               </div>
-              <p className={`text-xs leading-relaxed ${live ? 'text-slate-400' : 'text-slate-500'}`}>{desc}</p>
+              <p className={`font-body text-xs leading-relaxed ${live ? 'text-support' : 'text-support'}`}>{desc}</p>
               <span
-                className={`inline-flex items-center gap-1 text-xs mt-3 ${
-                  live ? 'text-brand-400 group-hover:text-brand-300' : 'text-slate-500'
+                className={`mt-3 inline-flex items-center gap-1 font-body text-xs ${
+                  live ? 'text-stamp group-hover:text-stamp-deep' : 'text-support'
                 }`}
               >
                 {live ? 'Open' : 'Preview & get notified'} <ArrowRight size={12} />

@@ -53,16 +53,16 @@ function deriveStatus(spnItems: ChecklistItem[]): EvidenceStatus {
 }
 
 const STATUS_CONFIG: Record<EvidenceStatus, { label: string; color: string; bg: string; icon: typeof CheckCircle2 }> = {
-  complete:   { label: 'Complete',   color: 'text-emerald-300', bg: 'bg-emerald-500/15 border-emerald-500/30', icon: CheckCircle2 },
-  partial:    { label: 'Partial',    color: 'text-amber-300',   bg: 'bg-amber-500/15 border-amber-500/30',   icon: AlertTriangle },
-  incomplete: { label: 'Incomplete', color: 'text-red-300',     bg: 'bg-red-500/15 border-red-500/30',       icon: AlertCircle },
+  complete:   { label: 'Complete',   color: 'text-stamp',     bg: 'bg-stamp/[0.06] border-stamp/40',     icon: CheckCircle2 },
+  partial:    { label: 'Partial',    color: 'text-support',   bg: 'bg-paper-deep border-hairline',       icon: AlertTriangle },
+  incomplete: { label: 'Incomplete', color: 'text-seal-text', bg: 'bg-seal/[0.06] border-seal-text/40',  icon: AlertCircle },
 }
 
 function StatusBadge({ status }: { status: EvidenceStatus }) {
   const cfg = STATUS_CONFIG[status]
   const Icon = cfg.icon
   return (
-    <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-xs font-semibold ${cfg.bg} ${cfg.color}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-[3px] border px-2.5 py-1 font-mono text-[11px] font-bold uppercase tracking-[0.1em] ${cfg.bg} ${cfg.color}`}>
       <Icon size={12} />
       {cfg.label}
     </span>
@@ -74,7 +74,7 @@ function StatusBadge({ status }: { status: EvidenceStatus }) {
 // ---------------------------------------------------------------------------
 
 function Label({ children }: { children: React.ReactNode }) {
-  return <p className="text-xs font-medium text-slate-300 mb-1.5">{children}</p>
+  return <p className="mb-1.5 font-mono text-[10.5px] font-medium uppercase tracking-[0.1em] text-support">{children}</p>
 }
 
 function TextField({
@@ -88,7 +88,7 @@ function TextField({
         value={value}
         placeholder={placeholder}
         onChange={e => onChange(e.target.value)}
-        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20"
+        className="w-full rounded-[3px] border border-hairline bg-white px-3 py-2 font-body text-sm text-ink placeholder-support focus:border-stamp focus:outline-none"
       />
     </div>
   )
@@ -109,11 +109,11 @@ function SelectField({
       <select
         value={value}
         onChange={e => onChange(e.target.value)}
-        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 appearance-none"
+        className="w-full appearance-none rounded-[3px] border border-hairline bg-white px-3 py-2 font-body text-sm text-ink focus:border-stamp focus:outline-none"
       >
-        {placeholder && <option value="" className="bg-surface-900">{placeholder}</option>}
+        {placeholder && <option value="" className="bg-white text-ink">{placeholder}</option>}
         {options.map(o => (
-          <option key={o.value} value={o.value} className="bg-surface-900">{o.label}</option>
+          <option key={o.value} value={o.value} className="bg-white text-ink">{o.label}</option>
         ))}
       </select>
     </div>
@@ -128,31 +128,31 @@ function ItemStatusTable({ items }: { items: ChecklistItem[] }) {
   if (items.length === 0) return null
   return (
     <div>
-      <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+      <p className="mb-2 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
         Document tracker
       </p>
-      <div className="rounded-xl border border-white/10 overflow-hidden divide-y divide-white/[0.06]">
+      <div className="divide-y divide-hairline overflow-hidden rounded-[3px] border border-hairline">
         {items.map(it => (
-          <div key={it.id} className="flex items-center justify-between gap-3 px-3.5 py-2.5">
-            <div className="flex items-center gap-2 min-w-0">
-              <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${STATUS_DOT[it.status]}`} />
-              <span className="text-xs text-slate-200 truncate">{it.title}</span>
+          <div key={it.id} className="flex items-center justify-between gap-3 bg-white px-3.5 py-2.5">
+            <div className="flex min-w-0 items-center gap-2">
+              <span className={`h-1.5 w-1.5 flex-shrink-0 rounded-full ${STATUS_DOT[it.status]}`} />
+              <span className="truncate font-body text-xs text-ink">{it.title}</span>
               {it.priority === 'critical' && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded border border-red-500/25 bg-red-500/10 text-red-300 flex-shrink-0">
+                <span className="flex-shrink-0 rounded-[3px] border border-seal-text/40 bg-seal/[0.06] px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-seal-text">
                   Critical
                 </span>
               )}
               {it.priority === 'standard' && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded border border-white/10 bg-white/5 text-slate-400 flex-shrink-0">
+                <span className="flex-shrink-0 rounded-[3px] border border-hairline bg-paper-deep px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase tracking-[0.08em] text-support">
                   Optional
                 </span>
               )}
             </div>
-            <span className="text-[11px] text-slate-400 flex-shrink-0">{STATUS_LABELS[it.status]}</span>
+            <span className="flex-shrink-0 font-mono text-[10.5px] text-support">{STATUS_LABELS[it.status]}</span>
           </div>
         ))}
       </div>
-      <p className="text-[11px] text-slate-500 mt-2">
+      <p className="mt-2 font-body text-[11px] text-support">
         Update document statuses in the Visa File Builder below.
       </p>
     </div>
@@ -189,11 +189,11 @@ function ResultPanel({
   })()
 
   return (
-    <div className="space-y-4 pt-4 border-t border-white/10">
+    <div className="space-y-4 border-t border-hairline pt-4">
       {/* Status */}
       <div className="flex items-center gap-2">
         <Icon size={18} className={cfg.color} />
-        <span className="text-sm font-semibold text-white">Sponsor Evidence Status</span>
+        <span className="font-body text-sm font-semibold text-ink">Sponsor Evidence Status</span>
         <StatusBadge status={status} />
       </div>
 
@@ -203,13 +203,13 @@ function ResultPanel({
       {/* Missing critical items */}
       {criticalMissing.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+          <p className="mb-2 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
             Missing critical items
           </p>
           <ul className="space-y-1.5">
             {criticalMissing.map(it => (
-              <li key={it.id} className="flex items-start gap-2 text-xs text-red-300 rounded-lg bg-red-500/5 border border-red-500/15 px-3 py-2">
-                <AlertCircle size={12} className="flex-shrink-0 mt-0.5" />
+              <li key={it.id} className="flex items-start gap-2 rounded-[3px] border border-seal-text/30 bg-seal/[0.06] px-3 py-2 font-body text-xs text-seal-text">
+                <AlertCircle size={12} className="mt-0.5 flex-shrink-0" />
                 {it.title}
               </li>
             ))}
@@ -220,13 +220,13 @@ function ResultPanel({
       {/* Warnings */}
       {warnings.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+          <p className="mb-2 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
             Warnings
           </p>
           <ul className="space-y-1.5">
             {warnings.map((w, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-amber-300 rounded-lg bg-amber-500/5 border border-amber-500/20 px-3 py-2">
-                <AlertTriangle size={12} className="flex-shrink-0 mt-0.5" />
+              <li key={i} className="flex items-start gap-2 rounded-[3px] border border-hairline bg-paper-deep px-3 py-2 font-body text-xs text-ink">
+                <AlertTriangle size={12} className="mt-0.5 flex-shrink-0 text-support" />
                 {w}
               </li>
             ))}
@@ -235,9 +235,9 @@ function ResultPanel({
       )}
 
       {/* Next action */}
-      <div className="flex items-start gap-2.5 rounded-xl border border-brand-500/20 bg-brand-500/5 px-4 py-3">
-        <FileText size={14} className="text-brand-400 flex-shrink-0 mt-0.5" />
-        <p className="text-xs text-brand-200">{nextAction}</p>
+      <div className="flex items-start gap-2.5 rounded-[3px] border-l-2 border-l-stamp border-y border-r border-y-hairline border-r-hairline bg-white px-4 py-3">
+        <FileText size={14} className="mt-0.5 flex-shrink-0 text-stamp" />
+        <p className="font-body text-xs text-ink">{nextAction}</p>
       </div>
     </div>
   )
@@ -316,16 +316,16 @@ export function SponsorEvidenceModule({ file, locked, defaultRelationship, onFil
   // ── Locked ────────────────────────────────────────────────────────────────
   if (locked) {
     return (
-      <section className="glass rounded-2xl border border-white/10 p-6 text-center">
-        <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mx-auto mb-3">
-          <Lock size={20} className="text-slate-500" />
+      <section className="rounded-[4px] border border-hairline bg-white p-6 text-center shadow-[6px_6px_0_0] shadow-ink/10">
+        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+          <Lock size={20} className="text-support" />
         </div>
-        <h2 className="text-white font-semibold text-sm mb-1">Sponsor Evidence Module</h2>
-        <p className="text-slate-500 text-xs max-w-sm mx-auto mb-5">
+        <h2 className="mb-1 font-serif text-[17px] leading-tight text-ink">Sponsor Evidence Module</h2>
+        <p className="mx-auto mb-5 max-w-sm font-body text-xs text-support">
           Run your first readiness check to build your visa file — then we&apos;ll tailor the exact
           sponsor documents and letters you need.
         </p>
-        <Link href="/tools/student-visa/countries" className="btn-primary text-sm justify-center">
+        <Link href="/tools/student-visa/countries" className="btn-primary text-sm">
           <Sparkles size={14} />
           Start a readiness check
         </Link>
@@ -335,31 +335,31 @@ export function SponsorEvidenceModule({ file, locked, defaultRelationship, onFil
 
   // ── Main ──────────────────────────────────────────────────────────────────
   return (
-    <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
+    <section className="rounded-[4px] border border-hairline bg-white p-5 shadow-[6px_6px_0_0] shadow-ink/10 sm:p-6">
       {/* Header — collapsible only once items have been injected */}
       <button
         type="button"
         onClick={() => hasItems && setFormOpen(o => !o)}
-        className={`w-full flex items-center justify-between gap-3 ${hasItems ? 'cursor-pointer' : 'cursor-default'}`}
+        className={`flex w-full items-center justify-between gap-3 ${hasItems ? 'cursor-pointer' : 'cursor-default'}`}
       >
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-xl bg-brand-500/10 border border-brand-500/20 flex items-center justify-center flex-shrink-0">
-            <Users size={15} className="text-brand-400" />
+          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+            <Users size={15} className="text-stamp" />
           </div>
           <div className="text-left">
-            <h2 className="text-sm font-bold text-white">Sponsor Evidence Module</h2>
-            <p className="text-[11px] text-slate-500">
+            <h2 className="font-serif text-[16px] leading-tight text-ink">Sponsor Evidence Module</h2>
+            <p className="font-mono text-[10.5px] uppercase tracking-[0.1em] text-support">
               {hasItems
                 ? 'Organise your sponsor documents — tap to update inputs'
                 : 'Organise and assess your sponsor evidence documents'}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0">
+        <div className="flex flex-shrink-0 items-center gap-2">
           {hasItems && <StatusBadge status={evidenceStatus} />}
           {hasItems && (formOpen
-            ? <ChevronUp size={14} className="text-slate-500" />
-            : <ChevronDown size={14} className="text-slate-500" />)}
+            ? <ChevronUp size={14} className="text-support" />
+            : <ChevronDown size={14} className="text-support" />)}
         </div>
       </button>
 
@@ -368,7 +368,7 @@ export function SponsorEvidenceModule({ file, locked, defaultRelationship, onFil
         <div className="mt-5 space-y-5">
           {/* Sponsor identity */}
           <div>
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+            <p className="mb-3 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
               About the sponsor
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -407,7 +407,7 @@ export function SponsorEvidenceModule({ file, locked, defaultRelationship, onFil
 
           {/* Bank evidence */}
           <div>
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+            <p className="mb-3 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
               Bank evidence
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -436,7 +436,7 @@ export function SponsorEvidenceModule({ file, locked, defaultRelationship, onFil
 
           {/* Income & source */}
           <div>
-            <p className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-3">
+            <p className="mb-3 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] text-support">
               Income & source of funds
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -476,7 +476,7 @@ export function SponsorEvidenceModule({ file, locked, defaultRelationship, onFil
           </div>
 
           {error && (
-            <div className="flex items-center gap-2 text-xs text-red-300 rounded-lg bg-red-500/10 border border-red-500/20 px-3 py-2">
+            <div className="flex items-center gap-2 rounded-[3px] border border-seal-text/30 bg-seal/[0.06] px-3 py-2 font-body text-xs text-seal-text">
               <AlertCircle size={13} />
               {error}
             </div>
@@ -486,7 +486,7 @@ export function SponsorEvidenceModule({ file, locked, defaultRelationship, onFil
             type="button"
             onClick={onSubmit}
             disabled={loading}
-            className="btn-primary w-full justify-center text-sm"
+            className="btn-primary w-full text-sm"
           >
             {loading ? (
               <>
