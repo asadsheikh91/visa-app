@@ -456,6 +456,8 @@ class TestCheckEndpointReturnFields:
              patch("routers.student_visa.load_scoring", return_value=_SCORING), \
              patch("routers.student_visa.evaluate", return_value=engine_result), \
              patch("routers.student_visa.get_user_by_auth_id", self._db_user_mock), \
+             patch("routers.student_visa.check_lifetime_cap", AsyncMock(return_value=(True, 0, 3))), \
+             patch("routers.student_visa.complete_readiness_session", AsyncMock(return_value=None)), \
              patch("routers.student_visa.save_visa_check", self._save_mock):
             return self.client.post(f"/api/visa/student/{country}/check", json={"answers": answers})
 
@@ -559,6 +561,8 @@ class TestCheckEndpointRobustness:
              patch("routers.student_visa.load_scoring", return_value=_SCORING), \
              patch("routers.student_visa.evaluate", return_value=er), \
              patch("routers.student_visa.get_user_by_auth_id", self._db_user_mock), \
+             patch("routers.student_visa.check_lifetime_cap", AsyncMock(return_value=(True, 0, 3))), \
+             patch("routers.student_visa.complete_readiness_session", AsyncMock(return_value=None)), \
              patch("routers.student_visa.save_visa_check", self._save_mock):
             return self.client.post(f"/api/visa/student/{country}/check", json={"answers": answers})
 

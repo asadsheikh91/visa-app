@@ -18,6 +18,9 @@ jest.mock('next/link', () => ({
     <a href={href} className={className}>{children}</a>
   ),
 }))
+// The result phase renders ResultCard, whose report prompt uses these.
+jest.mock('next/navigation', () => ({ useRouter: () => ({ push: jest.fn() }) }))
+jest.mock('@/lib/useReportApi', () => ({ useReportApi: () => ({ generate: jest.fn() }) }))
 
 import { useVisaApi } from '../lib/useVisaApi'
 import { CountryChecker } from '../components/checker/CountryChecker'
@@ -25,9 +28,11 @@ import { ApiError } from '../lib/api'
 
 const mockGetQuestions  = jest.fn()
 const mockCheckReadiness = jest.fn()
+const mockStartReadiness = jest.fn()
 const stableApi = {
   getQuestions:  mockGetQuestions,
   checkReadiness: mockCheckReadiness,
+  startReadiness: mockStartReadiness,
   getCountries:  jest.fn(),
   getHistory:    jest.fn(),
 }
@@ -82,6 +87,8 @@ async function renderAndLoad(questions: Question[]) {
 beforeEach(() => {
   jest.clearAllMocks()
   ;(useVisaApi as jest.Mock).mockReturnValue(stableApi)
+  // Default: opening a session succeeds (funnel tracking) so the checker proceeds.
+  mockStartReadiness.mockResolvedValue({ session_id: 'sess-1', remaining: 2, limit: 3 })
 })
 
 // ===========================================================================
@@ -111,7 +118,8 @@ describe('CountryChecker — Phase 5A: q.id filtering and keying', () => {
     await waitFor(() =>
       expect(mockCheckReadiness).toHaveBeenCalledWith(
         'australia',
-        expect.objectContaining({ aus_coe: 'yes' })
+        expect.objectContaining({ aus_coe: 'yes' }),
+        'sess-1'
       )
     )
   })

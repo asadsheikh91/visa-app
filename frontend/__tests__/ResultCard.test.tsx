@@ -22,6 +22,10 @@ jest.mock('next/link', () => ({
   ),
 }))
 
+// ResultCard's post-check report prompt uses these — stub them out.
+jest.mock('next/navigation', () => ({ useRouter: () => ({ push: jest.fn() }) }))
+jest.mock('@/lib/useReportApi', () => ({ useReportApi: () => ({ generate: jest.fn() }) }))
+
 // ---------------------------------------------------------------------------
 // Fixtures
 // ---------------------------------------------------------------------------

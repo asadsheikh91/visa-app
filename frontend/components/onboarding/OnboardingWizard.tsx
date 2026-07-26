@@ -143,6 +143,9 @@ type FormState = {
 interface Props {
   initialData?: Partial<UserProfile>
   onComplete:   (profile: UserProfile) => void
+  // Label for the final button. Defaults to onboarding copy; the dashboard
+  // profile editor passes "Save changes".
+  submitLabel?: string
 }
 
 const STEP_TITLES = ['About you', 'Study plans', 'Finances', 'Background']
@@ -249,7 +252,7 @@ function StyledSelect({
 // Main wizard
 // ---------------------------------------------------------------------------
 
-export function OnboardingWizard({ initialData, onComplete }: Props) {
+export function OnboardingWizard({ initialData, onComplete, submitLabel = 'Complete setup' }: Props) {
   const api = useProfileApi()
 
   const [form, setForm] = useState<FormState>({
@@ -723,7 +726,7 @@ export function OnboardingWizard({ initialData, onComplete }: Props) {
             </>
           ) : step === TOTAL_STEPS ? (
             <>
-              Complete setup
+              {submitLabel}
               <Check size={14} />
             </>
           ) : (

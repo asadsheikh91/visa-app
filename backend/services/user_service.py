@@ -11,7 +11,7 @@ high_risk_flags, soft_warnings, normalized_answers, and sources_used.
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func, select
 
-from models import User, VisaCheck
+from models import ReadinessSession, User, VisaCheck, utc_now_naive
 from auth.base import AuthUser
 
 
@@ -159,6 +159,53 @@ async def save_visa_check(
         await db.rollback()
         raise
     return check
+
+
+async def start_readiness_session(
+    db: AsyncSession,
+    db_user: User,
+    country: str,
+) -> ReadinessSession:
+    """Open a readiness session (status 'started') for the funnel/abandonment KPI."""
+    session = ReadinessSession(user_id=db_user.id, country=country, status="started")
+    db.add(session)
+    try:
+        await db.commit()
+        await db.refresh(session)
+    except Exception:
+        await db.rollback()
+        raise
+    return session
+
+
+async def complete_readiness_session(
+    db: AsyncSession,
+    db_user: User,
+    session_id,
+    check: VisaCheck,
+) -> None:
+    """
+    Mark the user's readiness session completed and link it to the saved check.
+
+    Best-effort: a missing/foreign/already-completed session is ignored (the check
+    is saved regardless). Never raises — funnel accounting must not break /check.
+    """
+    if not session_id:
+        return
+    try:
+        result = await db.execute(
+            select(ReadinessSession).where(ReadinessSession.id == session_id)
+        )
+        session = result.scalar_one_or_none()
+        if session is None or session.user_id != db_user.id:
+            return
+        session.status = "completed"
+        session.visa_check_id = check.id
+        session.completed_at = utc_now_naive()
+        session.updated_at = utc_now_naive()
+        await db.commit()
+    except Exception:
+        await db.rollback()
 
 
 async def get_user_checks(

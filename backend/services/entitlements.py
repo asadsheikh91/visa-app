@@ -24,6 +24,7 @@ from sqlalchemy import func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from models import User
+from services.admin import is_admin
 
 logger = logging.getLogger(__name__)
 
@@ -32,6 +33,20 @@ FREE_LIMITS: dict[str, int] = {
     "sop_review":         3,
     "interview":          1,
     "financial_document": 5,
+}
+
+# LIFETIME (all-time, per account) caps for the free plan. Unlike FREE_LIMITS these
+# never reset. Paid plans and admins are exempt (unlimited); a per-user override
+# column can raise an individual user's cap. See check_lifetime_cap.
+LIFETIME_LIMITS: dict[str, int] = {
+    "readiness_check": 3,
+    "report":          3,
+}
+
+# Maps a lifetime feature → the User column that overrides its default cap.
+_LIFETIME_OVERRIDE_COLUMN: dict[str, str] = {
+    "readiness_check": "readiness_check_limit",
+    "report":          "report_limit",
 }
 
 
@@ -137,3 +152,60 @@ async def check_quota(db: AsyncSession, user: User, feature: str, model) -> tupl
     used = await count_today(db, model, user)
     remaining = max(0, limit - used)
     return used < limit, remaining
+
+
+# ---------------------------------------------------------------------------
+# Lifetime caps (all-time, per account) — readiness checks + reports
+# ---------------------------------------------------------------------------
+
+def lifetime_limit_for(user: User, feature: str) -> int | None:
+    """
+    The lifetime cap for this user + feature, or None for UNLIMITED.
+
+    Unlimited when the user is on a paid plan or is an admin. Otherwise the
+    per-user override column (if set) wins over the default LIFETIME_LIMITS.
+    """
+    if getattr(user, "plan", "free") and user.plan != "free":
+        return None
+    if is_admin(user):
+        return None
+    override_col = _LIFETIME_OVERRIDE_COLUMN.get(feature)
+    if override_col:
+        override = getattr(user, override_col, None)
+        if override is not None:
+            return int(override)
+    return LIFETIME_LIMITS.get(feature, 0)
+
+
+async def lifetime_count(db: AsyncSession, model, user: User) -> int:
+    """Count ALL rows of `model` ever created for `user` (needs a user_id column)."""
+    result = await db.execute(
+        select(func.count()).select_from(model).where(model.user_id == user.id)
+    )
+    return int(result.scalar_one() or 0)
+
+
+async def check_lifetime_cap(
+    db: AsyncSession, user: User, feature: str, model
+) -> tuple[bool, int, int | None]:
+    """
+    Returns (allowed, used, limit) for `user` on a lifetime `feature`.
+
+    `limit` is None when unlimited (paid/admin) — `allowed` is then always True.
+    `model` is the feature's authoritative record table (VisaCheck for readiness
+    checks, Report for reports); its all-time row count is the usage.
+
+    Concurrency: mirrors check_quota — the same per-(user, feature) advisory lock
+    serializes the check + the caller's insert, so a burst of parallel requests
+    can't each read "under limit" and all slip through, overrunning the cap.
+    """
+    limit = lifetime_limit_for(user, feature)
+    if limit is None:
+        # Unlimited (paid/admin) — no need to count.
+        return True, 0, None
+    used = await lifetime_count(db, model, user)
+    if limit <= 0:
+        return False, used, limit
+    if not await _try_serialize(db, user.id, f"lifetime:{feature}"):
+        return False, used, limit
+    return used < limit, used, limit

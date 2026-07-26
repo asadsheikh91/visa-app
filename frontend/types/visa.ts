@@ -125,6 +125,15 @@ export interface CheckResult {
   normalized_answers: Record<string, unknown>
   sources_used: SourceRef[]
   required_missing_answers: string[]
+  // Lifetime readiness checks left after this one; null = unlimited (paid/admin).
+  checks_remaining?: number | null
+}
+
+// POST /{country}/start — opens a session + surfaces remaining budget.
+export interface StartSessionResponse {
+  session_id: string
+  remaining: number | null   // null = unlimited
+  limit: number | null
 }
 
 // ---------------------------------------------------------------------------

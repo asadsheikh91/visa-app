@@ -29,6 +29,7 @@ const isProtectedRoute = createRouteMatcher([
   '/trust(.*)',
   '/consultant(.*)',
   '/report(.*)',
+  '/admin(.*)',
 ])
 
 // Report routes that must NOT require a Clerk session:

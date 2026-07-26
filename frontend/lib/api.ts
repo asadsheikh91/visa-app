@@ -1,5 +1,6 @@
 import type {
   CountryMeta, CountryAuthorityMeta, CheckResult, QuestionsResponse, HistoryItem, AnswerValue,
+  StartSessionResponse,
   UserProfile, ProfilePayload,
   VisaFile, ChecklistStatus,
   FinancialProofInputs, FinancialProofResponse,
@@ -16,6 +17,9 @@ import type {
   MyOrg, RosterClient, OrgInvitation, ClientJourneyResponse,
 } from '@/types/visa'
 import type { ReportData } from '@/types/report'
+import type {
+  AdminOverview, AdminUserList, AdminUserDetail, AdminCheckDetail, AdminUserUpdate,
+} from '@/types/admin'
 import { parseReportData } from '@/lib/reportSchema'
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
@@ -78,12 +82,26 @@ export function createVisaApi(getToken: () => Promise<string | null>) {
         await getToken()
       ),
 
-    // answers keyed by question.id; multi_choice values are string[]
-    checkReadiness: async (country: string, answers: Record<string, AnswerValue>) =>
+    // Open a readiness session (funnel/abandonment tracking) + enforce the
+    // lifetime cap up front. Throws ApiError 429 when the cap is exhausted.
+    startReadiness: async (country: string) =>
+      apiFetch<StartSessionResponse>(
+        `/api/visa/student/${encodeURIComponent(country)}/start`,
+        await getToken(),
+        { method: 'POST', body: JSON.stringify({}) }
+      ),
+
+    // answers keyed by question.id; multi_choice values are string[]. Pass the
+    // sessionId from startReadiness so the check closes its funnel session.
+    checkReadiness: async (
+      country: string,
+      answers: Record<string, AnswerValue>,
+      sessionId?: string | null,
+    ) =>
       apiFetch<CheckResult>(
         `/api/visa/student/${encodeURIComponent(country)}/check`,
         await getToken(),
-        { method: 'POST', body: JSON.stringify({ answers }) }
+        { method: 'POST', body: JSON.stringify({ answers, session_id: sessionId ?? null }) }
       ),
 
     getHistory: async () =>
@@ -547,6 +565,57 @@ export function createReportApi(getToken: () => Promise<string | null>) {
 }
 
 export type ReportApi = ReturnType<typeof createReportApi>
+
+// ---------------------------------------------------------------------------
+// Admin API
+// ---------------------------------------------------------------------------
+
+export function createAdminApi(getToken: () => Promise<string | null>) {
+  return {
+    /** Whether the signed-in user is an admin. Throws ApiError 403 if not. */
+    me: async () =>
+      apiFetch<{ admin: boolean; email: string | null }>('/api/admin/me', await getToken()),
+
+    getOverview: async () =>
+      apiFetch<AdminOverview>('/api/admin/overview', await getToken()),
+
+    listUsers: async (opts?: { search?: string; plan?: string; limit?: number; offset?: number }) => {
+      const p = new URLSearchParams()
+      if (opts?.search) p.set('search', opts.search)
+      if (opts?.plan) p.set('plan', opts.plan)
+      if (opts?.limit != null) p.set('limit', String(opts.limit))
+      if (opts?.offset != null) p.set('offset', String(opts.offset))
+      const qs = p.toString()
+      return apiFetch<AdminUserList>(`/api/admin/users${qs ? `?${qs}` : ''}`, await getToken())
+    },
+
+    getUser: async (userId: string) =>
+      apiFetch<AdminUserDetail>(`/api/admin/users/${encodeURIComponent(userId)}`, await getToken()),
+
+    getCheck: async (userId: string, checkId: string) =>
+      apiFetch<AdminCheckDetail>(
+        `/api/admin/users/${encodeURIComponent(userId)}/checks/${encodeURIComponent(checkId)}`,
+        await getToken(),
+      ),
+
+    getReport: async (userId: string, reportId: string): Promise<ReportData> => {
+      const raw = await apiFetch<unknown>(
+        `/api/admin/users/${encodeURIComponent(userId)}/reports/${encodeURIComponent(reportId)}`,
+        await getToken(),
+      )
+      return parseReportData(raw)
+    },
+
+    updateUser: async (userId: string, patch: AdminUserUpdate) =>
+      apiFetch<{ id: string; plan: string; readiness_check_limit: number | null; report_limit: number | null }>(
+        `/api/admin/users/${encodeURIComponent(userId)}`,
+        await getToken(),
+        { method: 'PATCH', body: JSON.stringify(patch) },
+      ),
+  }
+}
+
+export type AdminApi = ReturnType<typeof createAdminApi>
 
 /**
  * Fetch report data using a single-use RENDER TOKEN instead of a Clerk session.

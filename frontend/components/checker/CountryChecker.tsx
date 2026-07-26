@@ -52,6 +52,8 @@ export function CountryChecker({ country }: Props) {
   const [error, setError] = useState<ErrorState>({ message: '', unsupported: false })
   // Per-question validation error shown inline
   const [fieldError, setFieldError] = useState<string | null>(null)
+  // Readiness session id (funnel/abandonment tracking), opened on load.
+  const [sessionId, setSessionId] = useState<string | null>(null)
 
   // ── Derived: visible questions filtered by show_if ──────────────────────
   const visibleQuestions = useMemo(
@@ -84,6 +86,22 @@ export function CountryChecker({ country }: Props) {
       setVisibleIdx(0)
       setResult(null)
       setFieldError(null)
+
+      // Open a readiness session — this also enforces the lifetime cap before the
+      // user answers anything. A 429 means they're out of free checks.
+      try {
+        const session = await api.startReadiness(country)
+        setSessionId(session.session_id)
+      } catch (e) {
+        if (e instanceof ApiError && e.status === 429) {
+          setError({ message: e.message, unsupported: true })
+          setPhase('error')
+          return
+        }
+        // Any other start failure is non-fatal — proceed without a session id.
+        setSessionId(null)
+      }
+
       setPhase('questions')
     } catch (e) {
       if (e instanceof ApiError && e.status === 404) {
@@ -180,7 +198,7 @@ export function CountryChecker({ country }: Props) {
     setPhase('submitting')
     setError({ message: '', unsupported: false })
     try {
-      const res = await api.checkReadiness(country, finalAnswers)
+      const res = await api.checkReadiness(country, finalAnswers, sessionId)
       setResult(res)
       setPhase('result')
     } catch (e) {
@@ -188,7 +206,7 @@ export function CountryChecker({ country }: Props) {
       setError({ message: msg, unsupported: e instanceof ApiError && e.status === 404 })
       setPhase('error')
     }
-  }, [api, country])
+  }, [api, country, sessionId])
 
   const restart = useCallback(() => {
     setAnswers({})

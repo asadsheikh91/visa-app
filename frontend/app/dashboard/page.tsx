@@ -15,6 +15,7 @@ import {
   Sparkles,
   History,
   ArrowRight,
+  UserCog,
 } from 'lucide-react'
 import Link from 'next/link'
 import { AuthGate } from '@/components/auth/AuthGate'
@@ -33,6 +34,7 @@ import { FinancialProofChecker } from '@/components/dashboard/FinancialProofChec
 import { SponsorEvidenceModule } from '@/components/dashboard/SponsorEvidenceModule'
 import { VisaFileBuilder } from '@/components/dashboard/VisaFileBuilder'
 import { PreviousChecks } from '@/components/dashboard/PreviousChecks'
+import { ProfileSettings } from '@/components/dashboard/ProfileSettings'
 import { useVisaApi } from '@/lib/useVisaApi'
 import { useVisaFileApi } from '@/lib/useVisaFileApi'
 import { ApiError } from '@/lib/api'
@@ -40,16 +42,19 @@ import type { HistoryItem, UserProfile, VisaFile, ChecklistStatus } from '@/type
 
 type Section =
   | 'overview' | 'readiness' | 'action_plan' | 'visa_file'
-  | 'financial' | 'sponsor' | 'timeline' | 'documents' | 'ai_tools' | 'history'
+  | 'financial' | 'sponsor' | 'timeline' | 'documents' | 'ai_tools' | 'history' | 'profile'
 
 // ---------------------------------------------------------------------------
 // DashboardContent — sidebar shell + per-section content
 // ---------------------------------------------------------------------------
 
-function DashboardContent({ profile }: { profile: UserProfile }) {
+function DashboardContent({ profile: initialProfile }: { profile: UserProfile }) {
   const { user } = useUser()
   const api = useVisaApi()
   const fileApi = useVisaFileApi()
+
+  // Local profile state so edits from the Profile section reflect immediately.
+  const [profile, setProfile] = useState<UserProfile>(initialProfile)
   const name = profile.preferred_name || user?.firstName || 'there'
 
   const [section, setSection] = useState<Section>('overview')
@@ -155,6 +160,7 @@ function DashboardContent({ profile }: { profile: UserProfile }) {
     { id: 'documents',   label: 'Document guide',   icon: FileStack },
     { id: 'ai_tools',    label: 'AI coaching',      icon: Sparkles },
     { id: 'history',     label: 'Previous checks',  icon: History },
+    { id: 'profile',     label: 'Profile',          icon: UserCog },
   ]
 
   const SECTION_TITLES: Record<Section, string> = {
@@ -168,6 +174,7 @@ function DashboardContent({ profile }: { profile: UserProfile }) {
     documents:   'Document guide',
     ai_tools:    'AI coaching tools',
     history:     'Previous checks',
+    profile:     'Your profile',
   }
 
   function renderSection() {
@@ -235,6 +242,8 @@ function DashboardContent({ profile }: { profile: UserProfile }) {
         )
       case 'ai_tools':
         return <AiToolsSection />
+      case 'profile':
+        return <ProfileSettings profile={profile} onSaved={setProfile} />
       case 'history':
         return (
           <PreviousChecks

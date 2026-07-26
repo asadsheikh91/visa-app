@@ -118,7 +118,9 @@ class TestCreateReport:
         check = MagicMock()
         check.user_id = db_user.id
         session = MagicMock()
-        session.execute = AsyncMock(side_effect=[_result(check), _result(None)])  # check, profile
+        # queries: check, existing-report-for-assessment (None → new), profile.
+        # db_user is a paid plan, so the lifetime cap short-circuits without a count query.
+        session.execute = AsyncMock(side_effect=[_result(check), _result(None), _result(None)])
         built = _report(db_user.id)
         monkeypatch.setattr(report_router, "build_report", AsyncMock(return_value=built))
 
