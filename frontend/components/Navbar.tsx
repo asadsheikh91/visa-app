@@ -3,11 +3,12 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { ArrowRight, Menu, X } from 'lucide-react'
+import { ArrowRight, Menu, X, ShieldCheck } from 'lucide-react'
 import clsx from 'clsx'
 import { SignedIn, UserButton } from '@clerk/nextjs'
 import { CurrencyConverterWidget } from '@/components/currency/CurrencyConverterWidget'
 import { BrandSeal } from '@/components/BrandSeal'
+import { useIsAdmin } from '@/lib/useAdminApi'
 
 const navLinks = [
   { label: 'Check Eligibility', href: '/tools/student-visa/countries' },
@@ -96,6 +97,7 @@ export function Navbar() {
             </Link>
             {CLERK_ENABLED && (
               <SignedIn>
+                <AdminNavLink />
                 {onDashboard && (
                   <>
                     <CurrencyConverterWidget />
@@ -172,6 +174,25 @@ function Brand() {
       <span className="font-serif text-[21px] leading-none tracking-tight text-ink">
         Parchi<em className="italic">Visa</em>
       </span>
+    </Link>
+  )
+}
+
+/**
+ * Admin link — only rendered for allowlisted admins (backend /api/admin/me).
+ * Mounted inside <SignedIn> so the Clerk-backed hook only runs when Clerk is
+ * configured. Mount is authorization convenience only; the API enforces access.
+ */
+function AdminNavLink() {
+  const { isAdmin } = useIsAdmin()
+  if (!isAdmin) return null
+  return (
+    <Link
+      href="/admin"
+      className="inline-flex items-center gap-1.5 font-body text-sm font-medium text-support transition-colors hover:text-ink"
+    >
+      <ShieldCheck size={15} />
+      Admin
     </Link>
   )
 }

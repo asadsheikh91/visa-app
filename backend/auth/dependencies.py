@@ -13,7 +13,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from auth.base import AuthError, AuthUser
 from auth.provider import get_auth_provider
 from database import get_db
-from services.user_service import upsert_user
+from services.admin import is_admin
+from services.user_service import get_user_by_auth_id, upsert_user
 
 logger = logging.getLogger(__name__)
 _bearer = HTTPBearer(auto_error=True)
@@ -65,3 +66,27 @@ async def get_current_user(
         ) from exc
 
     return auth_user
+
+
+async def get_admin_user(
+    current_user: AuthUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    FastAPI dependency for the operator admin panel. Verifies the session (via
+    get_current_user), then authorizes against the ADMIN_EMAILS allowlist. Returns
+    the DB `User` row (admin routes need it). 403 for any non-allowlisted account.
+
+    Authorization is checked against the persisted email (get_current_user upserts
+    it) with the token-claim email as a fallback — either matching the allowlist
+    grants access. This is enforced on EVERY admin route; the frontend gate is a
+    convenience only.
+    """
+    db_user = await get_user_by_auth_id(db, current_user.user_id)
+    email = (db_user.email if db_user else None) or current_user.email
+    if not is_admin(email):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Admin access required.",
+        )
+    return db_user

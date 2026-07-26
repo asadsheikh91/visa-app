@@ -102,6 +102,33 @@ async def create_report(
         # Owner mismatch on an unguessable UUID → 403 per spec.
         return JSONResponse(status_code=403, content={"error": "You do not own this assessment."})
 
+    # Lifetime report cap. Re-generating a report that ALREADY exists for this
+    # assessment is a free re-view (build_report is idempotent by cache key), so we
+    # only enforce the cap when a NEW report would be created. Count is over
+    # distinct Report rows — the correct "reports used" measure.
+    existing_res = await db.execute(
+        select(Report)
+        .where(Report.user_id == db_user.id, Report.visa_check_id == check.id)
+        .order_by(Report.created_at.desc())
+    )
+    existing_report = existing_res.scalars().first()
+    if existing_report is None:
+        allowed, used, cap = await entitlements.check_lifetime_cap(
+            db, db_user, "report", Report
+        )
+        if not allowed:
+            return JSONResponse(
+                status_code=429,
+                content={
+                    "error": (
+                        "You've used all your free readiness reports. Upgrade to "
+                        "generate more, or contact support."
+                    ),
+                    "used": used,
+                    "limit": cap,
+                },
+            )
+
     prof_res = await db.execute(
         select(UserVisaProfile).where(UserVisaProfile.user_id == db_user.id)
     )

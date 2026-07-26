@@ -25,7 +25,11 @@ from services.user_service import (
     get_user_by_auth_id,
     save_visa_check,
     get_user_checks,
+    start_readiness_session,
+    complete_readiness_session,
 )
+from services.entitlements import check_lifetime_cap
+from models import VisaCheck
 
 from services.visa_data_service import (
     get_available_countries,
@@ -55,6 +59,18 @@ VISA_TYPE = "student_visa"
 
 class CheckRequest(BaseModel):
     answers: dict
+    # Optional: the readiness session opened by POST /start, so the check can close
+    # it (funnel/abandonment accounting). Omitting it still saves the check.
+    session_id: str | None = None
+
+
+# Free accounts get a fixed number of readiness checks for their whole lifetime.
+# When they're out, the checker is closed (paid/admin are exempt). This message is
+# shared by /start and /check so the copy stays consistent.
+_CAP_MESSAGE = (
+    "You've used all your free readiness checks. Upgrade to run more, or contact "
+    "support if you need another attempt."
+)
 
 
 def _data_error_response(exc: Exception) -> JSONResponse | None:
@@ -142,6 +158,47 @@ async def get_history(
         }
         for check in checks
     ])
+
+
+# ---------------------------------------------------------------------------
+# POST /{country}/start  — open a session + enforce the lifetime cap up front
+# ---------------------------------------------------------------------------
+
+@router.post("/{country}/start")
+@limiter.limit("20/minute")
+async def start_check(
+    request: Request,
+    country: str,
+    current_user: AuthUser = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """
+    Open a readiness session (for the funnel/abandonment KPI) and enforce the
+    lifetime cap before the user answers anything. Over cap → 429. The cap is
+    re-checked authoritatively at /check, so this endpoint is purely UX + tracking.
+    """
+    country = country.lower().strip()
+    if not is_supported_country(VISA_TYPE, country):
+        return JSONResponse(status_code=404, content={"error": "This country is not supported yet."})
+
+    db_user = await get_user_by_auth_id(db, current_user.user_id)
+    if db_user is None:
+        db_user = await get_or_create_user(db, current_user.user_id, current_user.email)
+
+    allowed, used, limit = await check_lifetime_cap(db, db_user, "readiness_check", VisaCheck)
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={"error": _CAP_MESSAGE, "used": used, "limit": limit},
+        )
+
+    session = await start_readiness_session(db, db_user, country)
+    remaining = None if limit is None else max(0, limit - used)
+    return JSONResponse(content={
+        "session_id": str(session.id),
+        "remaining":  remaining,
+        "limit":      limit,
+    })
 
 
 # ---------------------------------------------------------------------------
@@ -250,16 +307,22 @@ async def check_readiness(
     normalized_qs = normalize_questions(raw_questions)
     required_missing = compute_required_missing(normalized_qs, body.answers)
 
-    # Persist — save_visa_check now stores the full engine result (Phase 4B)
-    try:
-        db_user = await get_user_by_auth_id(db, current_user.user_id)
-        if db_user is None:
-            logger.info(
-                "Authenticated user %s not found in DB; creating before saving check.",
-                current_user.user_id,
-            )
-            db_user = await get_or_create_user(db, current_user.user_id, current_user.email)
+    # Resolve the user and enforce the lifetime cap authoritatively here — never
+    # trust that /start ran. Done after evaluation so data/scoring errors keep their
+    # own status codes; the cap still gates the save below.
+    db_user = await get_user_by_auth_id(db, current_user.user_id)
+    if db_user is None:
+        db_user = await get_or_create_user(db, current_user.user_id, current_user.email)
 
+    allowed, used, cap = await check_lifetime_cap(db, db_user, "readiness_check", VisaCheck)
+    if not allowed:
+        return JSONResponse(
+            status_code=429,
+            content={"error": _CAP_MESSAGE, "used": used, "limit": cap},
+        )
+
+    # Persist — save_visa_check now stores the full engine result (Phase 4B).
+    try:
         saved = await save_visa_check(db, db_user, country, VISA_TYPE, result)
         check_id = str(saved.id)
     except Exception:
@@ -272,6 +335,12 @@ async def check_readiness(
             status_code=500,
             content={"error": "Failed to save visa check. Please try again."},
         )
+
+    # Close the funnel session (best-effort — never blocks the response).
+    await complete_readiness_session(db, db_user, body.session_id, saved)
+
+    # This check counts against the lifetime cap now that it's saved.
+    remaining = None if cap is None else max(0, cap - (used + 1))
 
     return JSONResponse(content={
         "id":                       check_id,
@@ -288,4 +357,5 @@ async def check_readiness(
         "normalized_answers":       result.get("normalized_answers", {}),
         "sources_used":             result.get("sources_used",       []),
         "required_missing_answers": required_missing,
+        "checks_remaining":         remaining,
     })

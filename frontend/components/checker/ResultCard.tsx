@@ -1,4 +1,8 @@
-import { AlertTriangle, CheckCircle2, Info, ArrowRight, RefreshCw, ShieldAlert } from 'lucide-react'
+'use client'
+
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { AlertTriangle, CheckCircle2, Info, ArrowRight, RefreshCw, ShieldAlert, FileText, Loader2 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import type { CheckResult, ResultIssue } from '@/types/visa'
 import Link from 'next/link'
@@ -6,10 +10,71 @@ import { DocCard } from '@/components/ui/DocCard'
 import { ScoreBlock } from '@/components/ui/ScoreBlock'
 import { StatusPill, type StatusTone, toneTextClass } from '@/components/ui/StatusPill'
 import { SourcesUsedList } from '@/components/checker/SourcesUsedList'
+import { useReportApi } from '@/lib/useReportApi'
+import { ApiError } from '@/lib/api'
 
 interface Props {
   result: CheckResult
   onRetry: () => void
+}
+
+/**
+ * Post-check prompt: invites the user to generate + open their full readiness
+ * report. Shown only when the check was saved (result.id present). Generating is
+ * idempotent server-side; re-viewing an existing report doesn't consume budget.
+ */
+function ReportPrompt({ assessmentId }: { assessmentId: string }) {
+  const reportApi = useReportApi()
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const onView = async () => {
+    setLoading(true)
+    setError(null)
+    try {
+      const { token } = await reportApi.generate(assessmentId)
+      router.push(`/report/${token}`)
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 429) {
+        setError("You've used all your free readiness reports. Visit your dashboard to manage them.")
+      } else if (e instanceof ApiError && e.status === 503) {
+        setError('Report generation is temporarily unavailable. Please try again shortly.')
+      } else {
+        setError(e instanceof ApiError ? e.message : 'Could not open your report. Please try again.')
+      }
+      setLoading(false)
+    }
+  }
+
+  return (
+    <DocCard>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-start gap-3">
+          <span className="mt-0.5 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-[4px] border border-hairline bg-paper">
+            <FileText size={17} className="text-stamp" aria-hidden="true" />
+          </span>
+          <div>
+            <p className="font-mono text-[11px] font-bold uppercase tracking-[0.16em] text-ink">Your check is complete</p>
+            <p className="mt-1 font-body text-[13.5px] leading-relaxed text-support">
+              Get your full readiness report — findings, fixes and an official-source roadmap in one document.
+            </p>
+          </div>
+        </div>
+        <button onClick={onView} disabled={loading} className="btn-primary flex-shrink-0 text-sm">
+          {loading ? <Loader2 size={15} className="animate-spin" aria-hidden="true" /> : <FileText size={15} aria-hidden="true" />}
+          {loading ? 'Preparing…' : 'View full report'}
+          {!loading && <ArrowRight size={15} aria-hidden="true" />}
+        </button>
+      </div>
+      {error && (
+        <div role="alert" className="mt-3 flex items-start gap-2 rounded-[3px] border border-seal-text/40 bg-seal/[0.06] p-3">
+          <AlertTriangle size={14} className="mt-0.5 flex-shrink-0 text-seal-text" aria-hidden="true" />
+          <p className="font-body text-[13px] text-seal-text">{error}</p>
+        </div>
+      )}
+    </DocCard>
+  )
 }
 
 const countryLabels: Record<string, string> = {
@@ -118,6 +183,9 @@ export function ResultCard({ result, onRetry }: Props) {
           </div>
         </div>
       )}
+
+      {/* Post-check prompt to view the full report (only when the check was saved) */}
+      {result.id && <ReportPrompt assessmentId={result.id} />}
 
       {/* Critical blockers */}
       {blockers.length > 0 && (

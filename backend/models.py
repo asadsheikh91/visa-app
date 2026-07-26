@@ -23,6 +23,13 @@ class User(Base):
     # Billing plan for entitlements/quotas. "free" by default; a paywall can set
     # this to a paid tier later without any schema change. See services/entitlements.py.
     plan = Column(String, nullable=False, default="free", server_default="free")
+
+    # Per-user lifetime cap OVERRIDES (admin-grantable). NULL = use the default
+    # LIFETIME_LIMITS; a set integer replaces the default for this user only.
+    # Paid plans and admins are unlimited regardless (see services/entitlements.py).
+    readiness_check_limit = Column(Integer, nullable=True)
+    report_limit          = Column(Integer, nullable=True)
+
     created_at = Column(DateTime, default=utc_now_naive, nullable=False)
 
 
@@ -55,6 +62,43 @@ class VisaCheck(Base):
     sources_used         = Column(JSON,    nullable=True)
 
     created_at           = Column(DateTime, default=utc_now_naive, nullable=False)
+
+
+class ReadinessSession(Base):
+    """
+    One attempt at the Student Visa Readiness Checker, opened when the user starts
+    the questionnaire and closed when they submit.
+
+    Purpose: measure funnel drop-off. A row is created (status "started") by
+    POST /start; POST /check flips it to "completed" and links the resulting
+    VisaCheck. Sessions left "started" are abandonments (left mid-session) — the
+    KPI the admin panel reports. Distinct from VisaCheck, which only ever records
+    COMPLETED checks and remains the authoritative usage record for the lifetime
+    cap (see services/entitlements.py).
+    """
+    __tablename__ = "readiness_sessions"
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("users.id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    country = Column(String, nullable=False)
+    status  = Column(String, nullable=False, default="started")  # started | completed
+    # Set when the session completes. SET NULL keeps the session (and its funnel
+    # signal) if the check is later deleted.
+    visa_check_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("visa_checks.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True,
+    )
+
+    started_at   = Column(DateTime, default=utc_now_naive, nullable=False, index=True)
+    completed_at = Column(DateTime, nullable=True)
+    updated_at   = Column(DateTime, default=utc_now_naive, nullable=False)
 
 
 class UserVisaProfile(Base):

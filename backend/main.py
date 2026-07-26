@@ -12,7 +12,7 @@ from limiter import limiter
 from routers import (
     student_visa, currency, profile, visa_file, action_plan, timeline, sop, interview,
     document_guidance, financial_document, trust, outcomes, journey, org, report,
-    billing,
+    billing, admin,
 )
 from sqlalchemy import text
 from fastapi.responses import JSONResponse
@@ -185,6 +185,7 @@ app.include_router(journey.router, prefix="/api/visa/journey", tags=["journey"])
 app.include_router(org.router, prefix="/api/org", tags=["organization"])
 app.include_router(report.router, prefix="/api/visa", tags=["readiness-report"])
 app.include_router(billing.router, prefix="/api/billing", tags=["billing"])
+app.include_router(admin.router, prefix="/api/admin", tags=["admin"])
 
 
 @app.get("/")
