@@ -115,6 +115,14 @@ const config: Config = {
         },
         support: withOpacity('--pv-support'),
         hairline: withOpacity('--pv-hairline'),
+        fail: {
+          DEFAULT: withOpacity('--pv-fail'),
+          text: withOpacity('--pv-fail-text'),
+        },
+        warn: {
+          DEFAULT: withOpacity('--pv-warn'),
+          text: withOpacity('--pv-warn-text'),
+        },
         // Single readiness/quality language — shared by score bands and pills.
         readiness: {
           high: withOpacity('--readiness-high'),

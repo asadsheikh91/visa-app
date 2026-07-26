@@ -34,6 +34,20 @@
      12.5 — all AA on the manila ground. */
   --pv-support: #6B6560;
   --pv-hairline: #E8DFC8;
+  /* Failure/warn status colours (report card line items, badges). Same
+     AA-verification approach as seal/seal-text: base = fill/border/large-text,
+     -text = small-text-safe variant (≥4.5:1 on paper, verified below). */
+  --pv-fail: #DC2626;
+  /* #B3261E on paper: 5.52:1. */
+  --pv-fail-text: #B3261E;
+  --pv-warn: #D97706;
+  /* #92400E on paper: 5.99:1. */
+  --pv-warn-text: #92400E;
+
+  /* ── Motion ────────────────────────────────────────────────────────────
+     Single shared easing token for the hero's load sequence (the stamp uses
+     its own overshoot curve — see RubberStamp's `impact` variant). */
+  --ease-doc: cubic-bezier(0.16, 1, 0.3, 1);
 
   /* ── Type scale ────────────────────────────────────────────────────────
      Families come from next/font variables set on the landing wrapper

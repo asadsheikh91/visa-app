@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useMemo } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import { ArrowRight, ArrowLeft, Loader2, AlertCircle, RefreshCw, Globe } from 'lucide-react'
 import { useVisaApi } from '@/lib/useVisaApi'
 import { ApiError } from '@/lib/api'
@@ -10,10 +11,23 @@ import {
   getVisibleQuestions,
   pruneHiddenAnswers,
 } from '@/lib/visibility'
+import { resolveIntake } from '@/lib/intake'
 import { DocCard } from '@/components/ui/DocCard'
 import { QuestionCard } from './QuestionCard'
 import { ResultCard } from './ResultCard'
 import type { Question, CheckResult, AnswerValue } from '@/types/visa'
+
+// Best-effort match for a checker question that captures the applicant's
+// intended intake — no current country's live question set has one (verified
+// against the seeded data at the time this was written), so this is currently
+// inert. It only fires (prefills the answer AND skips the question) when a
+// live match exists, so it never risks writing a wrong answer.
+function findIntakeQuestion(questions: Question[]): Question | undefined {
+  return questions.find((q) => {
+    const haystack = `${q.id} ${q.scoring_key ?? ''} ${q.question ?? ''}`.toLowerCase()
+    return haystack.includes('intake')
+  })
+}
 
 type Phase = 'loading' | 'questions' | 'submitting' | 'result' | 'error'
 
@@ -43,6 +57,8 @@ function isAnswerProvided(answer: AnswerValue | undefined): boolean {
 
 export function CountryChecker({ country }: Props) {
   const api = useVisaApi()
+  const searchParams = useSearchParams()
+  const intake = resolveIntake(searchParams.get('intake'))
   const [phase, setPhase] = useState<Phase>('loading')
   const [questions, setQuestions] = useState<Question[]>([])
   // Answers keyed by question.id; multi_choice values are string[]
@@ -82,8 +98,26 @@ export function CountryChecker({ country }: Props) {
         ? data.questions.filter((q) => q && q.id)
         : []
       setQuestions(qs)
-      setAnswers({})
-      setVisibleIdx(0)
+
+      // ?intake= from the hero's inline starter — only acts when a live
+      // question actually captures intake and we have a value for it.
+      let initialAnswers: Record<string, AnswerValue> = {}
+      let initialIdx = 0
+      if (intake && intake.value !== 'unsure') {
+        const intakeQ = findIntakeQuestion(qs)
+        const prefillValue =
+          intakeQ?.input_type === 'date' ? intake.isoDate : intakeQ?.input_type === 'text' ? intake.label : null
+        if (intakeQ && prefillValue) {
+          initialAnswers = { [intakeQ.id]: prefillValue }
+          const visibleAtStart = getVisibleQuestions(qs, initialAnswers)
+          const matchIdx = visibleAtStart.findIndex((q) => q.id === intakeQ.id)
+          if (matchIdx !== -1) {
+            initialIdx = Math.min(matchIdx + 1, Math.max(visibleAtStart.length - 1, 0))
+          }
+        }
+      }
+      setAnswers(initialAnswers)
+      setVisibleIdx(initialIdx)
       setResult(null)
       setFieldError(null)
 
@@ -112,7 +146,7 @@ export function CountryChecker({ country }: Props) {
       }
       setPhase('error')
     }
-  }, [api, country])
+  }, [api, country, intake])
 
   useEffect(() => { loadQuestions() }, [loadQuestions])
 

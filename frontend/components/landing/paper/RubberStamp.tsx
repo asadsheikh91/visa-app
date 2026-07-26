@@ -26,6 +26,7 @@ export function RubberStamp({
   delay = 0,
   size = 'md',
   className,
+  impact = false,
 }: {
   label: string
   sublabel?: string
@@ -34,6 +35,15 @@ export function RubberStamp({
   delay?: number
   size?: 'sm' | 'md'
   className?: string
+  /**
+   * The signature-moment variant (hero "Assessed" stamp only). Swaps the
+   * default spring for the exact impact spec: overshoot scale/rotate/blur in
+   * 260ms, then a 180ms rubber-band settle wobble. `rotate` is still the
+   * final settled angle — the overshoot and wobble are expressed as deltas
+   * from it, so this composes correctly even when a parent wrapper already
+   * applies its own fixed rotation (see Hero.tsx).
+   */
+  impact?: boolean
 }) {
   const reduced = useReducedMotion()
 
@@ -72,31 +82,69 @@ export function RubberStamp({
     </span>
   )
 
+  // Impact variant: deltas from the final `rotate`, so the -16deg start and
+  // the -7.4deg wobble mid-point land correctly even when a parent wrapper
+  // already contributes a fixed rotation (see Hero.tsx's stamp wrapper).
+  // The ink-bleed SVG filter (roughened stamp edge) is static texture, not an
+  // animated value — it has to ride inside the SAME `filter` keyframes as the
+  // blur (framer applies animated `filter` as inline style, which would
+  // otherwise clobber the `style` prop's url(#pv-ink-bleed) outright).
+  const impactInitial = { opacity: 0, scale: 1.7, rotate: rotate - 8, filter: 'url(#pv-ink-bleed) blur(3px)' }
+  const impactAnimate = {
+    opacity: 1,
+    scale: [1.7, 1, 1],
+    rotate: [rotate - 8, rotate, rotate + 0.6, rotate],
+    y: [0, 0, 1, 0],
+    filter: 'url(#pv-ink-bleed) blur(0px)',
+  }
+  const impactTransition = {
+    delay,
+    duration: 0.44,
+    times: [0, 260 / 440, 350 / 440, 1],
+    ease: [0.2, 0.9, 0.3, 1.4] as const,
+  }
+
   return (
     <motion.span
       className={clsx('relative inline-block select-none mix-blend-multiply', colorClass[color], className)}
-      initial={reduced ? { opacity: 1, rotate } : { opacity: 0, scale: 1.55, rotate: rotate + 7 }}
+      initial={
+        reduced
+          ? { opacity: 1, rotate }
+          : impact
+            ? impactInitial
+            : { opacity: 0, scale: 1.55, rotate: rotate + 7 }
+      }
       whileInView={
         reduced
           ? { opacity: 1, rotate }
-          : { opacity: 1, scale: 1, rotate }
+          : impact
+            ? impactAnimate
+            : { opacity: 1, scale: 1, rotate }
       }
       viewport={{ once: true, amount: 0.5 }}
-      transition={{
-        delay,
-        type: 'spring',
-        stiffness: 480,
-        damping: 26,
-        mass: 0.9,
-        opacity: { duration: 0.1, delay },
-      }}
-      style={{ filter: 'url(#pv-ink-bleed)' }}
+      transition={
+        reduced
+          ? { duration: 0.2 }
+          : impact
+            ? impactTransition
+            : {
+                delay,
+                type: 'spring',
+                stiffness: 480,
+                damping: 26,
+                mass: 0.9,
+                opacity: { duration: 0.1, delay },
+              }
+      }
+      style={{ filter: impact && !reduced ? undefined : 'url(#pv-ink-bleed)' }}
       aria-label={sublabel ? `${label} ${sublabel}` : label}
       role="img"
     >
       {face}
-      {/* Brief ink-bleed: a blurred ghost of the face flashes on press. */}
-      {!reduced && (
+      {/* Brief ink-bleed: a blurred ghost of the face flashes on press.
+          Skipped for `impact` — its own blur→sharp filter is already the
+          ink-spread cue; layering both reads as muddy, not tactile. */}
+      {!reduced && !impact && (
         <motion.span
           aria-hidden="true"
           className="absolute inset-0 blur-[3px]"

@@ -1,47 +1,98 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import Link from 'next/link'
-import { animate, motion, useReducedMotion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { RubberStamp, StampInkFilter } from './RubberStamp'
 import { StampMark } from './StampMark'
 import { Section } from './Section'
+import { AssessmentStarter } from './AssessmentStarter'
+import { SAMPLE_REPORT, type ReportLineStatus } from '@/content/sample-report'
+import { RULES_UPDATED_LABEL } from '@/content/site-config'
 
 const CHECKER_HREF = '/tools/student-visa/countries'
-const SCORE = 82
-
-// TODO(content): confirm the exact figures before launch — these are the
-// brief's example values, not verified numbers. VISA_FEE names the money the
-// applicant stands to lose (UK Student visa application fee); FULL_REPORT_PRICE
-// is the paid tier shown above the fold so pricing is never hidden behind
-// signup. Do not ship without confirming both.
-const VISA_FEE = '£490'
 const FULL_REPORT_PRICE = 'PKR 1,500'
 
-const trust = ['Free readiness score', 'Answer in 2 minutes', 'Rules from official sources']
-
-const fileRows: [string, string][] = [
-  ['Applicant', 'A. R. Khan'],
-  ['Route', 'Pakistan → United Kingdom'],
-  ['Program', 'MSc Computer Science'],
-  ['Intake', 'September 2026'],
+const trust = [
+  'Free readiness score',
+  '2 minutes',
+  'Rules sourced from GOV.UK, IRCC and Home Affairs',
+  RULES_UPDATED_LABEL,
 ]
 
-// The card describes what the tool actually does — it scores self-reported
-// answers against published rules. It does NOT verify documents, so no row may
-// read "verified". States: meets = clears the published threshold; onfile =
-// the applicant reports holding it; missing = absent, needs action.
-const checkRows: { doc: string; state: 'meets' | 'onfile' | 'missing'; label: string }[] = [
-  { doc: 'Financial evidence', state: 'meets', label: 'Meets threshold' },
-  { doc: 'CAS + offer letter', state: 'onfile', label: 'On file' },
-  { doc: 'TB certificate', state: 'missing', label: 'Missing' },
-]
+// Single shared easing token (mirrors --ease-doc in pv-tokens.css — kept as a
+// literal here because framer's JS transition option can't read a CSS var).
+const EASE_DOC = [0.16, 1, 0.3, 1] as const
 
-const rise = (reduced: boolean, delay: number) => ({
-  initial: reduced ? undefined : { opacity: 0, y: 18 },
-  animate: { opacity: 1, y: 0 },
-  transition: { delay, type: 'spring' as const, stiffness: 260, damping: 30 },
-})
+// Report-card colour keyframes need literal values, not var() refs (framer
+// can't interpolate a CSS custom property as a colour) — mirrors pv-tokens.css.
+const INK_HEX = '#14213D' // --pv-ink
+const PASS_HEX = '#1F6B4A' // --pv-stamp
+const WARN_HEX = '#92400E' // --pv-warn-text
+const FAIL_TEXT_HEX = '#B3261E' // --pv-fail-text
+const FAIL_HEX = '#DC2626' // --pv-fail
+const statusHex: Record<ReportLineStatus, string> = { pass: PASS_HEX, warn: WARN_HEX, fail: FAIL_TEXT_HEX }
+
+// ── Page-load sequence (seconds, from first paint) — see brief Part B table.
+const T = {
+  eyebrow: 0.15,
+  headlineLine1: 0.25,
+  headlineLine2: 0.33,
+  subhead: 0.45,
+  ctaRow: 0.6,
+  microCopy: 0.7,
+  disclaimer: 0.76,
+  trustBar: 0.82,
+  card: 0.35,
+  stamp: 1.1,
+  countStart: 1.3,
+  countDuration: 0.9,
+  linesStart: 1.5,
+  lineStagger: 0.07,
+  starter: 1.9,
+}
+const countEnd = T.countStart + T.countDuration
+
+function fadeRise(reduced: boolean, delay: number, duration: number, distance = 10) {
+  return {
+    initial: reduced ? { opacity: 0 } : { opacity: 0, y: distance },
+    animate: { opacity: 1, y: 0 },
+    transition: reduced ? { duration: 0.2, delay } : { duration, delay, ease: EASE_DOC },
+  }
+}
+
+function fadeOnly(reduced: boolean, delay: number, duration = 0.4) {
+  return {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    transition: { duration: reduced ? 0.2 : duration, delay },
+  }
+}
+
+/** One "printed" headline line — text sits in the DOM at first paint, hidden
+ *  by transform (never display:none), masked by the overflow-hidden wrapper. */
+function MaskLine({
+  reduced,
+  delay,
+  children,
+}: {
+  reduced: boolean
+  delay: number
+  children: ReactNode
+}) {
+  return (
+    <span className="block overflow-hidden">
+      <motion.span
+        className="block"
+        initial={reduced ? { opacity: 0 } : { y: '100%' }}
+        animate={reduced ? { opacity: 1 } : { y: 0 }}
+        transition={reduced ? { duration: 0.2, delay } : { duration: 0.6, delay, ease: EASE_DOC }}
+      >
+        {children}
+      </motion.span>
+    </span>
+  )
+}
 
 export function Hero() {
   const reduced = useReducedMotion() ?? false
@@ -70,74 +121,90 @@ export function Hero() {
         {/* ── Left: copy ── */}
         <div className="lg:col-span-7 lg:pr-6">
           <motion.p
-            {...rise(reduced, 0)}
+            {...fadeRise(reduced, T.eyebrow, 0.45, 8)}
             className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-support"
           >
-            Student visa readiness&ensp;·&ensp;PK → UK · AUS · CAN · USA
+            Student visa readiness&ensp;·&ensp;September 2026 &amp; January 2027 intakes{' '}
+            <span className="whitespace-nowrap">·&ensp;UK · AUS · CAN · USA</span>
           </motion.p>
 
-          {/* One declarative line. No em-dash, no italic second line — those
-              read as generated. Sizes are conservative because the headline now
-              wraps 2–3 lines naturally rather than to a designed two-line break;
-              text-balance evens the ragged edge. NOTE(CLS): the serif fallback
-              metrics in pv-tokens.css were tuned to the previous headline's wrap
-              counts and may need re-measuring for this longer string. */}
+          {/* Two "printed" lines, each independently mask-revealed — the
+              metaphor is text being printed onto the page. text-balance evens
+              the ragged edge inside each line if it wraps further on its own. */}
           <h1
             id="hero-heading"
             className="mt-6 text-balance font-serif text-[32px] font-medium leading-[1.08] tracking-[-0.015em] text-ink sm:text-[44px] md:text-[52px] lg:text-[42px] xl:text-[52px] 2xl:text-[56px]"
           >
-            <motion.span {...rise(reduced, 0.08)} className="block">
-              Don&rsquo;t lose {VISA_FEE} finding out your file was incomplete.
-            </motion.span>
+            <MaskLine reduced={reduced} delay={T.headlineLine1}>
+              Find out what&rsquo;s wrong with your file now,
+            </MaskLine>
+            <MaskLine reduced={reduced} delay={T.headlineLine2}>
+              not in the refusal letter.
+            </MaskLine>
           </h1>
 
           <motion.p
-            {...rise(reduced, 0.26)}
+            {...fadeRise(reduced, T.subhead, 0.5)}
             className="measure mt-6 font-body text-[17px] leading-relaxed text-support"
           >
-            ParchiVisa checks every document against the official rules, scores your readiness, and
-            tells you exactly what to fix before you apply.
+            ParchiVisa checks your file against the official UKVI, IRCC and Home Affairs rules,
+            scores your readiness, and gives you the exact list of what to fix.{' '}
+            <span className="font-semibold text-ink">
+              Some fixes take 28 days. Find out while you still have them.
+            </span>
           </motion.p>
 
-          <motion.div {...rise(reduced, 0.34)} className="mt-9 flex flex-wrap items-center gap-6">
+          <motion.div {...fadeRise(reduced, T.ctaRow, 0.45)} className="mt-9 flex flex-wrap items-center gap-6">
             <Link
               href={CHECKER_HREF}
-              className="rounded-[3px] bg-stamp px-6 py-3.5 font-body text-[15px] font-semibold text-paper transition-colors hover:bg-stamp-deep"
+              className="rounded-[3px] bg-stamp px-6 py-3.5 font-body text-[15px] font-semibold text-paper transition-[background-color,transform] duration-150 hover:bg-stamp-deep hover:-translate-y-px active:translate-y-0 active:duration-75"
             >
-              Check my readiness — free
+              Get my readiness score
             </Link>
             {/* TODO(content): point at the real, ungated sample report once the
                 sample asset exists; brief requires it not be hidden behind
                 signup. Anchored to how-it-works as an interim, honest target. */}
             <Link
               href="/#how-it-works"
-              className="font-body text-[15px] font-medium text-ink underline decoration-hairline underline-offset-[6px] transition-colors hover:decoration-stamp"
+              className="font-body text-[15px] font-medium text-ink underline decoration-hairline underline-offset-4 transition-[text-underline-offset,text-decoration-thickness] duration-[180ms] hover:decoration-2 hover:underline-offset-2 hover:decoration-stamp"
             >
-              See a sample report
+              See a real report first
             </Link>
+          </motion.div>
+
+          <motion.div
+            {...fadeOnly(reduced, T.microCopy)}
+            className="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[11px] uppercase tracking-[0.1em] text-support"
+          >
+            <span>Free · 2 minutes</span>
+            <span>No email needed</span>
           </motion.div>
 
           {/* Pricing is visible in the first scroll — hiding it behind signup
               reads as bait-and-switch in this market. */}
           <motion.p
-            {...rise(reduced, 0.38)}
-            className="mt-6 font-mono text-[12px] uppercase tracking-[0.1em] text-support"
+            {...fadeOnly(reduced, T.microCopy)}
+            className="mt-4 font-mono text-[12px] uppercase tracking-[0.1em] text-support"
           >
-            Free readiness score. Full report {FULL_REPORT_PRICE}.
+            Score and gap list: free. Full report with fix-by-fix plan: {FULL_REPORT_PRICE}. One
+            time, no subscription.
           </motion.p>
 
           {/* Persistent disclaimer, repeated directly under the CTA (also in the
               footer on every page). Keeps every claim inside what the tool does. */}
           <motion.p
-            {...rise(reduced, 0.44)}
+            {...fadeOnly(reduced, T.disclaimer)}
             className="measure mt-3 font-body text-[12px] leading-relaxed text-support"
           >
-            ParchiVisa is an independent tool. Not affiliated with, endorsed by, or acting on behalf
-            of any government, embassy, or high commission. This is not immigration advice.
+            <span className="font-body text-[15px] font-medium text-ink">We are not an agent.</span>{' '}
+            We do not file your application, we take no commission from any university, and we
+            will never promise you a visa. ParchiVisa is an independent tool, not affiliated with
+            or acting on behalf of any government, embassy or high commission. This is not
+            immigration advice.
           </motion.p>
 
           <motion.ul
-            {...rise(reduced, 0.42)}
+            {...fadeOnly(reduced, T.trustBar)}
             className="mt-12 flex max-w-[640px] flex-wrap items-center gap-y-3 border-t border-hairline pt-5"
           >
             {trust.map((t, i) => (
@@ -151,14 +218,18 @@ export function Hero() {
               </li>
             ))}
           </motion.ul>
+
+          <AssessmentStarter reduced={reduced} delay={T.starter} />
         </div>
 
         {/* ── Right: the official document card ── */}
         <motion.div
           className="relative overflow-visible lg:col-span-5 lg:mt-2"
-          initial={reduced ? undefined : { opacity: 0, x: 28 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2, type: 'spring', stiffness: 220, damping: 30 }}
+          initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.98 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          transition={
+            reduced ? { duration: 0.2, delay: T.card } : { duration: 0.6, delay: T.card, ease: EASE_DOC }
+          }
         >
           <DocumentCard reduced={reduced} />
 
@@ -171,7 +242,13 @@ export function Hero() {
               so the rotated bounding box never crops the ink. */}
           <div className="absolute right-0 top-0 z-20 -translate-y-[37%] translate-x-[16%] overflow-visible xl:translate-x-[26%] 2xl:translate-x-[37%]">
             <div className="-rotate-[8deg] overflow-visible p-[14px]">
-              <RubberStamp label="Assessed" sublabel="PV · 23 Jul 2026" rotate={0} delay={1.15} />
+              <RubberStamp
+                label="Assessed"
+                sublabel="PV · 23 Jul 2026"
+                rotate={0}
+                delay={T.stamp}
+                impact
+              />
             </div>
           </div>
         </motion.div>
@@ -183,20 +260,33 @@ export function Hero() {
 /* ── The readiness assessment slip ─────────────────────────────────────── */
 
 function DocumentCard({ reduced }: { reduced: boolean }) {
-  const [score, setScore] = useState(reduced ? SCORE : 0)
+  const [score, setScore] = useState(reduced ? SAMPLE_REPORT.score : 0)
 
+  // Raw rAF counter (not setInterval, per brief) — decelerates into the final number.
   useEffect(() => {
     if (reduced) return
-    const controls = animate(0, SCORE, {
-      delay: 0.55,
-      duration: 1.1,
-      ease: [0.22, 1, 0.36, 1],
-      onUpdate: (v) => setScore(Math.round(v)),
-    })
-    return () => controls.stop()
+    let raf = 0
+    const startAt = performance.now() + T.countStart * 1000
+    const durationMs = T.countDuration * 1000
+    const easeOutCubic = (t: number) => 1 - (1 - t) ** 3
+
+    const tick = (now: number) => {
+      const elapsed = now - startAt
+      if (elapsed < 0) {
+        raf = requestAnimationFrame(tick)
+        return
+      }
+      const t = Math.min(elapsed / durationMs, 1)
+      setScore(Math.round(easeOutCubic(t) * SAMPLE_REPORT.score))
+      if (t < 1) raf = requestAnimationFrame(tick)
+    }
+
+    raf = requestAnimationFrame(tick)
+    return () => cancelAnimationFrame(raf)
   }, [reduced])
 
-  const filled = Math.round((SCORE / 100) * 20)
+  const filled = Math.round((SAMPLE_REPORT.score / 100) * 20)
+  const fileRows: [string, string][] = [['Applicant', SAMPLE_REPORT.applicant], ...SAMPLE_REPORT.fileRows]
 
   return (
     <div className="relative border border-ink bg-white shadow-[6px_6px_0_0] shadow-ink/10">
@@ -244,46 +334,57 @@ function DocumentCard({ reduced }: { reduced: boolean }) {
               </div>
             </div>
             <div className="pb-1 text-right">
-              <span className="inline-block border border-stamp px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-stamp">
-                Strong — minor gaps
-              </span>
+              <ScoreBadge reduced={reduced} />
             </div>
           </div>
 
           {/* Segmented form-box meter: 20 cells, no gauges, no glow. */}
           <div aria-hidden="true" className="mt-4 flex gap-[3px]">
-            {Array.from({ length: 20 }, (_, i) => (
-              <span
-                key={i}
-                className={`h-[9px] flex-1 border ${
-                  i < filled ? 'border-stamp bg-stamp' : 'border-hairline bg-paper-deep'
-                }`}
-              />
-            ))}
+            {Array.from({ length: 20 }, (_, i) => {
+              const isFilled = i < filled
+              if (!isFilled) {
+                return <span key={i} className="h-[9px] flex-1 border border-hairline bg-paper-deep" />
+              }
+              const segDelay = Math.max(0, countEnd - (filled - i) * 0.022)
+              return (
+                <motion.span
+                  key={i}
+                  className="h-[9px] flex-1 border border-fail bg-fail"
+                  style={{ transformOrigin: 'bottom' }}
+                  initial={reduced ? { opacity: 1, scaleY: 1 } : { opacity: 0, scaleY: 0.6 }}
+                  animate={{ opacity: 1, scaleY: 1 }}
+                  transition={reduced ? { duration: 0 } : { duration: 0.15, delay: segDelay }}
+                />
+              )
+            })}
           </div>
         </div>
 
         <ul className="mt-5 space-y-2 border-t border-hairline pt-4">
-          {checkRows.map(({ doc, state, label }) => (
-            <li key={doc} className="flex items-baseline justify-between gap-4">
-              <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink">
-                {doc}
-              </span>
-              <span
-                className={`font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] ${
-                  state === 'meets'
-                    ? 'text-stamp'
-                    : state === 'missing'
-                      ? // seal-orange budget: a genuine attention state.
-                        // seal-text (not seal) because 10.5px needs AA 4.5:1.
-                        'text-seal-text'
-                      : 'text-support'
-                }`}
+          {SAMPLE_REPORT.lines.map(({ doc, detail, status }, i) => {
+            const rowDelay = T.linesStart + i * T.lineStagger
+            return (
+              <motion.li
+                key={doc}
+                className="flex items-baseline justify-between gap-4"
+                initial={reduced ? { opacity: 0 } : { opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={reduced ? { duration: 0.2 } : { duration: 0.3, delay: rowDelay, ease: EASE_DOC }}
               >
-                {label}
-              </span>
-            </li>
-          ))}
+                <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-ink">{doc}</span>
+                <motion.span
+                  className="font-mono text-[10.5px] font-bold uppercase tracking-[0.14em]"
+                  initial={reduced ? { color: statusHex[status] } : { color: INK_HEX }}
+                  animate={{ color: statusHex[status] }}
+                  transition={
+                    reduced ? { duration: 0 } : { duration: 0.25, delay: rowDelay + 0.2 }
+                  }
+                >
+                  {detail}
+                </motion.span>
+              </motion.li>
+            )
+          })}
         </ul>
 
         <div className="mt-5 flex items-end justify-end gap-4 border-t border-hairline pt-4">
@@ -292,10 +393,26 @@ function DocumentCard({ reduced }: { reduced: boolean }) {
             <span aria-hidden="true" className="text-hairline">
               ·
             </span>
-            PV-2026-0193
+            {SAMPLE_REPORT.formNumber}
           </span>
         </div>
       </div>
     </div>
+  )
+}
+
+/** Transitions ink → failure colour in sync with the first failing line item. */
+function ScoreBadge({ reduced }: { reduced: boolean }) {
+  const badgeDelay = T.linesStart + 0.2 // synced with row 0's status colour transition
+
+  return (
+    <motion.span
+      className="inline-block border px-2 py-1 font-mono text-[10px] font-bold uppercase tracking-[0.14em]"
+      initial={reduced ? { borderColor: FAIL_HEX, color: FAIL_TEXT_HEX } : { borderColor: INK_HEX, color: INK_HEX }}
+      animate={{ borderColor: FAIL_HEX, color: FAIL_TEXT_HEX }}
+      transition={reduced ? { duration: 0 } : { duration: 0.25, delay: badgeDelay }}
+    >
+      {SAMPLE_REPORT.badge}
+    </motion.span>
   )
 }
