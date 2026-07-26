@@ -1,3 +1,4 @@
+import { NewsStrip } from '@/components/landing/paper/NewsStrip'
 import { LandingNav } from '@/components/landing/paper/LandingNav'
 import { Hero } from '@/components/landing/paper/Hero'
 import { FailureClauses } from '@/components/landing/paper/FailureClauses'
@@ -23,6 +24,7 @@ export default function HomePage() {
       data-pv-landing=""
       className={`${pvSerif.variable} ${pvSans.variable} ${pvMono.variable} min-h-screen bg-paper font-body text-ink antialiased`}
     >
+      <NewsStrip />
       <LandingNav />
       <Hero />
       <FailureClauses />
