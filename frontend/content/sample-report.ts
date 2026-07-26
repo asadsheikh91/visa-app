@@ -20,6 +20,11 @@ export const SAMPLE_REPORT = {
   score: 61,
   badge: 'AT RISK · 3 CRITICAL GAPS',
   formNumber: 'PV-2026-0193',
+  // Assessment date on the corner stamp. A fixed illustrative date, not
+  // derived from Date.now() (it's a sample file, not a live one) — chosen to
+  // read sensibly a few weeks ahead of the sample's own September 2026 intake
+  // rather than tracking real-world "today".
+  assessedDate: 'PV · 12 Aug 2026',
   lines: [
     { doc: 'Financial evidence', detail: '28-day rule not met', status: 'fail' },
     { doc: 'Course progression', detail: '2-year gap unexplained', status: 'fail' },

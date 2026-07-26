@@ -82,8 +82,11 @@ export function NewsStrip() {
 }
 
 function LiveDot({ reduced }: { reduced: boolean }) {
+  // -ml pulls the dot back by its own width + the row's gap-3 (6px + 12px =
+  // 18px) so it reads as a marker sitting before the text rather than
+  // pushing the text 18px right of the nav logo / eyebrow's shared gutter.
   return (
-    <span className="relative flex h-1.5 w-1.5 flex-shrink-0" aria-hidden="true">
+    <span className="relative -ml-[18px] flex h-1.5 w-1.5 flex-shrink-0" aria-hidden="true">
       {!reduced && (
         <motion.span
           className="absolute inset-0 rounded-full bg-stamp"

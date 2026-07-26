@@ -33,6 +33,15 @@ const FAIL_TEXT_HEX = '#B3261E' // --pv-fail-text
 const FAIL_HEX = '#DC2626' // --pv-fail
 const statusHex: Record<ReportLineStatus, string> = { pass: PASS_HEX, warn: WARN_HEX, fail: FAIL_TEXT_HEX }
 
+// Segmented bar fill colour by score band. The badge pill stays red regardless
+// (it's this sample's overall verdict) — an all-red bar at 61/100 read as
+// "everything is wrong", which a 61 isn't.
+function barBandClass(score: number) {
+  if (score < 50) return 'border-fail bg-fail'
+  if (score < 75) return 'border-warn bg-warn'
+  return 'border-stamp bg-stamp'
+}
+
 // ── Page-load sequence (seconds, from first paint) — see brief Part B table.
 const T = {
   eyebrow: 0.15,
@@ -105,7 +114,11 @@ export function Hero() {
       // produce horizontal scroll at any viewport width.
       className="relative overflow-hidden"
       // Positions the watermark against the CONTAINER edge, not the viewport.
-      innerClassName="relative"
+      // Section's shared `py-band` (~72-120px) sets top AND bottom padding;
+      // pt-* here overrides just the top (Tailwind's padding plugin always
+      // emits pt-* after py-*, so same-specificity pt-* wins) — bottom is
+      // untouched, so this only shrinks the hero, never pads it out further.
+      innerClassName="relative pt-8 md:pt-12 lg:pt-20"
     >
       <StampInkFilter />
 
@@ -120,12 +133,16 @@ export function Hero() {
       <div className="relative z-10 grid grid-cols-1 items-start gap-14 lg:grid-cols-12 lg:gap-10">
         {/* ── Left: copy ── */}
         <div className="lg:col-span-7 lg:pr-6">
+          {/* Two explicit lines, not a natural wrap — the previous single-line
+              copy wrapped onto a leading "· UK · AUS..." at exactly this
+              column width, an orphaned separator. Line 2 sits at reduced
+              opacity so the two-line break reads as intentional hierarchy. */}
           <motion.p
             {...fadeRise(reduced, T.eyebrow, 0.45, 8)}
             className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-support"
           >
-            Student visa readiness&ensp;·&ensp;September 2026 &amp; January 2027 intakes{' '}
-            <span className="whitespace-nowrap">·&ensp;UK · AUS · CAN · USA</span>
+            <span className="block">Student visa readiness · September 2026 &amp; January 2027 intakes</span>
+            <span className="mt-1 block text-support/70">UK · Australia · Canada · USA</span>
           </motion.p>
 
           {/* Two "printed" lines, each independently mask-revealed — the
@@ -143,41 +160,55 @@ export function Hero() {
             </MaskLine>
           </h1>
 
-          <motion.p
+          <motion.div
             {...fadeRise(reduced, T.subhead, 0.5)}
-            className="measure mt-6 font-body text-[17px] leading-relaxed text-support"
+            className="mt-4 max-w-[58ch] font-body text-[17px] leading-relaxed text-support [text-wrap:pretty]"
           >
-            ParchiVisa checks your file against the official UKVI, IRCC and Home Affairs rules,
-            scores your readiness, and gives you the exact list of what to fix.{' '}
-            <span className="font-semibold text-ink">
+            <p>
+              ParchiVisa checks your file against the official UKVI, IRCC and Home Affairs rules,
+              scores your readiness, and gives you the exact list of what to fix.
+            </p>
+            {/* Own line — breaking "take / 28 days" mid-phrase read as an accident. */}
+            <p className="mt-2 font-semibold text-ink">
               Some fixes take 28 days. Find out while you still have them.
-            </span>
-          </motion.p>
-
-          <motion.div {...fadeRise(reduced, T.ctaRow, 0.45)} className="mt-9 flex flex-wrap items-center gap-6">
-            <Link
-              href={CHECKER_HREF}
-              className="rounded-[3px] bg-stamp px-6 py-3.5 font-body text-[15px] font-semibold text-paper transition-[background-color,transform] duration-150 hover:bg-stamp-deep hover:-translate-y-px active:translate-y-0 active:duration-75"
-            >
-              Get my readiness score
-            </Link>
-            {/* TODO(content): point at the real, ungated sample report once the
-                sample asset exists; brief requires it not be hidden behind
-                signup. Anchored to how-it-works as an interim, honest target. */}
-            <Link
-              href="/#how-it-works"
-              className="font-body text-[15px] font-medium text-ink underline decoration-hairline underline-offset-4 transition-[text-underline-offset,text-decoration-thickness] duration-[180ms] hover:decoration-2 hover:underline-offset-2 hover:decoration-stamp"
-            >
-              See a real report first
-            </Link>
+            </p>
           </motion.div>
 
-          <motion.div
-            {...fadeOnly(reduced, T.microCopy)}
-            className="mt-3 flex flex-wrap gap-x-6 gap-y-1 font-mono text-[11px] uppercase tracking-[0.1em] text-support"
-          >
-            <span>Free · 2 minutes</span>
-            <span>No email needed</span>
+          <motion.div {...fadeRise(reduced, T.ctaRow, 0.45)} className="mt-9 flex flex-wrap items-start gap-6">
+            <div className="flex flex-col items-start">
+              <Link
+                href={CHECKER_HREF}
+                className="rounded-[3px] bg-stamp px-6 py-3.5 font-body text-[15px] font-semibold text-paper transition-[background-color,transform] duration-150 hover:bg-stamp-deep hover:-translate-y-px active:translate-y-0 active:duration-75"
+              >
+                Get my readiness score
+              </Link>
+              {/* No "no sign-up" claim here — confirmed (again, on this pass)
+                  that /tools/student-visa is Clerk-gated in middleware.ts AND
+                  <AuthGate>, so that line would be false. See PR notes. */}
+              <motion.p
+                {...fadeOnly(reduced, T.microCopy)}
+                className="mt-2 font-mono text-[11px] uppercase tracking-[0.1em] text-support"
+              >
+                Free · 2 minutes
+              </motion.p>
+            </div>
+            <div className="flex flex-col items-start">
+              {/* TODO(content): point at the real, ungated sample report once the
+                  sample asset exists; brief requires it not be hidden behind
+                  signup. Anchored to how-it-works as an interim, honest target. */}
+              <Link
+                href="/#how-it-works"
+                className="mt-[9px] font-body text-[15px] font-medium text-ink underline decoration-hairline underline-offset-4 transition-[text-underline-offset,text-decoration-thickness] duration-[180ms] hover:decoration-2 hover:underline-offset-2 hover:decoration-stamp"
+              >
+                See a real report first
+              </Link>
+              <motion.p
+                {...fadeOnly(reduced, T.microCopy)}
+                className="mt-2 font-mono text-[11px] uppercase tracking-[0.1em] text-support"
+              >
+                No email needed
+              </motion.p>
+            </div>
           </motion.div>
 
           {/* Pricing is visible in the first scroll — hiding it behind signup
@@ -194,7 +225,7 @@ export function Hero() {
               footer on every page). Keeps every claim inside what the tool does. */}
           <motion.p
             {...fadeOnly(reduced, T.disclaimer)}
-            className="measure mt-3 font-body text-[12px] leading-relaxed text-support"
+            className="measure mt-2 font-body text-[11px] leading-relaxed text-support"
           >
             <span className="font-body text-[15px] font-medium text-ink">We are not an agent.</span>{' '}
             We do not file your application, we take no commission from any university, and we
@@ -205,7 +236,7 @@ export function Hero() {
 
           <motion.ul
             {...fadeOnly(reduced, T.trustBar)}
-            className="mt-12 flex max-w-[640px] flex-wrap items-center gap-y-3 border-t border-hairline pt-5"
+            className="mt-8 flex max-w-[640px] flex-wrap items-center gap-y-3 border-t border-hairline pt-5"
           >
             {trust.map((t, i) => (
               <li
@@ -223,8 +254,11 @@ export function Hero() {
         </div>
 
         {/* ── Right: the official document card ── */}
+        {/* lg:mt-px: measured (Range.getBoundingClientRect on the eyebrow's
+            first line's text node vs the card's top) so the card's top edge
+            lands on the eyebrow's cap-height, not its taller line box. */}
         <motion.div
-          className="relative overflow-visible lg:col-span-5 lg:mt-2"
+          className="relative overflow-visible lg:col-span-5 lg:mt-px"
           initial={reduced ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.98 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={
@@ -244,7 +278,7 @@ export function Hero() {
             <div className="-rotate-[8deg] overflow-visible p-[14px]">
               <RubberStamp
                 label="Assessed"
-                sublabel="PV · 23 Jul 2026"
+                sublabel={SAMPLE_REPORT.assessedDate}
                 rotate={0}
                 delay={T.stamp}
                 impact
@@ -349,7 +383,7 @@ function DocumentCard({ reduced }: { reduced: boolean }) {
               return (
                 <motion.span
                   key={i}
-                  className="h-[9px] flex-1 border border-fail bg-fail"
+                  className={`h-[9px] flex-1 border ${barBandClass(SAMPLE_REPORT.score)}`}
                   style={{ transformOrigin: 'bottom' }}
                   initial={reduced ? { opacity: 1, scaleY: 1 } : { opacity: 0, scaleY: 0.6 }}
                   animate={{ opacity: 1, scaleY: 1 }}
