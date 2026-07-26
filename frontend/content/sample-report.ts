@@ -11,7 +11,7 @@ export interface ReportLine {
 }
 
 export const SAMPLE_REPORT = {
-  applicant: 'Ayesha R.',
+  applicant: 'Asad Sheikh',
   fileRows: [
     ['Route', 'Pakistan → United Kingdom'],
     ['Program', 'MSc Computer Science'],
