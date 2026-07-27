@@ -34,6 +34,26 @@ const isProtectedRoute = createRouteMatcher([
   '/admin(.*)',
 ])
 
+// Next's metadata file conventions (app/**/opengraph-image.tsx etc.) compile to
+// GET routes UNDER the page they belong to, so a protected page's share image
+// would 307 to sign-in and every unfurl would fall back to a grey box. They
+// render static brand art with no user data, so they are public everywhere.
+// In production the emitted path carries a build hash: /…/opengraph-image-<hash>.
+const isMetadataImageRoute = createRouteMatcher([
+  '/(.*)(opengraph-image|twitter-image)(-.*)?',
+  '/(opengraph-image|twitter-image)(-.*)?',
+])
+
+// The checker's country picker is the URL that actually gets shared, so it has
+// to be crawlable — a 307 to /sign-in means the share card is built from the
+// sign-in page, not this one. Only the page shell is public: <AuthGate> still
+// walls the CountrySelector itself, and every route BELOW this one
+// (/countries/[country], the questionnaire, results) stays protected above.
+const isPublicCheckerShell = createRouteMatcher([
+  '/tools/student-visa',
+  '/tools/student-visa/countries',
+])
+
 // Report routes that must NOT require a Clerk session:
 //   - /report/*/print : loaded by the server-side Playwright renderer (no session);
 //     carries a single-use render token and shows nothing without valid data.
@@ -48,7 +68,9 @@ const isPublicReportRoute = createRouteMatcher(['/report/(.*)/print', '/report/p
 // lands back where they intended after authenticating.
 const middleware = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
   ? clerkMiddleware((auth, req) => {
-      if (isProtectedRoute(req) && !isPublicReportRoute(req)) {
+      const isPublic =
+        isPublicReportRoute(req) || isMetadataImageRoute(req) || isPublicCheckerShell(req)
+      if (isProtectedRoute(req) && !isPublic) {
         const { userId, redirectToSignIn } = auth()
         if (!userId) {
           return redirectToSignIn({ returnBackUrl: req.url })

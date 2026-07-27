@@ -418,9 +418,13 @@ body[data-report-print] > footer {
 
 /* ---------------------------------------------------------------------------
    "The Official Document" landing — scoped chrome + paper ground.
-   The redesigned landing route renders its own paper-styled Nav/Footer, so the
-   global dark chrome is suppressed for it (same technique as the report print
-   route above, but keyed off the landing wrapper instead of a body attr).
+   The redesigned landing route renders its own paper-styled Nav/Footer.
+
+   The global chrome is no longer RENDERED on those routes at all — see
+   components/GlobalChrome.tsx, which is the real fix. Hiding it here left two
+   <header>/<footer> landmarks with two different link sets in the HTML, which
+   crawlers and screen readers both read. This rule is kept only as a backstop
+   for any route that adds data-pv-landing without updating LANDING_ROUTES.
 --------------------------------------------------------------------------- */
 body:has([data-pv-landing]) > header,
 body:has([data-pv-landing]) > footer {

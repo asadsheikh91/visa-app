@@ -88,7 +88,7 @@ export function ComingSoonPreview({
         {/* Actions */}
         <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
           <a
-            href={`mailto:hello@parchivisa.com?subject=${encodeURIComponent(notifySubject)}`}
+            href={`mailto:hello@parchivisa.app?subject=${encodeURIComponent(notifySubject)}`}
             className="btn-primary justify-center text-sm"
           >
             <Bell size={15} />
