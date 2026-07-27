@@ -29,12 +29,11 @@ export function PullQuote() {
             &ldquo;
           </div>
           <blockquote className="mx-auto mt-8 max-w-[26ch] text-balance font-serif text-[28px] font-medium leading-[1.25] tracking-[-0.01em] text-ink sm:text-[34px]">
-            It caught the exact bank-statement mistake that gets people refused. I had no idea my
-            funds had to sit untouched for{' '}
+            I had no idea my funds had to sit untouched for{' '}
             <em className="italic underline decoration-stamp decoration-2 underline-offset-4">
               28 days
-            </em>{' '}
-            — ParchiVisa flagged it before I booked my biometrics.
+            </em>
+. ParchiVisa caught it before I booked biometrics.
           </blockquote>
           <figcaption className="mt-10 font-mono text-[11px] uppercase tracking-[0.2em] text-support">
             Ayesha Khan&ensp;·&ensp;Lahore → UK Student Visa

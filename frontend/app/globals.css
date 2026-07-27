@@ -1,4 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+/* No external font import. The whole site — landing, app and report — runs on
+   the three self-hosted next/font families declared in app/pv-fonts.ts (Libre
+   Caslon Display / Public Sans / IBM Plex Mono). The previous Google Fonts
+   import pulled Anton + Inter, which nothing rendered any more (Anton only
+   survived in the superseded dark landing components, Inter in an unused
+   `font-sans` alias) while still blocking first paint on a third-party
+   request — including on the Playwright PDF render route. */
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "./pv-tokens.css"; /* landing color/type/layout tokens + .type-* / .measure classes */
@@ -19,18 +25,25 @@
     --white-15: rgba(255, 255, 255, 0.15);
     --white-20: rgba(255, 255, 255, 0.20);
 
-    --surface-1: rgba(255, 255, 255, 0.02);
-    --surface-2: rgba(255, 255, 255, 0.04);
-    --surface-3: rgba(255, 255, 255, 0.05);
-    --surface-4: rgba(255, 255, 255, 0.08);
+    /* Surface/line tints, repointed to the paper theme. These were white-alpha
+       fills for the dark UI (bg-tint-*, border-line-*); on the manila ground
+       white-alpha is invisible, so they now step from paper → white → ink
+       hairlines. Kept as vars so every existing call site reskins for free. */
+    --surface-1: color-mix(in oklab, var(--pv-ink) 2%, transparent);
+    --surface-2: #ffffff;
+    --surface-3: color-mix(in oklab, var(--pv-ink) 4%, transparent);
+    --surface-4: var(--pv-paper-deep);
 
-    --line-1: rgba(255, 255, 255, 0.08);
-    --line-2: rgba(255, 255, 255, 0.14);
-    --line-3: rgba(255, 255, 255, 0.20);
+    --line-1: var(--pv-hairline);
+    --line-2: color-mix(in oklab, var(--pv-ink) 18%, transparent);
+    --line-3: var(--pv-support);
 
-    --readiness-high: #10b981;
-    --readiness-mid:  #f59e0b;
-    --readiness-low:  #ef4444;
+    /* Readiness ramp on paper — the pre-paper emerald/amber/red read as neon
+       against manila. Aligned to the pv stamp / warn / fail tokens, which are
+       already AA-verified on this ground. */
+    --readiness-high: var(--pv-stamp);
+    --readiness-mid:  var(--pv-warn-text);
+    --readiness-low:  var(--pv-fail-text);
 
     --accent-violet: #7c3aed;
     --accent-pink:   #ff5f8f;
@@ -43,7 +56,8 @@
     --grad-via:  #ff7a3c;
     --grad-to:   #ffb05a;
 
-    --display: 'Anton', sans-serif;
+    /* Anton is gone; the display face is now the document serif. */
+    --display: var(--font-pv-serif, Georgia, serif);
 
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
@@ -279,7 +293,7 @@
 
 @layer utilities {
   .text-balance { text-wrap: balance; }
-  .font-display { font-family: 'Anton', sans-serif; }
+  .font-display { font-family: var(--font-pv-serif, Georgia, serif); }
   .animate-delay-100 { animation-delay: 100ms; }
   .animate-delay-200 { animation-delay: 200ms; }
   .animate-delay-300 { animation-delay: 300ms; }

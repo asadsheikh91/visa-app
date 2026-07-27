@@ -35,18 +35,18 @@ const VISA_ROUTES: Record<string, string> = {
 
 function scoreColor(score: number): string {
   const t = tierFromScore(score)
-  if (t === 'ready') return 'text-emerald-400'
-  if (t === 'mostly_ready') return 'text-brand-400'
-  if (t === 'needs_work') return 'text-amber-400'
-  return 'text-red-400'
+  if (t === 'ready') return 'text-stamp'
+  if (t === 'mostly_ready') return 'text-stamp'
+  if (t === 'needs_work') return 'text-warn-text'
+  return 'text-fail-text'
 }
 
 function scoreBg(score: number): string {
   const t = tierFromScore(score)
   if (t === 'ready') return 'bg-emerald-500/15 border-emerald-500/25'
-  if (t === 'mostly_ready') return 'bg-brand-500/15 border-brand-500/25'
+  if (t === 'mostly_ready') return 'bg-stamp/10 border-stamp/40'
   if (t === 'needs_work') return 'bg-amber-500/15 border-amber-500/25'
-  return 'bg-red-500/15 border-red-500/25'
+  return 'bg-red-500/15 border-fail/30'
 }
 
 // ── Formatting ───────────────────────────────────────────────────────────────
@@ -86,12 +86,12 @@ function NormalizedAnswers({ answers }: { answers: Record<string, unknown> }) {
   const entries = Object.entries(answers)
 
   return (
-    <div className="rounded-xl border border-white/10 bg-white/5">
+    <div className="rounded-xl border border-hairline bg-paper-deep">
       <button
         type="button"
         onClick={() => setOpen((o: boolean) => !o)}
         aria-expanded={open}
-        className="w-full flex items-center justify-between px-4 py-3 text-sm text-slate-400 hover:text-slate-200 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 text-sm text-slate-400 hover:text-ink transition-colors"
       >
         <span className="flex items-center gap-2">
           <FileText size={14} aria-hidden="true" />
@@ -147,7 +147,7 @@ export function HistoryResultCard({ item }: Props) {
     sources.length > 0
 
   return (
-    <div className="glass rounded-2xl border border-white/10 hover:border-white/20 transition-colors overflow-hidden">
+    <div className="glass rounded-2xl border border-hairline hover:border-hairline transition-colors overflow-hidden">
 
       {/* ── Summary row ─────────────────────────────────────────────────────── */}
       <div className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-4">
@@ -158,7 +158,7 @@ export function HistoryResultCard({ item }: Props) {
             {COUNTRY_FLAGS[item.country] ?? '🌐'}
           </span>
           <div className="min-w-0">
-            <p className="text-white font-semibold text-sm truncate">
+            <p className="text-ink font-semibold text-sm truncate">
               {COUNTRY_NAMES[item.country] ?? item.country}
             </p>
             <p className="text-slate-500 text-xs truncate">
@@ -189,7 +189,7 @@ export function HistoryResultCard({ item }: Props) {
               type="button"
               onClick={() => setExpanded((o: boolean) => !o)}
               aria-expanded={expanded}
-              className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-200 transition-colors px-2 py-1 rounded-lg hover:bg-white/5"
+              className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-ink transition-colors px-2 py-1 rounded-lg hover:bg-paper-deep"
             >
               {expanded ? 'Hide' : 'Details'}
               {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
@@ -197,7 +197,7 @@ export function HistoryResultCard({ item }: Props) {
           )}
           <Link
             href={`/tools/student-visa/countries/${item.country}`}
-            className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-400 hover:text-brand-300 transition-colors whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-stamp hover:text-stamp transition-colors whitespace-nowrap"
           >
             Retake <ArrowRight size={12} />
           </Link>
@@ -206,7 +206,7 @@ export function HistoryResultCard({ item }: Props) {
 
       {/* ── Expanded detail panel ────────────────────────────────────────────── */}
       {expanded && (
-        <div className="px-4 sm:px-5 pb-5 space-y-4 border-t border-white/10 pt-4">
+        <div className="px-4 sm:px-5 pb-5 space-y-4 border-t border-hairline pt-4">
 
           {/* Result description */}
           {item.result_description && (
@@ -215,10 +215,10 @@ export function HistoryResultCard({ item }: Props) {
 
           {/* Critical blockers */}
           {blockers.length > 0 && (
-            <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 text-red-200">
+            <div className="rounded-xl border border-fail/30 bg-red-500/5 p-4 text-red-200">
               <div className="flex items-center gap-2 mb-1">
-                <AlertTriangle size={14} className="text-red-400" aria-hidden="true" />
-                <h5 className="text-xs font-bold text-red-300">
+                <AlertTriangle size={14} className="text-fail-text" aria-hidden="true" />
+                <h5 className="text-xs font-bold text-fail-text">
                   Critical Blockers ({blockers.length})
                 </h5>
               </div>
@@ -256,8 +256,8 @@ export function HistoryResultCard({ item }: Props) {
           {warnings.length > 0 && (
             <div className="rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 text-amber-200">
               <div className="flex items-center gap-2 mb-1">
-                <Info size={14} className="text-amber-400" aria-hidden="true" />
-                <h5 className="text-xs font-bold text-amber-300">
+                <Info size={14} className="text-warn-text" aria-hidden="true" />
+                <h5 className="text-xs font-bold text-warn-text">
                   Warnings ({warnings.length})
                 </h5>
               </div>
@@ -267,10 +267,10 @@ export function HistoryResultCard({ item }: Props) {
 
           {/* Recommendations */}
           {recs.length > 0 && (
-            <div className="rounded-xl border border-brand-500/20 bg-brand-500/5 p-4 text-brand-200">
+            <div className="rounded-xl border border-stamp/40 bg-stamp/[0.06] p-4 text-stamp">
               <div className="flex items-center gap-2 mb-1">
-                <CheckCircle2 size={14} className="text-brand-400" aria-hidden="true" />
-                <h5 className="text-xs font-bold text-brand-300">
+                <CheckCircle2 size={14} className="text-stamp" aria-hidden="true" />
+                <h5 className="text-xs font-bold text-stamp">
                   Recommendations ({recs.length})
                 </h5>
               </div>

@@ -48,8 +48,7 @@ export function LandingFooter() {
               </span>
             </Link>
             <p className="mt-4 max-w-[36ch] font-body text-[14px] leading-relaxed text-support">
-              We catch the fixable mistakes before the embassy does. No guesswork, no agents —
-              just your real readiness, in ink.
+              We catch the fixable mistakes before the embassy does.
             </p>
             <div className="mt-6 flex gap-4">
               <a
@@ -98,8 +97,8 @@ export function LandingFooter() {
             directly under the hero CTA). Every claim on the site stays inside
             what the tool actually does. */}
         <p className="mt-14 max-w-[70ch] border-t border-hairline pt-6 font-body text-[12px] leading-relaxed text-support">
-          ParchiVisa is an independent tool. Not affiliated with, endorsed by, or acting on behalf
-          of any government, embassy, or high commission. This is not immigration advice.
+          ParchiVisa is an independent tool. Not affiliated with or endorsed by any government,
+          embassy or high commission. This is not immigration advice.
         </p>
 
         <div className="mt-6 flex flex-col gap-2 sm:flex-row sm:items-baseline sm:justify-between">

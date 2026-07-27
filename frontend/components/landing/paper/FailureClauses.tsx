@@ -22,28 +22,28 @@ const clauses: {
   {
     ref: '§ FIN-28(b)',
     title: 'The 28-day rule breaks silently',
-    body: 'The money was there — but it landed three days late, or sat in the wrong account, and broke the required hold period. There is no appeal for this.',
+    body: 'The money was there — it just landed late, or sat in the wrong account. There is no appeal.',
     module: 'Bank Statement Checker',
     href: '/tools/financial-document',
   },
   {
     ref: '§ PRO-RDY(a)',
     title: 'Applying on a guess',
-    body: 'You get one application per intake. Submit a weak file and the refusal letter won’t say what went wrong — only that it did.',
+    body: 'One application per intake. The refusal letter won’t say what went wrong — only that it did.',
     module: 'Readiness Checker',
     href: '/tools/student-visa/countries',
   },
   {
     ref: '§ DOC-SEQ(c)',
     title: 'Documents fetched in the wrong order',
-    body: 'One attestation quietly depends on another paper you don’t have yet. The embassy won’t warn you; you find out three weeks later.',
+    body: 'One attestation depends on a paper you don’t have yet. You find out three weeks later.',
     module: 'Document Guide',
     href: '/tools/document-guide',
   },
   {
     ref: '§ TIM-DLN(d)',
     title: 'The deadline you didn’t know existed',
-    body: 'CAS letters, biometrics, the tuition deposit, the financial hold — miss one date and the rest fall like dominoes. Intake gone, deposit gone.',
+    body: 'CAS, biometrics, tuition deposit — miss one date and the rest fall. Intake gone, deposit gone.',
     module: 'Deadline Planner',
     href: '/dashboard',
   },
@@ -68,13 +68,11 @@ export function FailureClauses() {
               Where applications <em className="italic">actually</em> fail.
             </h2>
             <p className="mt-5 max-w-[38ch] font-body text-[15.5px] leading-relaxed text-support">
-              Refusals arrive as a letter citing clauses. These are the four that catch genuine,
-              well-funded students — each one paired with the check that removes it.
+              Four clauses that catch genuine, well-funded students — each paired with the check
+              that removes it.
             </p>
             <p className="mt-8 border-t border-hairline pt-4 font-mono text-[10px] uppercase leading-relaxed tracking-[0.12em] text-support">
-              Clause refs are ParchiVisa&rsquo;s refusal taxonomy,
-              <br />
-              mapped to the official rules.
+              Clause refs are ParchiVisa&rsquo;s own taxonomy.
             </p>
           </div>
         </div>

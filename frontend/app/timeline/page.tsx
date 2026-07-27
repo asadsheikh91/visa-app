@@ -44,8 +44,8 @@ function MilestoneRow({
   return (
     <li className={`flex items-start gap-3 rounded-xl border px-4 py-3 ${
       done ? 'border-emerald-500/20 bg-emerald-500/5'
-        : overdue ? 'border-red-500/25 bg-red-500/5'
-        : 'border-white/10 bg-white/[0.02]'
+        : overdue ? 'border-fail/30 bg-red-500/5'
+        : 'border-hairline bg-paper-deep'
     }`}>
       <button
         type="button"
@@ -55,15 +55,15 @@ function MilestoneRow({
         aria-label={done ? 'Mark not done' : 'Mark done'}
       >
         {done
-          ? <CheckCircle2 size={18} className="text-emerald-400" />
+          ? <CheckCircle2 size={18} className="text-stamp" />
           : <Circle size={18} className="text-slate-500 hover:text-slate-300" />}
       </button>
       <div className="min-w-0 flex-1">
         <div className="flex items-center justify-between gap-2">
-          <p className={`text-sm font-medium ${done ? 'text-slate-500 line-through' : 'text-white'}`}>
+          <p className={`text-sm font-medium ${done ? 'text-slate-500 line-through' : 'text-ink'}`}>
             {m.label}
           </p>
-          <span className={`text-xs flex-shrink-0 ${overdue ? 'text-red-400 font-semibold' : 'text-slate-500'}`}>
+          <span className={`text-xs flex-shrink-0 ${overdue ? 'text-fail-text font-semibold' : 'text-slate-500'}`}>
             {overdue && <AlertTriangle size={11} className="inline mr-1 -mt-0.5" />}
             {formatDue(m.due_date)}
           </span>
@@ -73,7 +73,7 @@ function MilestoneRow({
             href={m.source}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-[10px] text-brand-400 hover:text-brand-300 mt-1"
+            className="inline-flex items-center gap-1 text-[10px] text-stamp hover:text-stamp mt-1"
           >
             Official guidance <ExternalLink size={10} />
           </a>
@@ -157,7 +157,7 @@ function TimelineContent() {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-3">
-        <Loader2 size={28} className="text-brand-400 animate-spin" />
+        <Loader2 size={28} className="text-stamp animate-spin" />
         <p className="text-slate-500 text-sm">Loading your timeline…</p>
       </div>
     )
@@ -166,8 +166,8 @@ function TimelineContent() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2">
-          <CalendarClock size={26} className="text-brand-400" />
+        <h1 className="text-2xl sm:text-3xl font-bold text-ink flex items-center gap-2">
+          <CalendarClock size={26} className="text-stamp" />
           Deadline planner
         </h1>
         <p className="text-slate-400 mt-1 text-sm">
@@ -176,7 +176,7 @@ function TimelineContent() {
       </div>
 
       {/* Setup */}
-      <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
+      <section className="glass rounded-2xl border border-hairline p-5 sm:p-6">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <p className="text-xs font-medium text-slate-300 mb-1.5">Course intake date</p>
@@ -184,7 +184,7 @@ function TimelineContent() {
               type="date"
               value={intakeDate}
               onChange={e => setIntakeDate(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20"
+              className="w-full bg-paper-deep border border-hairline rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-stamp/40 focus:ring-1 focus:ring-brand-500/20"
             />
           </div>
           <div>
@@ -192,7 +192,7 @@ function TimelineContent() {
             <select
               value={country}
               onChange={e => setCountry(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 appearance-none"
+              className="w-full bg-paper-deep border border-hairline rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-stamp/40 focus:ring-1 focus:ring-brand-500/20 appearance-none"
             >
               <option value="" className="bg-surface-900">Select…</option>
               {COUNTRIES.map(c => (
@@ -203,7 +203,7 @@ function TimelineContent() {
             </select>
           </div>
         </div>
-        {error && <p className="text-xs text-red-300 mt-3">{error}</p>}
+        {error && <p className="text-xs text-fail-text mt-3">{error}</p>}
         <button
           type="button"
           onClick={onGenerate}
@@ -218,7 +218,7 @@ function TimelineContent() {
 
       {/* Timeline */}
       {timeline && (
-        <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
+        <section className="glass rounded-2xl border border-hairline p-5 sm:p-6">
           <div className="flex items-center justify-between gap-2 mb-1">
             <h2 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">
               Your milestones
@@ -227,7 +227,7 @@ function TimelineContent() {
               {timeline.stats.done}/{timeline.stats.total} done · {timeline.stats.completion_pct}%
             </span>
           </div>
-          <div className="h-1.5 rounded-full bg-white/5 mb-4 overflow-hidden">
+          <div className="h-1.5 rounded-full bg-paper-deep mb-4 overflow-hidden">
             <div
               className="h-full bg-brand-500 transition-all"
               style={{ width: `${timeline.stats.completion_pct}%` }}

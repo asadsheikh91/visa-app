@@ -13,12 +13,7 @@ import { RULES_UPDATED_LABEL } from '@/content/site-config'
 const CHECKER_HREF = '/tools/student-visa/countries'
 const FULL_REPORT_PRICE = 'PKR 1,500'
 
-const trust = [
-  'Free readiness score',
-  '2 minutes',
-  'Rules sourced from GOV.UK, IRCC and Home Affairs',
-  RULES_UPDATED_LABEL,
-]
+const trust = ['Sourced from GOV.UK · IRCC · Home Affairs', RULES_UPDATED_LABEL]
 
 // Single shared easing token (mirrors --ease-doc in pv-tokens.css — kept as a
 // literal here because framer's JS transition option can't read a CSS var).
@@ -141,7 +136,7 @@ export function Hero() {
             {...fadeRise(reduced, T.eyebrow, 0.45, 8)}
             className="font-mono text-[11px] font-medium uppercase tracking-[0.22em] text-support"
           >
-            <span className="block">Student visa readiness · September 2026 &amp; January 2027 intakes</span>
+            <span className="block">Student visa readiness · 2026&ndash;27 intakes</span>
             <span className="mt-1 block text-support/70">UK · Australia · Canada · USA</span>
           </motion.p>
 
@@ -164,10 +159,7 @@ export function Hero() {
             {...fadeRise(reduced, T.subhead, 0.5)}
             className="mt-4 max-w-[58ch] font-body text-[17px] leading-relaxed text-support [text-wrap:pretty]"
           >
-            <p>
-              ParchiVisa checks your file against the official UKVI, IRCC and Home Affairs rules,
-              scores your readiness, and gives you the exact list of what to fix.
-            </p>
+            <p>We check your file against the official UKVI, IRCC and Home Affairs rules.</p>
             {/* Own line — breaking "take / 28 days" mid-phrase read as an accident. */}
             <p className="mt-2 font-semibold text-ink">
               Some fixes take 28 days. Find out while you still have them.
@@ -217,8 +209,7 @@ export function Hero() {
             {...fadeOnly(reduced, T.microCopy)}
             className="mt-4 font-mono text-[12px] uppercase tracking-[0.1em] text-support"
           >
-            Score and gap list: free. Full report with fix-by-fix plan: {FULL_REPORT_PRICE}. One
-            time, no subscription.
+            Score and gaps free · Full report {FULL_REPORT_PRICE}, one time
           </motion.p>
 
           {/* Persistent disclaimer, repeated directly under the CTA (also in the
@@ -228,10 +219,8 @@ export function Hero() {
             className="measure mt-2 font-body text-[11px] leading-relaxed text-support"
           >
             <span className="font-body text-[15px] font-medium text-ink">We are not an agent.</span>{' '}
-            We do not file your application, we take no commission from any university, and we
-            will never promise you a visa. ParchiVisa is an independent tool, not affiliated with
-            or acting on behalf of any government, embassy or high commission. This is not
-            immigration advice.
+            We don&rsquo;t file your application and will never promise you a visa. Not immigration
+            advice.
           </motion.p>
 
           <motion.ul

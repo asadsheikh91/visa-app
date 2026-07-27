@@ -27,7 +27,9 @@ const isProtectedRoute = createRouteMatcher([
   '/onboarding(.*)',
   '/timeline(.*)',
   '/trust(.*)',
-  '/consultant(.*)',
+  // '/consultant(.*)' — the agency route is withdrawn and 404s (see
+  // app/consultant/page.tsx). Leaving it protected would bounce visitors to
+  // sign-in instead of showing the 404. Restore alongside the route.
   '/report(.*)',
   '/admin(.*)',
 ])

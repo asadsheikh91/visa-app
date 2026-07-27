@@ -113,16 +113,22 @@ export function DocumentChecklist() {
             const done = docs.filter((d) => checked[keyFor(c.slug, d.id)]).length
             const pct = total > 0 ? Math.round((done / total) * 100) : 0
             return (
-              <TabPanel key={c.slug} value={c.slug} className="glass mt-5 rounded-2xl p-6 sm:p-7">
+              <TabPanel
+                key={c.slug}
+                value={c.slug}
+                className="mt-5 border border-ink bg-white p-6 shadow-[6px_6px_0_0] shadow-ink/10 sm:p-7"
+              >
                 {/* Progress indicator */}
                 <div className="mb-5">
-                  <div className="mb-2 flex items-center justify-between text-xs">
-                    <span className="font-medium text-slate-300">{c.name} documents</span>
-                    <span className="badge">{done} / {total} ready</span>
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="font-mono text-[10.5px] font-bold uppercase tracking-[0.2em] text-ink">
+                      {c.name} documents
+                    </span>
+                    <span className="badge-green">{done} / {total} ready</span>
                   </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-tint-4">
+                  <div className="h-[6px] overflow-hidden rounded-[2px] bg-paper-deep">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-brand-500 to-accent-500 transition-all duration-500"
+                      className="h-full bg-stamp transition-all duration-500"
                       style={{ width: `${pct}%` }}
                       role="progressbar"
                       aria-valuenow={done}
@@ -145,21 +151,22 @@ export function DocumentChecklist() {
                           aria-checked={isChecked}
                           onClick={() => toggle(c.slug, doc.id)}
                           className={clsx(
-                            'flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left text-sm transition-all duration-150',
+                            'flex w-full items-center gap-3 rounded-[3px] border px-4 py-3 text-left font-body text-sm transition-colors duration-150',
                             isChecked
-                              ? 'border-brand-500/40 bg-brand-600/10'
-                              : 'border-line-1 bg-tint-2 hover:border-line-3 hover:bg-tint-4'
+                              ? 'border-stamp bg-stamp/[0.06]'
+                              : 'border-hairline bg-white hover:border-support'
                           )}
                         >
                           <span
                             className={clsx(
-                              'flex h-5 w-5 flex-shrink-0 items-center justify-center rounded border-2',
-                              isChecked ? 'border-brand-400 bg-brand-500' : 'border-slate-600'
+                              'flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-[2px] border-2',
+                              isChecked ? 'border-stamp bg-stamp' : 'border-support'
                             )}
                           >
+                            {/* stays white — it sits on the stamp-green fill */}
                             {isChecked && <Check size={12} className="text-white" aria-hidden="true" />}
                           </span>
-                          <span className={clsx(isChecked ? 'text-slate-500 line-through' : 'text-slate-300')}>
+                          <span className={clsx(isChecked ? 'text-support line-through' : 'text-ink')}>
                             {doc.label}
                           </span>
                         </button>
@@ -168,9 +175,10 @@ export function DocumentChecklist() {
                   })}
                 </ul>
 
-                <p className="mt-5 text-xs text-slate-600">
-                  A general guide — exact requirements vary by university and your profile. Always confirm with the
-                  official visa authority.
+                {/* "Caption" slot — mono UPPERCASE, wide tracking. */}
+                <p className="mt-6 border-t border-hairline pt-4 font-mono text-[10px] uppercase leading-relaxed tracking-[0.1em] text-support">
+                  A general guide — exact requirements vary by university and profile. Always
+                  confirm with the official visa authority.
                 </p>
               </TabPanel>
             )

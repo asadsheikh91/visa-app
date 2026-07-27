@@ -77,11 +77,26 @@ export function RejectionReasons() {
           </TabList>
 
           {COUNTRIES.map((c) => (
-            <TabPanel key={c.slug} value={c.slug} className="glass mt-5 rounded-2xl p-6 sm:p-7">
-              <ul className="space-y-3.5">
+            <TabPanel
+              key={c.slug}
+              value={c.slug}
+              className="mt-5 border border-ink bg-white p-6 shadow-[6px_6px_0_0] shadow-ink/10 sm:p-7"
+            >
+              {/* Mono uppercase column header — the "section header" slot. */}
+              <p className="border-b border-hairline pb-3 font-mono text-[10.5px] font-bold uppercase tracking-[0.2em] text-ink">
+                {c.name} — documented grounds for refusal
+              </p>
+              <ul className="mt-5 space-y-4">
                 {reasonsBySlug[c.slug].map((reason, i) => (
-                  <li key={i} className="flex items-start gap-3 text-sm leading-relaxed text-slate-300">
-                    <AlertCircle size={16} className="mt-0.5 flex-shrink-0 text-readiness-mid/90" aria-hidden="true" />
+                  <li
+                    key={i}
+                    className="flex items-start gap-3 font-body text-[15px] leading-relaxed text-support"
+                  >
+                    <AlertCircle
+                      size={15}
+                      className="mt-1 flex-shrink-0 text-warn-text"
+                      aria-hidden="true"
+                    />
                     <span>{reason}</span>
                   </li>
                 ))}

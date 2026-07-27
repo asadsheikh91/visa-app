@@ -67,7 +67,7 @@ export function ScoreRing({ score, label, size = 140 }: Props) {
           <circle
             cx={size / 2} cy={size / 2} r={radius}
             fill="none" strokeWidth="10"
-            style={{ stroke: 'var(--white-6)' }}
+            style={{ stroke: 'var(--pv-hairline)' }}
           />
           <circle
             cx={size / 2} cy={size / 2} r={radius}
@@ -80,7 +80,7 @@ export function ScoreRing({ score, label, size = 140 }: Props) {
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <span className="text-4xl font-extrabold text-white">{animatedScore}</span>
+          <span className="text-4xl font-extrabold text-ink">{animatedScore}</span>
           <span className="text-xs text-slate-500 font-medium">/ 100</span>
         </div>
       </div>

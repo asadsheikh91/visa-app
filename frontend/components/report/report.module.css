@@ -10,28 +10,58 @@
 */
 
 .report {
-  --paper: #ffffff;
-  --ink: #161616;
-  --ink-soft: #484848;
-  --ink-faint: #8b8b8b;
-  --line: #e7e7e3;
-  --line-strong: #cfcfc9;
-  --black: #161616;
-  --orange: #e8562a;
-  --orange-deep: #c8451d;
-  --orange-tint: #fcede6;
-  --orange-line: #f2c8b5;
-  --crit: #c0392b;
-  --crit-bg: #fbeae8;
-  --crit-line: #e9b7b2;
-  --green: #1e7a4e;
-  --green-bg: #e7f3ec;
-  --green-line: #c2e0ce;
-  --grey-bg: #f6f6f3;
+  /* ── Colour: "The Official Document" ──────────────────────────────────
+     Repointed from the old standalone palette (neutral greys + #e8562a
+     orange) onto the site-wide pv tokens, so the report reads as the same
+     document as the landing page and the app. Local names are kept so the
+     ~80 rules below are unchanged — only what they resolve to has moved.
 
-  background: #ededea;
+     The accent is stamp green (the document system's primary); orange is no
+     longer a brand colour here, it survives only inside the WARN status
+     family. Structural risk colours map to the pv fail / warn tokens, which
+     are already AA-verified on this ground. */
+  --paper: #ffffff;
+  --ink: var(--pv-ink);
+  --ink-soft: var(--pv-support);
+  --ink-faint: var(--pv-support);
+  --line: var(--pv-hairline);
+  --line-strong: color-mix(in oklab, var(--pv-ink) 22%, transparent);
+  --black: var(--pv-ink);
+
+  /* Brand accent — was orange, now the stamp green. The --orange-* names are
+     retained as aliases so existing rules keep working; anything that is
+     semantically a WARNING uses --warn-* below instead. */
+  --orange: var(--pv-stamp);
+  --orange-deep: var(--pv-stamp-deep);
+  --orange-tint: color-mix(in oklab, var(--pv-stamp) 8%, #ffffff);
+  --orange-line: color-mix(in oklab, var(--pv-stamp) 35%, transparent);
+
+  --warn: var(--pv-warn);
+  --warn-deep: var(--pv-warn-text);
+  --warn-tint: color-mix(in oklab, var(--pv-warn) 10%, #ffffff);
+  --warn-line: color-mix(in oklab, var(--pv-warn) 35%, transparent);
+
+  --crit: var(--pv-fail-text);
+  --crit-bg: color-mix(in oklab, var(--pv-fail) 8%, #ffffff);
+  --crit-line: color-mix(in oklab, var(--pv-fail) 32%, transparent);
+
+  --green: var(--pv-stamp);
+  --green-bg: color-mix(in oklab, var(--pv-stamp) 8%, #ffffff);
+  --green-line: color-mix(in oklab, var(--pv-stamp) 32%, transparent);
+  --grey-bg: var(--pv-paper-deep);
+
+  /* ── Type ──────────────────────────────────────────────────────────────
+     Same three families as the rest of the site, mapped onto the document
+     slots: serif = Title/Heading/Quote, sans = Body/Subheading, mono =
+     Section header/Caption (always UPPERCASE with open tracking). */
+  --font-serif: var(--font-pv-serif, Georgia, serif);
+  --font-sans: var(--font-pv-sans, system-ui, sans-serif);
+  --font-mono: var(--font-pv-mono, ui-monospace, monospace);
+
+  /* The surround is the manila page ground, not neutral grey. */
+  background: var(--pv-paper);
   color: var(--ink);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: var(--font-sans);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
@@ -46,8 +76,9 @@
   max-width: 820px;
   margin: 28px auto;
   background: var(--paper);
-  box-shadow: 0 4px 30px rgba(22, 22, 22, 0.1);
-  border: 1px solid var(--line);
+  /* The document system's flat offset shadow, not a soft drop blur. */
+  box-shadow: 6px 6px 0 0 color-mix(in oklab, var(--pv-ink) 10%, transparent);
+  border: 1px solid var(--pv-ink);
   print-color-adjust: exact;
   -webkit-print-color-adjust: exact;
 }
@@ -57,19 +88,20 @@
 }
 
 .mono {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
 }
 .serif {
-  font-family: 'Source Serif 4', Georgia, serif;
+  font-family: var(--font-serif);
 }
 
+/* "Section header" slot: mono, UPPERCASE, +12% tracking. */
 .eyebrow {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10.5px;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--orange);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 /* ---------- Masthead ---------- */
@@ -94,22 +126,24 @@
   align-items: center;
   justify-content: center;
   color: var(--orange);
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-weight: 800;
   font-size: 15px;
   letter-spacing: 0.02em;
   flex-shrink: 0;
 }
+/* Matches the site wordmark: serif, natural weight, tight — not a tracked-out
+   sans caps lockup (Public Sans has no 800 cut, so that faux-bolded anyway). */
 .wordmark {
-  font-family: 'Inter', sans-serif;
-  font-weight: 800;
-  font-size: 23px;
-  letter-spacing: 0.13em;
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: 24px;
+  letter-spacing: -0.01em;
   color: var(--black);
   line-height: 1;
 }
 .tag {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
@@ -118,7 +152,7 @@
 }
 .meta {
   text-align: right;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   color: var(--ink-soft);
   line-height: 1.7;
@@ -132,8 +166,8 @@
 }
 .doctitle h2 {
   margin: 0;
-  font-family: 'Source Serif 4', serif;
-  font-weight: 600;
+  font-family: var(--font-serif);
+  font-weight: 400;
   font-size: 32px;
   letter-spacing: -0.02em;
   line-height: 1.1;
@@ -150,7 +184,7 @@
 .applicant {
   margin-top: 34px;
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 3px;
   background: var(--paper);
   overflow: hidden;
 }
@@ -163,15 +197,18 @@
   align-items: baseline;
 }
 .applicantHead .name {
-  font-family: 'Source Serif 4', serif;
+  font-family: var(--font-serif);
   font-size: 19px;
-  font-weight: 600;
+  font-weight: 400;
 }
+/* Sits on the ink header bar, so it cannot use the stamp accent (2.5:1 on
+   navy). Paper at 75% gives a quiet secondary that still clears AA. */
 .applicantHead .pathway {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10.5px;
-  letter-spacing: 0.08em;
-  color: var(--orange);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: color-mix(in oklab, var(--pv-paper) 78%, var(--pv-ink));
 }
 .applicantGrid {
   display: grid;
@@ -186,7 +223,7 @@
   border-right: none;
 }
 .field .k {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -210,18 +247,18 @@
   margin-bottom: 18px;
 }
 .secNum {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   color: #fff;
   background: var(--orange);
-  border-radius: 5px;
+  border-radius: 3px;
   padding: 3px 8px;
 }
 .secHead h3 {
   margin: 0;
-  font-family: 'Source Serif 4', serif;
-  font-weight: 600;
+  font-family: var(--font-serif);
+  font-weight: 400;
   font-size: 19px;
   letter-spacing: -0.01em;
   color: var(--ink);
@@ -236,7 +273,7 @@
 .verdict {
   background: var(--paper);
   border: 1px solid var(--line);
-  border-radius: 12px;
+  border-radius: 3px;
   padding: 26px 28px;
   display: grid;
   grid-template-columns: 180px 1fr;
@@ -247,8 +284,8 @@
   text-align: center;
 }
 .scoreDial .num {
-  font-family: 'Source Serif 4', serif;
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-weight: 400;
   font-size: 62px;
   line-height: 1;
   color: var(--orange);
@@ -264,7 +301,7 @@
   margin-top: 10px;
   padding: 5px 14px;
   border-radius: 20px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -274,7 +311,7 @@
   border: 1px solid var(--orange-line);
 }
 .verdictBody .lead {
-  font-family: 'Source Serif 4', serif;
+  font-family: var(--font-serif);
   font-size: 16px;
   line-height: 1.5;
   color: var(--ink);
@@ -290,30 +327,32 @@
 .meterTrack {
   display: flex;
   height: 9px;
-  border-radius: 5px;
+  border-radius: 3px;
   overflow: hidden;
   border: 1px solid var(--line);
 }
 .meterTrack span {
   flex: 1;
 }
+/* Band ramp: fail → warn → warn(light) → stamp, tinted so the track reads as a
+   scale rather than four saturated blocks. */
 .seg1 {
-  background: #e7a69a;
+  background: color-mix(in oklab, var(--pv-fail) 45%, #ffffff);
 }
 .seg2 {
-  background: #f0b98f;
+  background: color-mix(in oklab, var(--pv-warn) 45%, #ffffff);
 }
 .seg3 {
-  background: #e6d08c;
+  background: color-mix(in oklab, var(--pv-warn) 25%, #ffffff);
 }
 .seg4 {
-  background: #a9cbb2;
+  background: color-mix(in oklab, var(--pv-stamp) 40%, #ffffff);
 }
 .meterLabels {
   display: flex;
   justify-content: space-between;
   margin-top: 7px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 8.5px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -335,7 +374,7 @@
   position: absolute;
   top: -13px;
   transform: translateX(-50%);
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 8px;
   font-style: normal;
   color: var(--orange);
@@ -352,7 +391,7 @@
 /* ---------- Categories ---------- */
 .cats {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 3px;
   overflow: hidden;
   background: var(--paper);
 }
@@ -374,7 +413,7 @@
 }
 .cat .label small {
   display: block;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-weight: 400;
   font-size: 9px;
   letter-spacing: 0.06em;
@@ -385,25 +424,26 @@
 .bar {
   height: 8px;
   background: #eeeeeb;
-  border-radius: 5px;
+  border-radius: 3px;
   overflow: hidden;
 }
 .bar i {
   display: block;
   height: 100%;
-  border-radius: 5px;
+  border-radius: 3px;
 }
 .fillPass {
   background: var(--green);
 }
+/* Semantically a warning, so it takes the warn token — not the brand accent. */
 .fillWarn {
-  background: var(--orange);
+  background: var(--warn);
 }
 .fillCrit {
   background: var(--crit);
 }
 .cat .pct {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 13px;
   font-weight: 700;
   text-align: right;
@@ -418,13 +458,13 @@
   background: var(--orange-tint);
   border: 1px solid var(--orange-line);
   border-left: 4px solid var(--orange);
-  border-radius: 8px;
+  border-radius: 3px;
   padding: 16px 20px;
   margin-top: 16px;
 }
 .callout .big {
-  font-family: 'Source Serif 4', serif;
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-weight: 400;
   font-size: 34px;
   color: var(--orange-deep);
   line-height: 1;
@@ -432,7 +472,7 @@
 }
 .callout .big small {
   display: block;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -452,7 +492,7 @@
 /* ---------- Findings ---------- */
 .finding {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 3px;
   background: var(--paper);
   margin-top: 14px;
   overflow: hidden;
@@ -467,13 +507,13 @@
   border-bottom: 1px solid var(--line);
 }
 .sev {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 4px 9px;
-  border-radius: 5px;
+  border-radius: 3px;
   white-space: nowrap;
 }
 .sevCrit {
@@ -482,9 +522,9 @@
   border: 1px solid var(--crit-line);
 }
 .sevHigh {
-  background: var(--orange-tint);
-  color: var(--orange-deep);
-  border: 1px solid var(--orange-line);
+  background: var(--warn-tint);
+  color: var(--warn-deep);
+  border: 1px solid var(--warn-line);
 }
 .sevMed {
   background: var(--grey-bg);
@@ -492,14 +532,14 @@
   border: 1px solid var(--line-strong);
 }
 .findingHead .ftitle {
-  font-family: 'Source Serif 4', serif;
+  font-family: var(--font-serif);
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 400;
   color: var(--ink);
   flex: 1;
 }
 .findingHead .fcat {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 9px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -512,7 +552,7 @@
   gap: 14px;
 }
 .fblock .h {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 9.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -528,7 +568,7 @@
 }
 .fix {
   background: var(--grey-bg);
-  border-radius: 7px;
+  border-radius: 3px;
   padding: 12px 14px;
   border: 1px solid var(--line);
   border-left: 3px solid var(--orange);
@@ -548,9 +588,12 @@
   color: var(--ink);
   margin-bottom: 4px;
 }
+/* "Caption" slot: mono, UPPERCASE, +10% tracking — source lines, clause refs. */
 .source {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
   color: var(--ink-faint);
   border-top: 1px dashed var(--line-strong);
   padding-top: 10px;
@@ -571,7 +614,7 @@
   border-top: none;
 }
 .phase .when {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   color: var(--orange-deep);
@@ -601,12 +644,12 @@
   border-collapse: collapse;
   background: var(--paper);
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 3px;
   overflow: hidden;
 }
 .docs th {
   text-align: left;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 9.5px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -630,7 +673,7 @@
   font-weight: 600;
 }
 .stat {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 700;
   padding: 3px 8px;
@@ -642,8 +685,8 @@
   color: var(--green);
 }
 .statPending {
-  background: var(--orange-tint);
-  color: var(--orange-deep);
+  background: var(--warn-tint);
+  color: var(--warn-deep);
 }
 .statMissing {
   background: var(--crit-bg);
@@ -658,12 +701,12 @@
 }
 .expect .box {
   border: 1px solid var(--line);
-  border-radius: 10px;
+  border-radius: 3px;
   padding: 18px 20px;
   background: var(--paper);
 }
 .expect .box .h {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 9.5px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -671,9 +714,9 @@
   font-weight: 600;
 }
 .expect .box .big {
-  font-family: 'Source Serif 4', serif;
+  font-family: var(--font-serif);
   font-size: 26px;
-  font-weight: 700;
+  font-weight: 400;
   color: var(--orange-deep);
   margin: 8px 0 4px;
 }
@@ -696,7 +739,7 @@
 .refs .refDomain {
   color: var(--ink-faint);
   font-size: 10.5px;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
 }
 
 /* ---------- Disclaimer / footer ---------- */
@@ -705,14 +748,14 @@
   background: var(--grey-bg);
   border: 1px solid var(--line);
   border-left: 3px solid var(--orange);
-  border-radius: 10px;
+  border-radius: 3px;
   padding: 20px 24px;
   font-size: 11.5px;
   line-height: 1.6;
   color: var(--ink-soft);
 }
 .disclaimer .h {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
@@ -727,7 +770,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: 'JetBrains Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   color: var(--ink-faint);
   letter-spacing: 0.04em;
@@ -752,9 +795,9 @@
   background: var(--orange);
   color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: 3px;
   padding: 10px 18px;
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-sans);
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;

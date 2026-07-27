@@ -82,6 +82,26 @@ const config: Config = {
           900: '#0f172a',
           950: '#020414',
         },
+        // ── Slate ramp, repointed to the paper theme ──
+        // The pre-paper app used Tailwind's slate ramp for all its on-dark text
+        // (slate-300 body, slate-400 secondary, slate-500/600 faint). On the
+        // manila ground those render as washed-out grey-blue, so the ramp is
+        // remapped onto the pv ink/support tokens instead of being rewritten at
+        // ~180 call sites. Light shades stay text-ish; 700+ were dark-theme
+        // FILLS, so they map to paper tints and remain usable as backgrounds.
+        slate: {
+          50:  withOpacity('--pv-paper'),
+          100: withOpacity('--pv-paper-deep'),
+          200: withOpacity('--pv-ink'),
+          300: withOpacity('--pv-ink'),
+          400: withOpacity('--pv-support'),
+          500: withOpacity('--pv-support'),
+          600: withOpacity('--pv-support'),
+          700: withOpacity('--pv-hairline'),
+          800: withOpacity('--pv-paper-deep'),
+          900: withOpacity('--pv-paper'),
+          950: withOpacity('--pv-paper'),
+        },
         // Translucent white surface fills (alpha baked in — no opacity modifier).
         tint: {
           1: 'var(--surface-1)',
