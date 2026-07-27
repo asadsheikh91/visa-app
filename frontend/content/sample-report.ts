@@ -11,7 +11,7 @@ export interface ReportLine {
 }
 
 export const SAMPLE_REPORT = {
-  applicant: 'Asad Sheikh',
+  applicant: 'Ayesha R.',
   fileRows: [
     ['Route', 'Pakistan → United Kingdom'],
     ['Program', 'MSc Computer Science'],
@@ -20,11 +20,15 @@ export const SAMPLE_REPORT = {
   score: 61,
   badge: 'AT RISK · 3 CRITICAL GAPS',
   formNumber: 'PV-2026-0193',
-  // Assessment date on the corner stamp. A fixed illustrative date, not
-  // derived from Date.now() (it's a sample file, not a live one) — chosen to
-  // read sensibly a few weeks ahead of the sample's own September 2026 intake
-  // rather than tracking real-world "today".
-  assessedDate: 'PV · 12 Aug 2026',
+  // Assessment date on the corner stamp. A fixed PAST date, never new Date():
+  //   - fixed, because a live date would re-stamp this sample every morning and
+  //     break the fiction that it is one real prior assessment;
+  //   - past, because the previous value (12 Aug 2026) sat in the future, and a
+  //     sample document dated after today reads as careless on a product whose
+  //     whole pitch is accuracy.
+  // May 2026 reads correctly against the sample's own September 2026 intake:
+  // early enough that the 28-day financial hold flagged below is still fixable.
+  assessedDate: 'PV · 04 May 2026',
   lines: [
     { doc: 'Financial evidence', detail: '28-day rule not met', status: 'fail' },
     { doc: 'Course progression', detail: '2-year gap unexplained', status: 'fail' },

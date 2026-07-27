@@ -12,10 +12,17 @@ export const metadata: Metadata = {
 
 const CHECKER_HREF = '/tools/student-visa/countries'
 
-// TODO(content): replace with the real published address before launch. It is
-// referenced here, in components/Footer.tsx and in LandingFooter.tsx — change
-// all three together.
-const CONTACT_EMAIL = 'hello@parchivisa.com'
+// Must stay on the domain the site is actually served from. This was
+// hello@parchivisa.com while the site runs at parchivisa.app — and
+// parchivisa.com is not a registered domain at all (NXDOMAIN), so that address
+// could never have received mail.
+//
+// TODO(infra): parchivisa.app still publishes NO MX records, so this address
+// does not deliver yet either. DNS is already on Cloudflare — turn on Email
+// Routing for hello@ before launch or every "Contact Us" link is a dead end.
+// Referenced here, in components/Footer.tsx, LandingFooter.tsx and
+// ComingSoonPreview.tsx — change all four together.
+const CONTACT_EMAIL = 'hello@parchivisa.app'
 
 /* ── What we do — the concrete mechanics, not adjectives ────────────────── */
 const whatWeDo: { ref: string; title: string; body: string }[] = [

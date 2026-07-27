@@ -52,7 +52,11 @@ const steps: {
     title: 'Fix, re-check, apply',
     body: 'Work the action plan, watch the score move, submit knowing what the embassy sees.',
     stamp: 'Ready ✓',
-    sub: 'PV · Approved to apply',
+    // NOT "Approved to apply". Approval is a case officer's word, and the
+    // site-wide disclaimer exists precisely to say we never promise a visa —
+    // a badge reading "Approved" undercuts it. This describes the user's file,
+    // which is the only thing we ever assess.
+    sub: 'PV · Ready to submit',
     rotate: -8,
   },
 ]

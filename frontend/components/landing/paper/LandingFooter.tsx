@@ -29,7 +29,9 @@ const columns: { title: string; links: { label: string; href: string }[] }[] = [
     title: 'Support',
     links: [
       { label: 'Help Center', href: '/help' },
-      { label: 'Contact Us', href: 'mailto:hello@parchivisa.com' },
+      // Site is served at parchivisa.app; parchivisa.com is not registered.
+      // See the CONTACT_EMAIL note in app/about/page.tsx.
+      { label: 'Contact Us', href: 'mailto:hello@parchivisa.app' },
       { label: 'FAQ', href: '/faq' },
     ],
   },

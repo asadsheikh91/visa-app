@@ -4,15 +4,40 @@ import './globals.css'
 import { pvSerif, pvSans, pvMono } from './pv-fonts'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
+import { GlobalChrome } from '@/components/GlobalChrome'
 
+// metadataBase is mandatory, not cosmetic: without it Next emits RELATIVE
+// og:image paths, which every crawler rejects silently — the single most common
+// reason an added og:image still unfurls as a grey box. It also makes the
+// file-convention opengraph-image.tsx routes resolve to absolute https URLs.
 export const metadata: Metadata = {
-  title: 'ParchiVisa',
-  description: 'ParchiVisa checks your documents and gives you a readiness score before you apply for a visa.',
-  keywords: ['visa readiness', 'student visa', 'visa checker', 'UK visa', 'USA visa', 'Canada visa'],
+  metadataBase: new URL('https://parchivisa.app'),
+  title: 'ParchiVisa — Know your visa readiness before you apply',
+  description:
+    'Check your file against the official UKVI, IRCC and Home Affairs rules. ' +
+    'Free readiness score and gap list for the UK, Australia, Canada and the USA.',
+  keywords: [
+    'Pakistani student visa',
+    'student visa readiness',
+    'visa checker',
+    'UK student visa',
+    'Australia student visa',
+    'Canada student visa',
+    'USA student visa',
+  ],
+  // No title/description here on purpose — omitting them lets Next inherit the
+  // fields above (and each route's own title), so the card copy never drifts
+  // from the page copy.
   openGraph: {
-    title: 'ParchiVisa — Know Your Visa Readiness Before You Apply',
-    description: 'Check your visa documents and get a readiness score before you apply.',
     type: 'website',
+    siteName: 'ParchiVisa',
+    url: 'https://parchivisa.app',
+    locale: 'en_GB',
+  },
+  // summary_large_image, not summary: renders the 1200x630 card full-width
+  // instead of shrinking it to a small square thumbnail.
+  twitter: {
+    card: 'summary_large_image',
   },
 }
 
@@ -50,9 +75,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${pvSerif.variable} ${pvSans.variable} ${pvMono.variable} font-body`}
     >
       <body>
-        <Navbar />
+        {/* Landing routes ship their own nav/footer — GlobalChrome keeps this
+            pair out of the markup there entirely, rather than hiding it. */}
+        <GlobalChrome>
+          <Navbar />
+        </GlobalChrome>
         <main>{children}</main>
-        <Footer />
+        <GlobalChrome>
+          <Footer />
+        </GlobalChrome>
       </body>
     </html>
   )

@@ -184,10 +184,7 @@ export function Hero() {
                 Free · 2 minutes
               </motion.p>
             </div>
-            <div className="flex flex-col items-start">
-              {/* TODO(content): point at the real, ungated sample report once the
-                  sample asset exists; brief requires it not be hidden behind
-                  signup. Anchored to how-it-works as an interim, honest target. */}
+            {/* <div className="flex flex-col items-start">
               <Link
                 href="/#how-it-works"
                 className="mt-[9px] font-body text-[15px] font-medium text-ink underline decoration-hairline underline-offset-4 transition-[text-underline-offset,text-decoration-thickness] duration-[180ms] hover:decoration-2 hover:underline-offset-2 hover:decoration-stamp"
@@ -200,7 +197,7 @@ export function Hero() {
               >
                 No email needed
               </motion.p>
-            </div>
+            </div> */}
           </motion.div>
 
           {/* Pricing is visible in the first scroll — hiding it behind signup
@@ -239,7 +236,7 @@ export function Hero() {
             ))}
           </motion.ul>
 
-          <AssessmentStarter reduced={reduced} delay={T.starter} />
+          {/* <AssessmentStarter reduced={reduced} delay={T.starter} /> */}
         </div>
 
         {/* ── Right: the official document card ── */}
@@ -283,11 +280,34 @@ export function Hero() {
 /* ── The readiness assessment slip ─────────────────────────────────────── */
 
 function DocumentCard({ reduced }: { reduced: boolean }) {
-  const [score, setScore] = useState(reduced ? SAMPLE_REPORT.score : 0)
+  // The rendered value is ALWAYS the real score. The count-up is a visual
+  // enhancement layered on top of an already-correct number, never the thing
+  // that produces it — so the server HTML, every crawler, a no-JS load, a slow
+  // connection before hydration, and prefers-reduced-motion all read 61/100.
+  // (This previously initialised to 0 and animated up, which meant the static
+  // DOM said the sample applicant scored zero.)
+  // <number>, not the inferred `61` literal (SAMPLE_REPORT is `as const`) —
+  // the counter writes intermediate values into this state.
+  const [score, setScore] = useState<number>(SAMPLE_REPORT.score)
+
+  // Gates the enter animations on having mounted on the client. False during
+  // SSR and on the first client render (so hydration matches), which is what
+  // lets the static markup below carry the finished state.
+  const [animateIn, setAnimateIn] = useState(false)
+  useEffect(() => setAnimateIn(!reduced), [reduced])
 
   // Raw rAF counter (not setInterval, per brief) — decelerates into the final number.
   useEffect(() => {
-    if (reduced) return
+    // Reduced motion: no count-up runs at all; 61 is already on screen.
+    if (reduced) {
+      setScore(SAMPLE_REPORT.score)
+      return
+    }
+    // Drop to 0 only now, after the correct value has already been committed.
+    // The card is still at opacity 0 until T.card (0.35s), so this transient
+    // reset is never visible — and if hydration lands late, it stays in step
+    // with the rest of the hero, which is also mount-relative.
+    setScore(0)
     let raf = 0
     const startAt = performance.now() + T.countStart * 1000
     const durationMs = T.countDuration * 1000
@@ -361,22 +381,31 @@ function DocumentCard({ reduced }: { reduced: boolean }) {
             </div>
           </div>
 
-          {/* Segmented form-box meter: 20 cells, no gauges, no glow. */}
+          {/* Segmented form-box meter: 20 cells, no gauges, no glow.
+              Same rule as the score: the bar's correct fill is in the static
+              DOM. Before mount (and under reduced motion) each cell is a plain
+              span already carrying its final class, so a no-JS load shows the
+              bar filled to 12/20. Swapping to motion.span after mount is a real
+              element-type change, so framer honours `initial` and the wipe
+              still plays for everyone else. */}
           <div aria-hidden="true" className="mt-4 flex gap-[3px]">
             {Array.from({ length: 20 }, (_, i) => {
               const isFilled = i < filled
-              if (!isFilled) {
-                return <span key={i} className="h-[9px] flex-1 border border-hairline bg-paper-deep" />
+              const cellClass = isFilled
+                ? `h-[9px] flex-1 border ${barBandClass(SAMPLE_REPORT.score)}`
+                : 'h-[9px] flex-1 border border-hairline bg-paper-deep'
+              if (!isFilled || !animateIn) {
+                return <span key={i} className={cellClass} />
               }
               const segDelay = Math.max(0, countEnd - (filled - i) * 0.022)
               return (
                 <motion.span
                   key={i}
-                  className={`h-[9px] flex-1 border ${barBandClass(SAMPLE_REPORT.score)}`}
+                  className={cellClass}
                   style={{ transformOrigin: 'bottom' }}
-                  initial={reduced ? { opacity: 1, scaleY: 1 } : { opacity: 0, scaleY: 0.6 }}
+                  initial={{ opacity: 0, scaleY: 0.6 }}
                   animate={{ opacity: 1, scaleY: 1 }}
-                  transition={reduced ? { duration: 0 } : { duration: 0.15, delay: segDelay }}
+                  transition={{ duration: 0.15, delay: segDelay }}
                 />
               )
             })}
