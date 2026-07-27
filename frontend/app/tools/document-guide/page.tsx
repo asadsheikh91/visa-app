@@ -27,11 +27,11 @@ const HELD_OPTIONS = [
 ]
 
 const STATUS_BADGE: Record<DocStatus, { label: string; cls: string }> = {
-  have:        { label: 'Have it',        cls: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
-  done:        { label: 'Done',           cls: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30' },
-  in_progress: { label: 'In progress',    cls: 'bg-brand-500/15 text-brand-300 border-brand-500/30' },
-  ready:       { label: 'Ready to start', cls: 'bg-amber-500/15 text-amber-300 border-amber-500/30' },
-  blocked:     { label: 'Blocked',        cls: 'bg-white/5 text-slate-400 border-white/10' },
+  have:        { label: 'Have it',        cls: 'bg-emerald-500/15 text-stamp border-emerald-500/30' },
+  done:        { label: 'Done',           cls: 'bg-emerald-500/15 text-stamp border-emerald-500/30' },
+  in_progress: { label: 'In progress',    cls: 'bg-stamp/10 text-stamp border-stamp/40' },
+  ready:       { label: 'Ready to start', cls: 'bg-amber-500/15 text-warn-text border-amber-500/30' },
+  blocked:     { label: 'Blocked',        cls: 'bg-paper-deep text-slate-400 border-hairline' },
 }
 
 function fmtMoney(v: number | null): string | null {
@@ -71,16 +71,16 @@ function DocumentCard({
   }
 
   return (
-    <div className={`rounded-2xl border p-4 sm:p-5 ${blocked ? 'border-white/10 bg-white/[0.01] opacity-70' : 'border-white/10 bg-white/[0.03]'}`}>
+    <div className={`rounded-2xl border p-4 sm:p-5 ${blocked ? 'border-hairline bg-paper-deep opacity-70' : 'border-hairline bg-paper-deep'}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-2.5 min-w-0">
           {obtained
-            ? <CheckCircle2 size={18} className="text-emerald-400 flex-shrink-0 mt-0.5" />
+            ? <CheckCircle2 size={18} className="text-stamp flex-shrink-0 mt-0.5" />
             : blocked
               ? <Lock size={16} className="text-slate-500 flex-shrink-0 mt-1" />
-              : <Circle size={16} className="text-amber-400 flex-shrink-0 mt-1" />}
+              : <Circle size={16} className="text-warn-text flex-shrink-0 mt-1" />}
           <div className="min-w-0">
-            <p className="text-sm font-bold text-white leading-snug">{node.name}</p>
+            <p className="text-sm font-bold text-ink leading-snug">{node.name}</p>
             {node.issuing_authority && <p className="text-[11px] text-slate-500 mt-0.5">{node.issuing_authority}</p>}
           </div>
         </div>
@@ -97,23 +97,23 @@ function DocumentCard({
         <>
           {/* Normal / urgent toggle */}
           <div className="mt-3 ml-7">
-            <div className="inline-flex rounded-lg border border-white/10 bg-white/5 p-0.5 text-[11px]">
+            <div className="inline-flex rounded-lg border border-hairline bg-paper-deep p-0.5 text-[11px]">
               <button
                 type="button"
                 onClick={() => setLane('normal')}
-                className={`px-2.5 py-1 rounded-md ${lane === 'normal' ? 'bg-white/10 text-white' : 'text-slate-400'}`}
+                className={`px-2.5 py-1 rounded-md ${lane === 'normal' ? 'bg-paper-deep text-ink' : 'text-slate-400'}`}
               >Normal</button>
               <button
                 type="button"
                 onClick={() => setLane('urgent')}
-                className={`px-2.5 py-1 rounded-md ${lane === 'urgent' ? 'bg-brand-500/20 text-brand-200' : 'text-slate-400'}`}
+                className={`px-2.5 py-1 rounded-md ${lane === 'urgent' ? 'bg-stamp/10 text-stamp' : 'text-slate-400'}`}
               >Urgent (legal fast-track)</button>
             </div>
             <div className="flex items-center gap-3 mt-2 text-xs text-slate-300">
               <span>{lanes.cost ?? <span className="text-slate-500">See official source</span>}</span>
               {lanes.days && <><span className="text-slate-600">·</span><span className="flex items-center gap-1"><Clock size={11} />{lanes.days}</span></>}
               {lane === 'urgent' && lanes.url && (
-                <a href={lanes.url} target="_blank" rel="noopener noreferrer" className="text-brand-400 hover:text-brand-300 inline-flex items-center gap-1">
+                <a href={lanes.url} target="_blank" rel="noopener noreferrer" className="text-stamp hover:text-stamp inline-flex items-center gap-1">
                   Book online <ExternalLink size={10} />
                 </a>
               )}
@@ -132,7 +132,7 @@ function DocumentCard({
             <div className="mt-3 ml-7 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-slate-400">
               <span>{node.office.address ?? node.office.name}</span>
               {node.office.map_link && (
-                <a href={node.office.map_link} target="_blank" rel="noopener noreferrer" className="text-brand-400 hover:text-brand-300 inline-flex items-center gap-1">
+                <a href={node.office.map_link} target="_blank" rel="noopener noreferrer" className="text-stamp hover:text-stamp inline-flex items-center gap-1">
                   <MapPin size={11} /> Map
                 </a>
               )}
@@ -164,17 +164,17 @@ function DocumentCard({
       )}
 
       {/* Footer: official link, verified date, flag */}
-      <div className="mt-3 ml-7 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/5">
+      <div className="mt-3 ml-7 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-hairline">
         <div className="flex items-center gap-3 text-[10px] text-slate-500">
           {node.official_url && (
-            <a href={node.official_url} target="_blank" rel="noopener noreferrer" className="text-brand-400 hover:text-brand-300 inline-flex items-center gap-1">
+            <a href={node.official_url} target="_blank" rel="noopener noreferrer" className="text-stamp hover:text-stamp inline-flex items-center gap-1">
               Official source <ExternalLink size={10} />
             </a>
           )}
           {node.last_verified_at && <span>Verified {node.last_verified_at} · check official source</span>}
         </div>
         {flagDone ? (
-          <span className="text-[10px] text-emerald-400">Thanks — flagged</span>
+          <span className="text-[10px] text-stamp">Thanks — flagged</span>
         ) : (
           <button type="button" onClick={() => setFlagOpen(o => !o)} className="text-[10px] text-slate-500 hover:text-slate-300 inline-flex items-center gap-1">
             <Flag size={10} /> This is wrong
@@ -188,7 +188,7 @@ function DocumentCard({
             value={note}
             onChange={e => setNote(e.target.value)}
             placeholder="What's wrong? (fee changed, office moved…)"
-            className="flex-1 bg-white/5 border border-white/10 rounded-lg px-2.5 py-1.5 text-xs text-white placeholder-slate-600 focus:outline-none focus:border-brand-500/50"
+            className="flex-1 bg-paper-deep border border-hairline rounded-lg px-2.5 py-1.5 text-xs text-ink placeholder-slate-600 focus:outline-none focus:border-stamp/40"
           />
           <button type="button" onClick={submitFlag} className="btn-primary text-[11px] py-1.5 px-3">Send</button>
         </div>
@@ -261,8 +261,8 @@ function DocumentGuideContent() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2">
-          <FileStack size={26} className="text-brand-400" />
+        <h1 className="text-2xl sm:text-3xl font-bold text-ink flex items-center gap-2">
+          <FileStack size={26} className="text-stamp" />
           Document guide
         </h1>
         <p className="text-slate-400 mt-1 text-sm">
@@ -272,14 +272,14 @@ function DocumentGuideContent() {
       </div>
 
       {/* Profile form */}
-      <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6 space-y-4">
+      <section className="glass rounded-2xl border border-hairline p-5 sm:p-6 space-y-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <p className="text-xs font-medium text-slate-300 mb-1.5">Destination</p>
             <select
               value={profile.target_country}
               onChange={e => setProfile(p => ({ ...p, target_country: e.target.value }))}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white appearance-none focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20"
+              className="w-full bg-paper-deep border border-hairline rounded-lg px-3 py-2 text-sm text-ink appearance-none focus:outline-none focus:border-stamp/40 focus:ring-1 focus:ring-brand-500/20"
             >
               <option value="uk" className="bg-surface-900">United Kingdom</option>
               <option value="usa" className="bg-surface-900">United States</option>
@@ -292,7 +292,7 @@ function DocumentGuideContent() {
             <select
               value={profile.education_level}
               onChange={e => setProfile(p => ({ ...p, education_level: e.target.value }))}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white appearance-none"
+              className="w-full bg-paper-deep border border-hairline rounded-lg px-3 py-2 text-sm text-ink appearance-none"
             >
               <option value="masters" className="bg-surface-900">Master&apos;s</option>
               <option value="bachelors" className="bg-surface-900">Bachelor&apos;s</option>
@@ -304,7 +304,7 @@ function DocumentGuideContent() {
             <select
               value={profile.studied_in_pakistan ? 'yes' : 'no'}
               onChange={e => setProfile(p => ({ ...p, studied_in_pakistan: e.target.value === 'yes' }))}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white appearance-none"
+              className="w-full bg-paper-deep border border-hairline rounded-lg px-3 py-2 text-sm text-ink appearance-none"
             >
               <option value="yes" className="bg-surface-900">Yes</option>
               <option value="no" className="bg-surface-900">No</option>
@@ -315,7 +315,7 @@ function DocumentGuideContent() {
             <select
               value={profile.marital_status}
               onChange={e => setProfile(p => ({ ...p, marital_status: e.target.value }))}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white appearance-none"
+              className="w-full bg-paper-deep border border-hairline rounded-lg px-3 py-2 text-sm text-ink appearance-none"
             >
               <option value="single" className="bg-surface-900">Single</option>
               <option value="married" className="bg-surface-900">Married</option>
@@ -333,7 +333,7 @@ function DocumentGuideContent() {
                   key={o.id}
                   type="button"
                   onClick={() => toggleHeld(o.id)}
-                  className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${on ? 'bg-brand-500/15 text-brand-200 border-brand-500/30' : 'bg-white/5 text-slate-400 border-white/10 hover:text-white'}`}
+                  className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${on ? 'bg-stamp/10 text-stamp border-stamp/40' : 'bg-paper-deep text-slate-400 border-hairline hover:text-ink'}`}
                 >
                   {on ? '✓ ' : ''}{o.label}
                 </button>
@@ -342,7 +342,7 @@ function DocumentGuideContent() {
           </div>
         </div>
 
-        {error && <p className="text-xs text-red-300">{error}</p>}
+        {error && <p className="text-xs text-fail-text">{error}</p>}
 
         <button type="button" onClick={() => loadPlan(profile)} disabled={loading} className="btn-primary w-full justify-center text-sm">
           {loading ? <><Loader2 size={14} className="animate-spin" /> Building your path…</> : <>Show my document path <ArrowRight size={14} /></>}
@@ -364,7 +364,7 @@ function DocumentGuideContent() {
               <div className="flex items-center gap-2">
                 <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Step {i + 1}</span>
                 {wave.length > 1 && (
-                  <span className="text-[10px] text-brand-300 inline-flex items-center gap-1 bg-brand-500/10 border border-brand-500/20 rounded-full px-2 py-0.5">
+                  <span className="text-[10px] text-stamp inline-flex items-center gap-1 bg-stamp/10 border border-stamp/40 rounded-full px-2 py-0.5">
                     <Layers size={10} /> Can be done at the same time
                   </span>
                 )}

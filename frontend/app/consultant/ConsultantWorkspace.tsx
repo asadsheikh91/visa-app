@@ -1,5 +1,29 @@
 'use client'
 
+/* ══════════════════════════════════════════════════════════════════════════
+   "For Agencies" is WITHDRAWN from the site.
+
+   This directory deliberately has NO page.tsx, so /consultant does not exist
+   as a route and Next's router returns a genuine HTTP 404. (Keeping a page.tsx
+   that called notFound() only produced a soft 404 — the 404 UI served with a
+   200 status, which search engines will index. Verified against a production
+   build.) Nothing here is reachable until the route file is restored.
+
+   Withdrawn together with, and restored together with:
+     - the "For Agencies" nav entry     — components/Navbar.tsx
+     - the Agency Workspace tools card  — components/sections/ToolsSection.tsx
+     - the '/consultant(.*)' guard      — middleware.ts
+
+   To bring the offering back:
+     1. Recreate app/consultant/page.tsx as:
+          'use client'
+          export { default } from './ConsultantWorkspace'
+     2. Set NEXT_PUBLIC_AGENCY_ENABLED=true
+     3. Un-comment the three blocks listed above.
+
+   The workspace implementation below is unmodified and still type-checks.
+   ══════════════════════════════════════════════════════════════════════════ */
+
 import { useCallback, useEffect, useState } from 'react'
 import {
   Building2, Loader2, UserPlus, Trash2, ArrowLeft, Users, Clock, CheckCircle2,
@@ -46,7 +70,7 @@ function CreateWorkspace({ onCreated }: { onCreated: () => void }) {
       </p>
       <div className="mt-6 space-y-3">
         <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Bright Future Consultants"
-          className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-brand-500/50" />
+          className="w-full bg-paper-deep border border-hairline rounded-lg px-3 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-brand-500/50" />
         {error && <p className="text-xs text-red-300">{error}</p>}
         <button type="button" onClick={create} disabled={busy || !name.trim()} className="btn-primary w-full justify-center text-sm">
           {busy ? <><Loader2 size={14} className="animate-spin" /> Creating…</> : 'Create workspace'}
@@ -82,7 +106,7 @@ function ClientDetail({ clientId, onBack }: { clientId: string; onBack: () => vo
       {loading && <p className="text-slate-400 text-sm flex items-center gap-2"><Loader2 size={15} className="animate-spin" /> Loading…</p>}
       {error && <p className="text-sm text-red-300">{error}</p>}
       {data && (
-        <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
+        <section className="glass rounded-2xl border border-hairline p-5 sm:p-6">
           <p className="text-sm font-semibold text-white mb-4">{data.email}</p>
           <JourneyView journey={data.journey} interactive={false} />
         </section>
@@ -148,17 +172,17 @@ function Roster({ org }: { org: NonNullable<MyOrg['org']> }) {
           </h1>
           <p className="text-slate-400 text-sm mt-0.5">Your client roster.</p>
         </div>
-        <span className="text-xs px-3 py-1.5 rounded-full bg-white/5 text-slate-300 border border-white/10">
+        <span className="text-xs px-3 py-1.5 rounded-full bg-paper-deep text-slate-300 border border-hairline">
           {org.plan} plan
         </span>
       </div>
 
       {/* Invite */}
-      <section className="glass rounded-2xl border border-white/10 p-5 flex flex-col sm:flex-row gap-3 sm:items-end">
+      <section className="glass rounded-2xl border border-hairline p-5 flex flex-col sm:flex-row gap-3 sm:items-end">
         <div className="flex-1">
           <p className="text-xs font-medium text-slate-300 mb-1.5">Invite a student by email</p>
           <input value={email} onChange={e => setEmail(e.target.value)} type="email" placeholder="student@email.com"
-            className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-brand-500/50" />
+            className="w-full bg-paper-deep border border-hairline rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-brand-500/50" />
         </div>
         <button type="button" onClick={invite} disabled={inviting || !email.trim()} className="btn-primary justify-center text-sm">
           {inviting ? <><Loader2 size={14} className="animate-spin" /> Inviting…</> : <><UserPlus size={14} /> Invite</>}
@@ -170,7 +194,7 @@ function Roster({ org }: { org: NonNullable<MyOrg['org']> }) {
       {loading ? (
         <p className="text-slate-400 text-sm flex items-center gap-2"><Loader2 size={15} className="animate-spin" /> Loading roster…</p>
       ) : clients.length === 0 ? (
-        <div className="glass rounded-2xl border border-white/10 p-8 text-center">
+        <div className="glass rounded-2xl border border-hairline p-8 text-center">
           <Users size={28} className="text-slate-500 mx-auto mb-2" />
           <p className="text-sm text-slate-400">No clients yet. Invite your first student above.</p>
         </div>
@@ -179,7 +203,7 @@ function Roster({ org }: { org: NonNullable<MyOrg['org']> }) {
           {clients.map(c => {
             const pending = c.status === 'invited'
             return (
-              <div key={c.id} className="glass rounded-xl border border-white/10 p-4 flex items-center justify-between gap-4">
+              <div key={c.id} className="glass rounded-xl border border-hairline p-4 flex items-center justify-between gap-4">
                 <button type="button" disabled={pending} onClick={() => !pending && setSelected(c.id)}
                   className={`flex items-center gap-3 min-w-0 text-left ${pending ? '' : 'hover:opacity-90'}`}>
                   <div className="min-w-0">
@@ -201,12 +225,12 @@ function Roster({ org }: { org: NonNullable<MyOrg['org']> }) {
                 </button>
                 <div className="flex items-center gap-3 flex-shrink-0">
                   {!pending && c.journey && (
-                    <div className="hidden sm:block w-24 h-1.5 rounded-full bg-white/8 overflow-hidden">
+                    <div className="hidden sm:block w-24 h-1.5 rounded-full bg-paper-deep overflow-hidden">
                       <div className="h-full bg-gradient-to-r from-brand-500 to-brand-400" style={{ width: `${c.journey.overall_pct}%` }} />
                     </div>
                   )}
                   <button type="button" onClick={() => remove(c.id)} aria-label="Remove client"
-                    className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-white/5">
+                    className="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-paper-deep">
                     <Trash2 size={15} />
                   </button>
                 </div>
@@ -258,33 +282,42 @@ function ConsultantContent() {
   )
 }
 
-export default function ConsultantPage() {
-  if (!AGENCY_ENABLED) {
-    return (
-      <div className="min-h-screen pt-24">
-        <ComingSoonPreview
-          icon={Building2}
-          title="Agency Workspace"
-          lede="One honest workspace for consultants who refuse to guess with a student’s future."
-          worry="“I’m juggling thirty student files — and I can’t see who’s actually at risk.”"
-          stakes="When you manage applicants in spreadsheets and WhatsApp, the one with a broken bank statement looks identical to the one who’s ready. You find out which was which only after the refusal."
-          bullets={[
-            'Every student’s readiness, blockers and next action in a single view',
-            'Invite applicants and follow their progress from check to visa day',
-            'The same rules-based, source-linked engine your students trust — built for your whole roster',
-          ]}
-          meanwhile={{ href: '/tools/student-visa/countries', label: 'Try the student checker first' }}
-          notifySubject="Notify me when the Agency Workspace opens"
-        />
-      </div>
-    )
-  }
-
+/**
+ * The live agency workspace. Rendered only when the route is re-enabled — see
+ * app/consultant/page.tsx, which currently 404s the route entirely.
+ */
+export default function ConsultantWorkspace() {
   return (
     <div className="min-h-screen pt-24">
       <AuthGate>
         <ConsultantContent />
       </AuthGate>
+    </div>
+  )
+}
+
+/**
+ * Retained for the re-enable path: the Coming Soon teaser this route rendered
+ * back when the workspace was merely "not yet open" rather than withdrawn.
+ * Swap it in from page.tsx if you want a teaser instead of a 404.
+ */
+export function ConsultantComingSoon() {
+  return (
+    <div className="min-h-screen pt-24">
+      <ComingSoonPreview
+        icon={Building2}
+        title="Agency Workspace"
+        lede="One honest workspace for consultants who refuse to guess with a student’s future."
+        worry="“I’m juggling thirty student files — and I can’t see who’s actually at risk.”"
+        stakes="When you manage applicants in spreadsheets and WhatsApp, the one with a broken bank statement looks identical to the one who’s ready. You find out which was which only after the refusal."
+        bullets={[
+          'Every student’s readiness, blockers and next action in a single view',
+          'Invite applicants and follow their progress from check to visa day',
+          'The same rules-based, source-linked engine your students trust — built for your whole roster',
+        ]}
+        meanwhile={{ href: '/tools/student-visa/countries', label: 'Try the student checker first' }}
+        notifySubject="Notify me when the Agency Workspace opens"
+      />
     </div>
   )
 }

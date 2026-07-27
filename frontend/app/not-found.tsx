@@ -15,7 +15,7 @@ export default function NotFound() {
         <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#ff7a3c] mb-2">
           404 — Page not found
         </p>
-        <h1 className="text-2xl font-bold text-white mb-2">This page took a wrong turn</h1>
+        <h1 className="text-2xl font-bold text-ink mb-2">This page took a wrong turn</h1>
         <p className="text-slate-400 text-sm mb-7">
           The page you’re looking for doesn’t exist or may have moved. Let’s get you back on track.
         </p>

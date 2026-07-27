@@ -19,16 +19,16 @@ function todayIso(): string {
 // ── Result rendering ──────────────────────────────────────────────────────────
 
 const STATUS_UI: Record<RuleStatus, { ring: string; text: string; Icon: typeof CheckCircle2; label: string }> = {
-  pass: { ring: 'border-emerald-500/30 bg-emerald-500/5', text: 'text-emerald-400', Icon: CheckCircle2, label: 'Pass' },
-  warn: { ring: 'border-amber-500/30 bg-amber-500/5',     text: 'text-amber-400',   Icon: AlertTriangle, label: 'Check' },
-  fail: { ring: 'border-red-500/30 bg-red-500/5',         text: 'text-red-400',     Icon: XCircle,       label: 'Fail' },
+  pass: { ring: 'border-emerald-500/30 bg-emerald-500/5', text: 'text-stamp', Icon: CheckCircle2, label: 'Pass' },
+  warn: { ring: 'border-amber-500/30 bg-amber-500/5',     text: 'text-warn-text',   Icon: AlertTriangle, label: 'Check' },
+  fail: { ring: 'border-red-500/30 bg-red-500/5',         text: 'text-fail-text',     Icon: XCircle,       label: 'Fail' },
 }
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] px-3 py-2.5">
+    <div className="rounded-xl border border-hairline bg-paper-deep px-3 py-2.5">
       <p className="text-[10px] uppercase tracking-wider text-slate-500">{label}</p>
-      <p className="text-sm font-semibold text-white mt-0.5 break-words">{value}</p>
+      <p className="text-sm font-semibold text-ink mt-0.5 break-words">{value}</p>
     </div>
   )
 }
@@ -43,7 +43,7 @@ function ResultPanel({ result, onReset }: { result: FinancialDocResult; onReset:
           <top.Icon size={34} className={`${top.text} flex-shrink-0`} />
           <div className="min-w-0">
             <p className={`text-sm font-semibold uppercase tracking-wider ${top.text}`}>{top.label}</p>
-            <p className="text-sm text-white leading-relaxed mt-0.5">{result.summary}</p>
+            <p className="text-sm text-ink leading-relaxed mt-0.5">{result.summary}</p>
           </div>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-5">
@@ -59,7 +59,7 @@ function ResultPanel({ result, onReset }: { result: FinancialDocResult; onReset:
         </div>
       </section>
 
-      <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6">
+      <section className="glass rounded-2xl border border-hairline p-5 sm:p-6">
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4">Rule-by-rule check</p>
         <div className="space-y-3">
           {result.rule_checks.map((rc) => {
@@ -70,7 +70,7 @@ function ResultPanel({ result, onReset }: { result: FinancialDocResult; onReset:
                   <ui.Icon size={16} className={`${ui.text} flex-shrink-0 mt-0.5`} />
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="text-sm font-semibold text-white">{rc.label}</p>
+                      <p className="text-sm font-semibold text-ink">{rc.label}</p>
                       <span className={`text-[11px] font-bold uppercase ${ui.text}`}>{ui.label}</span>
                     </div>
                     <p className="text-xs text-slate-300 leading-relaxed mt-1">{rc.detail}</p>
@@ -78,7 +78,7 @@ function ResultPanel({ result, onReset }: { result: FinancialDocResult; onReset:
                       <span className="text-[11px] text-slate-500">Threshold: {rc.threshold}</span>
                       {rc.source?.url && (
                         <a href={rc.source.url} target="_blank" rel="noopener noreferrer"
-                           className="text-[11px] text-brand-400 hover:text-brand-300 inline-flex items-center gap-1">
+                           className="text-[11px] text-stamp hover:text-stamp inline-flex items-center gap-1">
                           {rc.source.label} <ExternalLink size={10} />
                         </a>
                       )}
@@ -107,7 +107,7 @@ function Input({ label, value, onChange, type = 'text', placeholder }: {
     <div>
       <p className="text-xs font-medium text-slate-300 mb-1.5">{label}</p>
       <input type={type} value={value} onChange={e => onChange(e.target.value)} placeholder={placeholder}
-        className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-brand-500/50" />
+        className="w-full bg-paper-deep border border-hairline rounded-lg px-3 py-2 text-sm text-ink placeholder-slate-600 focus:outline-none focus:border-stamp/40" />
     </div>
   )
 }
@@ -178,7 +178,7 @@ function ManualForm({ onSubmit, submitting }: {
   return (
     <div className="space-y-5">
       {/* Account details */}
-      <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6 space-y-4">
+      <section className="glass rounded-2xl border border-hairline p-5 sm:p-6 space-y-4">
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Your statement details</p>
         <div className="grid sm:grid-cols-2 gap-3">
           <Input label="Bank name (optional)" value={bankName} onChange={setBankName} placeholder="e.g. Meezan Bank" />
@@ -191,13 +191,13 @@ function ManualForm({ onSubmit, submitting }: {
       </section>
 
       {/* Balance timeline */}
-      <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6 space-y-3">
+      <section className="glass rounded-2xl border border-hairline p-5 sm:p-6 space-y-3">
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Account balance over time</p>
-        <div className="flex items-start gap-2 rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2">
-          <Info size={13} className="text-brand-400 flex-shrink-0 mt-0.5" />
+        <div className="flex items-start gap-2 rounded-lg border border-hairline bg-paper-deep px-3 py-2">
+          <Info size={13} className="text-stamp flex-shrink-0 mt-0.5" />
           <p className="text-[11px] text-slate-400">
             Enter your balance on the dates shown on your statement — at least the start and end of your
-            28-day period, and any date the balance dropped. We use the <span className="text-slate-200">lowest</span> point
+            28-day period, and any date the balance dropped. We use the <span className="text-ink">lowest</span> point
             to check the 28-day rule.
           </p>
         </div>
@@ -205,25 +205,25 @@ function ManualForm({ onSubmit, submitting }: {
           {rows.map((r, i) => (
             <div key={i} className="flex items-center gap-2">
               <input type="date" value={r.date} onChange={e => setRow(i, { date: e.target.value })}
-                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500/50" />
+                className="flex-1 bg-paper-deep border border-hairline rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-stamp/40" />
               <input type="number" value={r.balance} onChange={e => setRow(i, { balance: e.target.value })}
                 placeholder="Balance" inputMode="decimal"
-                className="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-brand-500/50" />
+                className="flex-1 bg-paper-deep border border-hairline rounded-lg px-3 py-2 text-sm text-ink placeholder-slate-600 focus:outline-none focus:border-stamp/40" />
               <button type="button" onClick={() => removeRow(i)} aria-label="Remove row"
-                className="p-2 rounded-lg text-slate-500 hover:text-red-400 hover:bg-white/5">
+                className="p-2 rounded-lg text-slate-500 hover:text-fail-text hover:bg-paper-deep">
                 <Trash2 size={15} />
               </button>
             </div>
           ))}
         </div>
         <button type="button" onClick={addRow}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-brand-400 hover:text-brand-300">
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-stamp hover:text-stamp">
           <Plus size={14} /> Add balance row
         </button>
       </section>
 
       {/* Application context */}
-      <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6 space-y-4">
+      <section className="glass rounded-2xl border border-hairline p-5 sm:p-6 space-y-4">
         <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Your application details</p>
         <div className="grid sm:grid-cols-2 gap-3">
           <Input label="Your full name (as on application)" value={applicant} onChange={setApplicant} />
@@ -233,7 +233,7 @@ function ManualForm({ onSubmit, submitting }: {
           <div>
             <p className="text-xs font-medium text-slate-300 mb-1.5">Course location</p>
             <select value={location} onChange={e => setLocation(e.target.value as 'london' | 'outside')}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500/50 appearance-none">
+              className="w-full bg-paper-deep border border-hairline rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-stamp/40 appearance-none">
               <option value="outside" className="bg-surface-900">Outside London</option>
               <option value="london" className="bg-surface-900">London</option>
             </select>
@@ -244,13 +244,13 @@ function ManualForm({ onSubmit, submitting }: {
           )}
         </div>
         {nonGbp && (
-          <p className="text-[11px] text-amber-300/90">
+          <p className="text-[11px] text-warn-text/90">
             Your balances aren&apos;t in GBP — enter the conversion rate so funds can be compared to the requirement.
           </p>
         )}
       </section>
 
-      {error && <p className="text-xs text-red-300">{error}</p>}
+      {error && <p className="text-xs text-fail-text">{error}</p>}
 
       <button type="button" onClick={submit} disabled={submitting} className="btn-primary w-full justify-center text-sm">
         {submitting
@@ -284,8 +284,8 @@ function FinancialDocContent() {
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2">
-          <ShieldCheck size={26} className="text-brand-400" />
+        <h1 className="text-2xl sm:text-3xl font-bold text-ink flex items-center gap-2">
+          <ShieldCheck size={26} className="text-stamp" />
           Bank statement checker
         </h1>
         <p className="text-slate-400 mt-1 text-sm">
@@ -294,7 +294,7 @@ function FinancialDocContent() {
         </p>
       </div>
 
-      {error && <p className="text-xs text-red-300">{error}</p>}
+      {error && <p className="text-xs text-fail-text">{error}</p>}
 
       {result
         ? <ResultPanel result={result} onReset={() => setResult(null)} />

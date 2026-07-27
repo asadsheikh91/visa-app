@@ -26,31 +26,31 @@ const AI_TOOLS_ENABLED = process.env.NEXT_PUBLIC_AI_TOOLS_ENABLED === 'true'
 const COUNTRIES = ['uk', 'usa', 'canada', 'australia'] as const
 
 function scoreColor(s: number): string {
-  if (s >= 75) return 'text-emerald-400'
-  if (s >= 50) return 'text-amber-400'
-  return 'text-red-400'
+  if (s >= 75) return 'text-stamp'
+  if (s >= 50) return 'text-warn-text'
+  return 'text-fail-text'
 }
 
 // ── Assessment panel ──────────────────────────────────────────────────────────
 
 function AssessmentPanel({ a }: { a: InterviewAssessment }) {
   return (
-    <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6 space-y-4">
+    <section className="glass rounded-2xl border border-hairline p-5 sm:p-6 space-y-4">
       <div className="flex items-center gap-4">
         <span className={`text-3xl font-extrabold ${scoreColor(a.overall_score)}`}>{a.overall_score}</span>
         <div>
           <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Credibility score</p>
-          <p className="text-sm text-white">{a.verdict}</p>
+          <p className="text-sm text-ink">{a.verdict}</p>
         </div>
       </div>
 
       {a.strengths.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-emerald-300 uppercase tracking-wider mb-2">Strengths</p>
+          <p className="text-xs font-semibold text-stamp uppercase tracking-wider mb-2">Strengths</p>
           <ul className="space-y-1.5">
             {a.strengths.map((s, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                <CheckCircle2 size={13} className="flex-shrink-0 mt-0.5 text-emerald-400" />{s}
+                <CheckCircle2 size={13} className="flex-shrink-0 mt-0.5 text-stamp" />{s}
               </li>
             ))}
           </ul>
@@ -59,11 +59,11 @@ function AssessmentPanel({ a }: { a: InterviewAssessment }) {
 
       {a.weaknesses.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-red-300 uppercase tracking-wider mb-2">Weaknesses</p>
+          <p className="text-xs font-semibold text-fail-text uppercase tracking-wider mb-2">Weaknesses</p>
           <ul className="space-y-1.5">
             {a.weaknesses.map((s, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                <AlertTriangle size={13} className="flex-shrink-0 mt-0.5 text-red-400" />{s}
+                <AlertTriangle size={13} className="flex-shrink-0 mt-0.5 text-fail-text" />{s}
               </li>
             ))}
           </ul>
@@ -72,11 +72,11 @@ function AssessmentPanel({ a }: { a: InterviewAssessment }) {
 
       {a.tips.length > 0 && (
         <div>
-          <p className="text-xs font-semibold text-amber-300 uppercase tracking-wider mb-2">Tips for the real interview</p>
+          <p className="text-xs font-semibold text-warn-text uppercase tracking-wider mb-2">Tips for the real interview</p>
           <ul className="space-y-1.5">
             {a.tips.map((s, i) => (
               <li key={i} className="flex items-start gap-2 text-sm text-slate-300">
-                <Lightbulb size={13} className="flex-shrink-0 mt-0.5 text-amber-400" />{s}
+                <Lightbulb size={13} className="flex-shrink-0 mt-0.5 text-warn-text" />{s}
               </li>
             ))}
           </ul>
@@ -138,8 +138,8 @@ function MockInterviewContent() {
     return (
       <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-6">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold text-white flex items-center gap-2">
-            <MessagesSquare size={26} className="text-brand-400" />
+          <h1 className="text-2xl sm:text-3xl font-bold text-ink flex items-center gap-2">
+            <MessagesSquare size={26} className="text-stamp" />
             Mock visa interview
           </h1>
           <p className="text-slate-400 mt-1 text-sm">
@@ -147,13 +147,13 @@ function MockInterviewContent() {
             scored assessment at the end.
           </p>
         </div>
-        <section className="glass rounded-2xl border border-white/10 p-5 sm:p-6 space-y-4">
+        <section className="glass rounded-2xl border border-hairline p-5 sm:p-6 space-y-4">
           <div>
             <p className="text-xs font-medium text-slate-300 mb-1.5">Destination (optional)</p>
             <select
               value={country}
               onChange={e => setCountry(e.target.value)}
-              className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 appearance-none"
+              className="w-full bg-paper-deep border border-hairline rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:border-stamp/40 focus:ring-1 focus:ring-brand-500/20 appearance-none"
             >
               <option value="" className="bg-surface-900">Any / not sure</option>
               {COUNTRIES.map(c => (
@@ -161,11 +161,11 @@ function MockInterviewContent() {
               ))}
             </select>
           </div>
-          {error && <p className="text-xs text-red-300">{error}</p>}
+          {error && <p className="text-xs text-fail-text">{error}</p>}
           {unavailable && (
             <div className="flex items-start gap-2.5 rounded-xl border border-amber-500/25 bg-amber-500/10 px-4 py-3">
-              <Clock size={15} className="text-amber-400 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-amber-300">
+              <Clock size={15} className="text-warn-text flex-shrink-0 mt-0.5" />
+              <p className="text-xs text-warn-text">
                 Mock interviews are coming soon — the AI isn&apos;t switched on yet.
               </p>
             </div>
@@ -184,22 +184,22 @@ function MockInterviewContent() {
   // ── Chat ─────────────────────────────────────────────────────────────────────
   return (
     <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10 space-y-5">
-      <h1 className="text-xl font-bold text-white flex items-center gap-2">
-        <MessagesSquare size={22} className="text-brand-400" /> Mock visa interview
+      <h1 className="text-xl font-bold text-ink flex items-center gap-2">
+        <MessagesSquare size={22} className="text-stamp" /> Mock visa interview
       </h1>
 
-      <section className="glass rounded-2xl border border-white/10 p-4 sm:p-5">
+      <section className="glass rounded-2xl border border-hairline p-4 sm:p-5">
         <div className="space-y-3 max-h-[55vh] overflow-y-auto pr-1">
           {session.transcript.map((t, i) => (
             <div key={i} className={`flex ${t.role === 'student' ? 'justify-end' : 'justify-start'}`}>
               <div className={`flex items-start gap-2 max-w-[85%] ${t.role === 'student' ? 'flex-row-reverse' : ''}`}>
                 {t.role === 'interviewer'
-                  ? <UserCircle2 size={20} className="text-brand-400 flex-shrink-0 mt-1" />
+                  ? <UserCircle2 size={20} className="text-stamp flex-shrink-0 mt-1" />
                   : null}
                 <div className={`rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed ${
                   t.role === 'student'
-                    ? 'bg-brand-500/15 border border-brand-500/25 text-white'
-                    : 'bg-white/[0.04] border border-white/10 text-slate-200'
+                    ? 'bg-stamp/10 border border-stamp/40 text-ink'
+                    : 'bg-paper-deep border border-hairline text-ink'
                 }`}>
                   {t.content}
                 </div>
@@ -215,12 +215,12 @@ function MockInterviewContent() {
         </div>
       </section>
 
-      {error && <p className="text-xs text-red-300">{error}</p>}
+      {error && <p className="text-xs text-fail-text">{error}</p>}
 
       {completed && session.assessment ? (
         <AssessmentPanel a={session.assessment} />
       ) : (
-        <section className="glass rounded-2xl border border-white/10 p-4 sm:p-5 space-y-3">
+        <section className="glass rounded-2xl border border-hairline p-4 sm:p-5 space-y-3">
           {canContinue ? (
             <>
               <textarea
@@ -228,7 +228,7 @@ function MockInterviewContent() {
                 onChange={e => setAnswer(e.target.value)}
                 rows={3}
                 placeholder="Type your answer…"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-3 py-2.5 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-brand-500/50 focus:ring-1 focus:ring-brand-500/20 resize-y"
+                className="w-full bg-paper-deep border border-hairline rounded-lg px-3 py-2.5 text-sm text-ink placeholder-slate-600 focus:outline-none focus:border-stamp/40 focus:ring-1 focus:ring-brand-500/20 resize-y"
               />
               <div className="flex gap-2">
                 <button type="button" onClick={onSend} disabled={busy || !answer.trim()} className="btn-primary text-sm flex-1 justify-center">

@@ -52,7 +52,7 @@ export function BenefitsSection() {
       <div className="container-inner">
         <div className="text-center mb-14">
           <p className="section-label mb-3">Why ParchiVisa</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-ink mb-4">
             Built for applicants who can&apos;t afford to guess
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto">
@@ -63,10 +63,10 @@ export function BenefitsSection() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {benefits.map(({ icon: Icon, title, description }) => (
             <div key={title} className="card group">
-              <div className="w-10 h-10 rounded-xl bg-brand-900/40 border border-brand-700/30 flex items-center justify-center mb-4 group-hover:bg-brand-800/50 transition-colors duration-200">
-                <Icon size={18} className="text-brand-400" />
+              <div className="w-10 h-10 rounded-[3px] bg-stamp/[0.06] border border-stamp/40 flex items-center justify-center mb-4 group-hover:bg-stamp/[0.12] transition-colors duration-200">
+                <Icon size={18} className="text-stamp" />
               </div>
-              <h3 className="font-semibold text-white mb-2 text-[15px]">{title}</h3>
+              <h3 className="font-semibold text-ink mb-2 text-[15px]">{title}</h3>
               <p className="text-slate-400 text-sm leading-relaxed">{description}</p>
             </div>
           ))}

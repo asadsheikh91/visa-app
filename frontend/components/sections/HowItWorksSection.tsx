@@ -33,7 +33,7 @@ export function HowItWorksSection() {
       <div className="container-inner relative">
         <div className="text-center mb-14">
           <p className="section-label mb-3">The process</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+          <h2 className="text-3xl sm:text-4xl font-bold text-ink mb-4">
             Three steps to clarity
           </h2>
           <p className="text-slate-400 max-w-xl mx-auto">
@@ -45,11 +45,8 @@ export function HowItWorksSection() {
         <div className="grid md:grid-cols-3 gap-6 relative">
           {/* Desktop connector line */}
           <div
-            className="hidden md:block absolute top-[42px] left-[calc(33%+24px)] right-[calc(33%+24px)] h-px pointer-events-none"
-            style={{
-              background: 'linear-gradient(to right, rgba(103,59,255,0.3), rgba(255,255,255,0.05), rgba(103,59,255,0.3))',
-              zIndex: 0,
-            }}
+            className="hidden md:block absolute top-[42px] left-[calc(33%+24px)] right-[calc(33%+24px)] h-px bg-hairline pointer-events-none"
+            style={{ zIndex: 0 }}
           />
 
           {steps.map(({ step, icon: Icon, title, description, detail }, i) => (
@@ -58,10 +55,10 @@ export function HowItWorksSection() {
                 {/* Step icon row */}
                 <div className="flex items-center gap-4">
                   <div className="relative flex-shrink-0">
-                    <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-brand-600/20 to-accent-600/10 border border-brand-600/30 flex items-center justify-center">
-                      <Icon size={20} className="text-brand-400" />
+                    <div className="w-12 h-12 rounded-[3px] bg-stamp/[0.06] border border-stamp/40 flex items-center justify-center">
+                      <Icon size={20} className="text-stamp" />
                     </div>
-                    <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-surface-900 border border-brand-600/40 flex items-center justify-center text-[9px] font-bold text-brand-400">
+                    <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-white border border-stamp/40 flex items-center justify-center font-mono text-[9px] font-bold text-stamp">
                       {step}
                     </span>
                   </div>
@@ -71,12 +68,12 @@ export function HowItWorksSection() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-bold text-white mb-2">{title}</h3>
+                  <h3 className="text-lg font-bold text-ink mb-2">{title}</h3>
                   <p className="text-slate-400 text-sm leading-relaxed">{description}</p>
                 </div>
 
-                <div className="pt-2 border-t border-white/6">
-                  <span className="text-xs font-semibold text-brand-400">{detail}</span>
+                <div className="pt-2 border-t border-hairline">
+                  <span className="text-xs font-semibold text-stamp">{detail}</span>
                 </div>
               </div>
             </div>

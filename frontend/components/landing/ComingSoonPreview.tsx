@@ -49,21 +49,21 @@ export function ComingSoonPreview({
           <span className="flex h-12 w-12 items-center justify-center rounded-2xl border border-[#ff5a1f]/30 bg-[#ff5a1f]/10">
             <Icon size={22} className="text-[#ff5a1f]" aria-hidden />
           </span>
-          <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-slate-800/60 px-3 py-1 text-xs font-semibold text-slate-300">
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-hairline bg-slate-800/60 px-3 py-1 text-xs font-semibold text-slate-300">
             <Clock size={11} />
             Coming soon
           </span>
         </div>
 
-        <h1 className="mt-6 font-display text-[clamp(2.25rem,6vw,3.5rem)] uppercase leading-[0.95] tracking-tight text-white">
+        <h1 className="mt-6 font-serif text-[clamp(2.25rem,6vw,3.5rem)] uppercase leading-[0.95] tracking-tight text-ink">
           {title}
         </h1>
         <p className="mt-3 text-lg leading-relaxed text-slate-300">{lede}</p>
 
         {/* The pain — named even though the fix isn't live yet */}
-        <div className="mt-8 rounded-2xl border border-red-500/15 bg-red-500/[0.04] p-5 sm:p-6">
-          <p className="flex items-start gap-2.5 text-balance text-lg font-bold leading-snug text-white">
-            <AlertTriangle size={18} className="mt-1 flex-shrink-0 text-red-400" aria-hidden />
+        <div className="mt-8 rounded-2xl border border-fail/30 bg-red-500/[0.04] p-5 sm:p-6">
+          <p className="flex items-start gap-2.5 text-balance text-lg font-bold leading-snug text-ink">
+            <AlertTriangle size={18} className="mt-1 flex-shrink-0 text-fail-text" aria-hidden />
             {worry}
           </p>
           <p className="mt-2.5 pl-8 text-sm leading-relaxed text-slate-400">{stakes}</p>
@@ -96,7 +96,7 @@ export function ComingSoonPreview({
           </a>
           <Link
             href={meanwhile.href}
-            className="group inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-slate-300 transition-colors hover:text-white"
+            className="group inline-flex items-center justify-center gap-1.5 text-sm font-semibold text-slate-300 transition-colors hover:text-ink"
           >
             {meanwhile.label}
             <ArrowRight size={15} className="transition-transform duration-200 group-hover:translate-x-0.5" />

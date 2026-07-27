@@ -1,19 +1,16 @@
 import type { ReactNode } from 'react'
 
 /**
- * Loads the report's display fonts (Source Serif 4 + JetBrains Mono; Inter is
- * already loaded globally) for both the on-screen and print report routes.
+ * The report inherits the app's self-hosted type stack (Libre Caslon Display /
+ * Public Sans / IBM Plex Mono) — next/font sets --font-pv-serif|sans|mono on
+ * <html> in the root layout, and report.module.css consumes those variables.
+ *
+ * There is deliberately no external font <link> here any more. The previous
+ * Source Serif 4 + JetBrains Mono stylesheet came from fonts.googleapis.com,
+ * which (a) put the report on a different type system to the rest of the site
+ * and (b) made the Playwright PDF render depend on a third-party request
+ * resolving before paint. Both are now gone.
  */
 export default function ReportLayout({ children }: { children: ReactNode }) {
-  return (
-    <>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link
-        href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600;8..60,700&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
-        rel="stylesheet"
-      />
-      {children}
-    </>
-  )
+  return <>{children}</>
 }

@@ -15,7 +15,10 @@ const navLinks = [
   { label: 'Visa Rules', href: '/why-rejected' },
   { label: 'Documentation', href: '/checklist' },
   { label: 'Guides', href: '/compare' },
-  { label: 'For Agencies', href: '/consultant' },
+  // Agency workspace is withdrawn from the public site for now — the route is
+  // also gated (see app/consultant/page.tsx). Restore this entry together with
+  // the route gate when the B2B offering goes live.
+  // { label: 'For Agencies', href: '/consultant' },
   { label: 'About Us', href: '/about' },
 ]
 

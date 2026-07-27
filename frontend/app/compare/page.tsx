@@ -15,7 +15,7 @@ export default function ComparePage() {
       <div className="container-inner px-4">
         <Link
           href="/"
-          className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-400 transition-colors hover:text-white"
+          className="inline-flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.14em] text-support transition-colors hover:text-ink"
         >
           <ArrowLeft size={15} aria-hidden="true" />
           Back to home

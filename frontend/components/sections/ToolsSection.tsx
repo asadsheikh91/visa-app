@@ -123,16 +123,18 @@ const tools: Tool[] = [
     href: '/tools/mock-interview',
     cta: 'Get notified',
   },
-  {
-    icon: Building2,
-    title: 'Agency Workspace',
-    description:
-      'For consultants who refuse to guess with a student’s future — manage every client file, score and deadline in one honest workspace.',
-    features: ['All your students, one view', 'Shared readiness & files', 'Built for agencies'],
-    status: 'soon',
-    href: '/consultant',
-    cta: 'Get notified',
-  },
+  // Agency Workspace card withdrawn along with the /consultant route and the
+  // "For Agencies" nav entry. Restore all three together when B2B goes live.
+  // {
+  //   icon: Building2,
+  //   title: 'Agency Workspace',
+  //   description:
+  //     'For consultants who refuse to guess with a student’s future — manage every client file, score and deadline in one honest workspace.',
+  //   features: ['All your students, one view', 'Shared readiness & files', 'Built for agencies'],
+  //   status: 'soon',
+  //   href: '/consultant',
+  //   cta: 'Get notified',
+  // },
 ]
 
 export function ToolsSection() {
@@ -142,10 +144,10 @@ export function ToolsSection() {
         {/* Section header */}
         <div className="text-center mb-14">
           <p className="section-label mb-3">Everything we do</p>
-          <h2 className="text-3xl sm:text-4xl font-bold text-white mb-4">
+          <h2 className="font-serif text-[30px] sm:text-[36px] font-medium leading-[1.12] tracking-[-0.01em] text-ink mb-4">
             One toolkit for the whole journey
           </h2>
-          <p className="text-slate-400 max-w-xl mx-auto">
+          <p className="font-body text-support measure mx-auto">
             Every tool exists to remove one reason a genuine student gets refused — from your first
             readiness check to the morning of your interview.
           </p>
@@ -159,47 +161,44 @@ export function ToolsSection() {
 
             const CardContent = (
               <div
-                className={`relative flex flex-col h-full rounded-2xl border transition-all duration-300 overflow-hidden ${
+                className={`relative flex flex-col h-full rounded-[4px] border bg-white transition-colors duration-200 overflow-hidden ${
                   isActive
-                    ? 'glass border-brand-700/30 hover:border-brand-500/50 hover:-translate-y-1 shadow-xl shadow-brand-900/30 cursor-pointer'
-                    : 'bg-white/[0.02] border-white/6 hover:border-white/12 cursor-pointer'
+                    ? 'border-ink shadow-[6px_6px_0_0] shadow-ink/10 cursor-pointer'
+                    : 'border-hairline hover:border-support cursor-pointer'
                 }`}
               >
-                {/* Top gradient strip */}
-                <div
-                  className={`h-1 w-full bg-gradient-to-r ${
-                    isActive ? 'from-brand-600 to-brand-500' : 'from-slate-700 to-slate-600'
-                  }`}
-                />
+                {/* Status edge — the document system's flat rule, not a gradient */}
+                <div className={`h-1 w-full ${isActive ? 'bg-stamp' : 'bg-hairline'}`} />
 
                 <div className="p-7 flex flex-col flex-1">
                   {/* Icon + badges */}
                   <div className="flex items-start justify-between mb-5">
                     <div
-                      className={`w-12 h-12 rounded-xl bg-gradient-to-br flex items-center justify-center shadow-lg ${
-                        isActive ? 'from-brand-600 to-brand-500' : 'from-slate-700 to-slate-600'
+                      className={`w-11 h-11 rounded-[3px] flex items-center justify-center border ${
+                        isActive ? 'border-stamp bg-stamp' : 'border-hairline bg-paper-deep'
                       }`}
                     >
-                      <Icon size={22} className="text-white" />
+                      {/* paper on the green fill, support on the paper tile */}
+                      <Icon size={20} className={isActive ? 'text-paper' : 'text-support'} />
                     </div>
                     {isActive ? (
-                      <span className="badge-green flex items-center gap-1.5 text-xs font-semibold">
+                      <span className="badge-green">
                         <CheckCircle2 size={11} />
                         Live
                       </span>
                     ) : (
-                      <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800/60 text-slate-400 border border-white/6">
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[3px] font-mono text-[11px] font-bold uppercase tracking-[0.12em] bg-paper-deep text-support border border-hairline">
                         <Clock size={10} />
-                        Coming Soon
+                        Coming soon
                       </span>
                     )}
                   </div>
 
                   {/* Text */}
-                  <h3 className={`text-lg font-bold mb-2 ${isActive ? 'text-white' : 'text-slate-300'}`}>
+                  <h3 className="font-serif text-[20px] font-medium leading-snug mb-2 text-ink">
                     {title}
                   </h3>
-                  <p className={`text-sm leading-relaxed mb-5 ${isActive ? 'text-slate-400' : 'text-slate-500'}`}>
+                  <p className="font-body text-sm leading-relaxed mb-5 text-support">
                     {description}
                   </p>
 
@@ -208,10 +207,10 @@ export function ToolsSection() {
                     {features.map((f) => (
                       <li
                         key={f}
-                        className={`flex items-center gap-2 text-xs ${isActive ? 'text-slate-400' : 'text-slate-500'}`}
+                        className="flex items-center gap-2 font-body text-xs text-support"
                       >
                         <span
-                          className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isActive ? 'bg-brand-400' : 'bg-slate-600'}`}
+                          className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${isActive ? 'bg-stamp' : 'bg-support'}`}
                         />
                         {f}
                       </li>
@@ -224,9 +223,7 @@ export function ToolsSection() {
                       {countries.map((c) => (
                         <span
                           key={c}
-                          className={`text-xs px-2 py-0.5 rounded-md font-medium ${
-                            isActive ? 'bg-white/8 text-slate-300 border border-white/10' : 'bg-white/4 text-slate-500'
-                          }`}
+                          className="font-mono text-[10px] uppercase tracking-[0.1em] px-2 py-0.5 rounded-[2px] bg-paper-deep text-support border border-hairline"
                         >
                           {c}
                         </span>
@@ -236,12 +233,12 @@ export function ToolsSection() {
 
                   {/* CTA */}
                   {isActive ? (
-                    <div className="flex items-center gap-1.5 text-brand-400 text-sm font-semibold group-hover:gap-2.5 transition-all">
+                    <div className="flex items-center gap-1.5 text-stamp text-sm font-semibold group-hover:gap-2.5 transition-all">
                       {cta}
                       <ArrowRight size={15} />
                     </div>
                   ) : (
-                    <div className="flex items-center gap-1.5 text-slate-400 text-sm font-semibold group-hover:gap-2.5 transition-all">
+                    <div className="flex items-center gap-1.5 text-support text-sm font-semibold group-hover:gap-2.5 transition-all">
                       <Bell size={13} />
                       {cta}
                     </div>

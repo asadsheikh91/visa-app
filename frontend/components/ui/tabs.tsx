@@ -119,11 +119,14 @@ export function TabList({ label, children, className }: TabListProps) {
   )
 }
 
+// Document-system tabs: squared folder tabs on paper, matching the landing's
+// Coverage dossier — selected tab is white with an ink edge, idle tabs sit on
+// the deeper paper tone.
 const tabBase =
-  'flex items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-semibold ' +
-  'transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500/60'
-const tabSelected = 'border-brand-500/50 bg-brand-600/20 text-brand-200'
-const tabIdle = 'border-line-1 bg-tint-2 text-slate-300 hover:border-line-3 hover:bg-tint-4'
+  'flex items-center justify-center gap-2 rounded-[3px] border px-4 py-3 font-body text-sm font-semibold ' +
+  'transition-colors duration-150 focus-visible:outline-none'
+const tabSelected = 'border-ink bg-white text-ink'
+const tabIdle = 'border-hairline bg-paper-deep text-support hover:border-support hover:text-ink hover:bg-white'
 
 interface TabProps {
   value: string

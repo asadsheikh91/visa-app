@@ -28,18 +28,18 @@ const countries: Country[] = [
     checks: [
       {
         label: 'Maintenance funds',
-        body: '28 consecutive days of held funds, in an acceptable account, at the level your city requires.',
+        body: '28 consecutive days held, in an acceptable account, at your city’s level.',
       },
       {
         label: 'CAS + offer letter',
-        body: 'Your CAS statement has to match your documents exactly — a single mismatch reads as deception.',
+        body: 'Your CAS must match your documents exactly — one mismatch reads as deception.',
       },
       {
         label: 'TB certificate',
-        body: 'Required for applicants from Pakistan, from an approved clinic, inside its validity window.',
+        body: 'From an approved clinic, inside its validity window.',
       },
     ],
-    trap: 'Most UK refusals break on the 28-day rule — money that was “always there” but moved between accounts at the wrong moment.',
+    trap: 'Most UK refusals break on the 28-day rule — money that was “always there”, moved at the wrong moment.',
   },
   {
     slug: 'australia',
@@ -49,18 +49,18 @@ const countries: Country[] = [
     checks: [
       {
         label: 'Genuine Student statement',
-        body: 'Officers read your GS answers against your academic and financial history — not your intentions.',
+        body: 'Officers read your GS answers against your academic and financial history.',
       },
       {
         label: 'Financial capacity',
-        body: 'Evidence of funds for tuition, living costs and travel, from sources you can document.',
+        body: 'Tuition, living costs and travel — from sources you can document.',
       },
       {
         label: 'OSHC health cover',
-        body: 'Overseas student health cover for the full length of your stay, purchased before you apply.',
+        body: 'Health cover for your full stay, purchased before you apply.',
       },
     ],
-    trap: 'The GS statement is where Subclass 500 files die — generic answers copied from templates are refused in bulk.',
+    trap: 'The GS statement is where Subclass 500 files die — template answers are refused in bulk.',
   },
   {
     slug: 'canada',
@@ -70,18 +70,18 @@ const countries: Country[] = [
     checks: [
       {
         label: 'GIC + first-year tuition',
-        body: 'A guaranteed investment certificate plus proof your first year of tuition is paid or held.',
+        body: 'A GIC plus proof your first year of tuition is paid or held.',
       },
       {
         label: 'Provincial attestation',
-        body: 'Most study permits now need a provincial attestation letter before IRCC will look at your file.',
+        body: 'Most permits now need a PAL before IRCC will open your file.',
       },
       {
         label: 'Letter of explanation',
-        body: 'Why Canada, why this program, why now — argued against your own academic history.',
+        body: 'Why Canada, why this program — argued against your own history.',
       },
     ],
-    trap: 'A clean GIC won’t save a letter of explanation that doesn’t answer “why this program, after that degree?”',
+    trap: 'A clean GIC won’t save a letter that doesn’t answer “why this program, after that degree?”',
   },
   {
     slug: 'usa',
@@ -91,18 +91,18 @@ const countries: Country[] = [
     checks: [
       {
         label: 'I-20 + SEVIS',
-        body: 'Your I-20 details, SEVIS fee receipt and DS-160 answers have to agree with each other exactly.',
+        body: 'Your I-20, SEVIS receipt and DS-160 answers must agree exactly.',
       },
       {
         label: 'Funding for year one',
-        body: 'Liquid, documented funds covering the first year — and a credible story for the years after.',
+        body: 'Liquid, documented funds for year one — and a credible story after.',
       },
       {
         label: 'Interview readiness',
-        body: 'Ties to Pakistan, program fit, sponsor credibility — answered in seconds, not paragraphs.',
+        body: 'Ties to Pakistan, program fit, sponsor credibility — in seconds, not paragraphs.',
       },
     ],
-    trap: 'The F-1 is decided in a 90-second interview — your papers only matter if your answers match them.',
+    trap: 'The F-1 is decided in a 90-second interview — your papers only matter if your answers match.',
   },
 ]
 

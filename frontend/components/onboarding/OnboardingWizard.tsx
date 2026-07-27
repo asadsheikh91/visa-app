@@ -177,7 +177,7 @@ function OptionCard({
     >
       {selected && (
         <span className="flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-stamp">
-          <Check size={10} className="text-white" strokeWidth={3} />
+          <Check size={10} className="text-ink" strokeWidth={3} />
         </span>
       )}
       {!selected && <span className="h-4 w-4 flex-shrink-0 rounded-full border border-support" />}
