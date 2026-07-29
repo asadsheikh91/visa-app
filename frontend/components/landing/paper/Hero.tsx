@@ -11,7 +11,6 @@ import { SAMPLE_REPORT, type ReportLineStatus } from '@/content/sample-report'
 import { RULES_UPDATED_LABEL } from '@/content/site-config'
 
 const CHECKER_HREF = '/tools/student-visa/countries'
-const FULL_REPORT_PRICE = 'PKR 1,500'
 
 const trust = ['Sourced from GOV.UK · IRCC · Home Affairs', RULES_UPDATED_LABEL]
 
@@ -201,12 +200,14 @@ export function Hero() {
           </motion.div>
 
           {/* Pricing is visible in the first scroll — hiding it behind signup
-              reads as bait-and-switch in this market. */}
+              reads as bait-and-switch in this market. Authored in sentence
+              case like every other line here; the `uppercase` class does the
+              shouting, so the source stays readable and diffable. */}
           <motion.p
             {...fadeOnly(reduced, T.microCopy)}
             className="mt-4 font-mono text-[12px] uppercase tracking-[0.1em] text-support"
           >
-            Score and gaps free · Full report {FULL_REPORT_PRICE}, one time
+            Full report free for the first 200 applicants · No card, no subscription
           </motion.p>
 
           {/* Persistent disclaimer, repeated directly under the CTA (also in the
