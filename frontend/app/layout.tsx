@@ -6,13 +6,15 @@ import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { GlobalChrome } from '@/components/GlobalChrome'
 import { Analytics } from '@/components/Analytics'
+import { OrganizationSchema } from '@/components/OrganizationSchema'
+import { SITE_NAME, SITE_URL } from '@/lib/site'
 
 // metadataBase is mandatory, not cosmetic: without it Next emits RELATIVE
 // og:image paths, which every crawler rejects silently — the single most common
 // reason an added og:image still unfurls as a grey box. It also makes the
 // file-convention opengraph-image.tsx routes resolve to absolute https URLs.
 export const metadata: Metadata = {
-  metadataBase: new URL('https://parchivisa.app'),
+  metadataBase: new URL(SITE_URL),
   title: 'ParchiVisa — Know your visa readiness before you apply',
   description:
     'Check your file against the official UKVI, IRCC and Home Affairs rules. ' +
@@ -31,8 +33,8 @@ export const metadata: Metadata = {
   // from the page copy.
   openGraph: {
     type: 'website',
-    siteName: 'ParchiVisa',
-    url: 'https://parchivisa.app',
+    siteName: SITE_NAME,
+    url: SITE_URL,
     locale: 'en_GB',
   },
   // summary_large_image, not summary: renders the 1200x630 card full-width
@@ -75,6 +77,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
       className={`${pvSerif.variable} ${pvSans.variable} ${pvMono.variable} font-body`}
     >
+      <head>
+        <OrganizationSchema />
+      </head>
       <body>
         {/* Landing routes ship their own nav/footer — GlobalChrome keeps this
             pair out of the markup there entirely, rather than hiding it. */}
