@@ -112,11 +112,3 @@ curl -s -o /dev/null -w "%{http_code}\n" https://api.parchivisa.app/docs   # 404
 
 `/docs` returning 404 is correct in production — interactive API documentation is
 disabled when `ENVIRONMENT=production`.
-
-## Legacy: the all-in-one droplet
-
-`docker-compose.prod.yml` at the repository root describes a different topology —
-frontend, backend, Postgres and Caddy on a single droplet behind Caddy-managed TLS.
-**This is not the live deployment.** It is retained as a self-hosting path, and shares
-the backend build context with the live setup. If you change how ParchiVisa is
-deployed, change it deliberately; do not assume the Compose file reflects production.

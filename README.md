@@ -64,7 +64,7 @@ backend/     FastAPI service
   routers/     HTTP surface, one module per feature area
   services/    Business logic — engines, policy registry, integrations
   alembic/     17 migrations, all with working downgrades
-  tests/       1,290 tests
+  tests/       1,305 tests
 frontend/    Next.js application
   app/         App Router routes
   components/  UI, organised by feature; `paper/` is the design system
@@ -109,9 +109,8 @@ on push to `main`. Postgres is a DigitalOcean Managed Database; Redis runs along
 the backend in Coolify. Alembic migrations run on container start via
 `backend/docker-entrypoint.sh`.
 
-`docker-compose.prod.yml` and `deploy/DEPLOYMENT.md` describe an alternative
-all-in-one droplet topology (Compose + Caddy + self-hosted Postgres). That is **not**
-the live deployment — see [deploy/DEPLOYMENT.md](deploy/DEPLOYMENT.md).
+See [deploy/DEPLOYMENT.md](deploy/DEPLOYMENT.md) for the full topology and the
+environment variables each platform needs.
 
 ## Scope
 
