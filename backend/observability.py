@@ -18,7 +18,7 @@ what this server holds is visa applicants' answers -- nationality, funding
 source, previous refusals. Shipping that to a third party because a route
 crashed would be a worse breach than the crash.
 
-Three settings prevent it, and none of them should be relaxed without deciding
+Four settings prevent it, and none of them should be relaxed without deciding
 that deliberately:
 
   send_default_pii=False        Do not attach user identifiers, cookies or
@@ -38,20 +38,31 @@ that deliberately:
                                 answer, and a report access token. Turning it off
                                 costs variable values in the trace; the frames,
                                 line numbers and exception remain.
-  before_send                   Strips the query string from the reported URL.
-                                Report links carry an access token as a query
-                                parameter; a token in an error report is a
-                                credential in a third-party system.
+  before_send                   Redacts URLs. A token in an error report is a
+                                live credential sitting in a third-party system,
+                                and report tokens reach the server as a PATH
+                                segment (/reports/{token}), so dropping query
+                                strings is not enough on its own.
 """
 
 import logging
 import os
+import re
 
 logger = logging.getLogger(__name__)
 
 
-def _strip_query(url):
-    return url.split("?", 1)[0] if isinstance(url, str) else url
+# Report access tokens travel as a PATH segment (/reports/{token}), not as a
+# query parameter -- see routers/report.py. Stripping query strings alone would
+# leave a live credential in the reported URL of any failure in that route.
+_TOKEN_PATH = re.compile(r"(/reports?/)[^/?#]+", re.IGNORECASE)
+
+
+def _redact_url(url):
+    """Remove the query string and redact report tokens from a URL."""
+    if not isinstance(url, str):
+        return url
+    return _TOKEN_PATH.sub(r"\1[redacted]", url.split("?", 1)[0])
 
 
 def _scrub(event, hint):
@@ -75,14 +86,14 @@ def _scrub(event, hint):
     try:
         request = event.get("request")
         if request:
-            request["url"] = _strip_query(request.get("url"))
+            request["url"] = _redact_url(request.get("url"))
             request.pop("query_string", None)
 
         for crumb in event.get("breadcrumbs", {}).get("values", []) or []:
             data = crumb.get("data")
             if isinstance(data, dict):
                 if "url" in data:
-                    data["url"] = _strip_query(data["url"])
+                    data["url"] = _redact_url(data["url"])
                 data.pop("http.query", None)
                 data.pop("http.fragment", None)
     except Exception:  # noqa: BLE001 - scrubbing must never break error reporting

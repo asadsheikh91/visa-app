@@ -42,11 +42,28 @@ def test_malformed_dsn_does_not_raise(monkeypatch):
 
 
 def test_scrub_removes_query_string():
-    event = {"request": {"url": "https://x/report/abc?token=SECRET", "query_string": "token=SECRET"}}
+    event = {"request": {"url": "https://x/checklist?token=SECRET", "query_string": "token=SECRET"}}
     scrubbed = _scrub(event, None)
-    assert scrubbed["request"]["url"] == "https://x/report/abc"
+    assert scrubbed["request"]["url"] == "https://x/checklist"
     assert "query_string" not in scrubbed["request"]
     assert "SECRET" not in json.dumps(scrubbed)
+
+
+@pytest.mark.parametrize(
+    "url,expected",
+    [
+        # Report tokens arrive as a path segment, not a query parameter.
+        ("https://api.x/api/visa/reports/LIVE_TOKEN", "https://api.x/api/visa/reports/[redacted]"),
+        ("https://api.x/api/visa/reports/LIVE_TOKEN/pdf", "https://api.x/api/visa/reports/[redacted]/pdf"),
+        ("https://x/report/LIVE_TOKEN/print", "https://x/report/[redacted]/print"),
+        # Non-report URLs must survive untouched.
+        ("https://api.x/api/visa/student/check", "https://api.x/api/visa/student/check"),
+    ],
+)
+def test_report_tokens_are_redacted_from_paths(url, expected):
+    event = _scrub({"request": {"url": url}}, None)
+    assert event["request"]["url"] == expected
+    assert "LIVE_TOKEN" not in json.dumps(event)
 
 
 def test_scrub_survives_malformed_event():
