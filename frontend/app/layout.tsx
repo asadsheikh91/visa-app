@@ -5,6 +5,7 @@ import { pvSerif, pvSans, pvMono } from './pv-fonts'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
 import { GlobalChrome } from '@/components/GlobalChrome'
+import { Analytics } from '@/components/Analytics'
 
 // metadataBase is mandatory, not cosmetic: without it Next emits RELATIVE
 // og:image paths, which every crawler rejects silently — the single most common
@@ -84,6 +85,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <GlobalChrome>
           <Footer />
         </GlobalChrome>
+        <Analytics />
       </body>
     </html>
   )

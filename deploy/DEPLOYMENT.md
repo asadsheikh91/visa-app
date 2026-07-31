@@ -25,8 +25,15 @@ NEXT_PUBLIC_API_URL=https://api.parchivisa.app
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_…
 NEXT_PUBLIC_AI_TOOLS_ENABLED=false
 NEXT_PUBLIC_AGENCY_ENABLED=false
+NEXT_PUBLIC_GA_ID=G-B0H4PSVMBL
 CLERK_SECRET_KEY=sk_live_…
 ```
+
+`NEXT_PUBLIC_GA_ID` is the Google Analytics 4 measurement ID. It is deliberately not
+committed to the repository — not because it is secret (measurement IDs are visible in
+any visitor's page source) but because leaving it unset is what keeps local
+development and Vercel preview deployments from writing into the production property.
+Set it on the Production environment only. See `frontend/components/Analytics.tsx`.
 
 ## Backend — Coolify
 
