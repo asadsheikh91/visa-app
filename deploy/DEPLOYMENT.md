@@ -56,6 +56,14 @@ when missing:
 | `GUMROAD_WEBHOOK_SECRET` | Billing webhook disables itself (503) — fail-closed by design |
 | `GEMINI_API_KEY` | Reports fall back to deterministic templated prose |
 | `REDIS_URL` | Rate limits become per-process; cache falls back to in-memory |
+| `SENTRY_DSN` | Error reporting disabled — 500s go to container logs only |
+
+`SENTRY_DSN` is the only configuration Sentry needs; everything else is set in
+`observability.py`. Do **not** paste Sentry's onboarding snippet into `main.py`:
+their default sets `send_default_pii=True`, which would ship applicants'
+nationality, funding source and previous-refusal answers to a third party on
+every crash. Four guards there prevent that, and `tests/test_observability.py`
+fails if any of them is removed.
 
 ## Migrations
 

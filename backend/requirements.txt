@@ -30,6 +30,11 @@ redis==5.0.8
 # ─── Rate limiting ────────────────────────────────────────────────────────────
 slowapi==0.1.9
 
+# ─── Error reporting ──────────────────────────────────────────────────────────
+# Inactive unless SENTRY_DSN is set. See observability.py for the PII guards —
+# request bodies are never attached, because they hold applicants' answers.
+sentry-sdk[fastapi]>=2.0.0,<3.0.0
+
 # ─── AI (Claude) — SOP reviewer + mock interview ──────────────────────────────
 anthropic==0.40.0
 

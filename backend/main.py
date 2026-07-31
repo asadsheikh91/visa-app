@@ -9,6 +9,7 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 
 from limiter import limiter
+from observability import init_sentry
 from routers import (
     student_visa, currency, profile, visa_file, action_plan, timeline, sop, interview,
     document_guidance, financial_document, trust, outcomes, journey, org, report,
@@ -21,6 +22,11 @@ from database import engine, Base
 
 load_dotenv()
 logging.basicConfig(level=logging.INFO)
+
+# Before anything else can raise: Sentry has to be initialised ahead of the app
+# and its routers so that failures during startup are reported too, not just the
+# ones that happen once traffic is being served. No-ops unless SENTRY_DSN is set.
+init_sentry()
 
 
 @asynccontextmanager
