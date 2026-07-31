@@ -1,389 +1,128 @@
-# VisaScore - Schengen Visa Risk Assessment
-
-AI-powered Schengen visa risk assessment tool for Pakistani applicants. Know your visa risk before you apply.
-
-## Project Overview
-
-**Problem:** 50% of Pakistani Schengen visa applications get rejected, costing applicants €185+ per attempt.
-
-**Solution:** VisaScore uses AI (Claude Opus 4.5) to assess visa applications and provide actionable recommendations.
-
-**Business Model:** Free risk assessment preview, $12 for full breakdown with specific fixes.
-
-## Tech Stack
-
-### Backend
-- **FastAPI** - High-performance async Python framework
-- **PostgreSQL** - Database for users and reports
-- **SQLAlchemy** - Async ORM
-- **Anthropic Claude Opus 4.5** - AI scoring engine
-- **Alembic** - Database migrations
-- **Resend** - Email delivery
-- **LemonSqueezy** - Payment processing
-
-### Frontend
-- **Next.js 14** - React framework with App Router
-- **TypeScript** - Type safety
-- **Tailwind CSS** - Utility-first styling
-- **React** - UI components
-
-## Project Structure
-
-```
-visa/
-├── backend/                      # FastAPI backend
-│   ├── main.py                   # FastAPI app entry point
-│   ├── database.py               # Database connection
-│   ├── models.py                 # SQLAlchemy models
-│   ├── schemas.py                # Pydantic schemas
-│   ├── routers/
-│   │   ├── reports.py            # Report endpoints
-│   │   └── webhooks.py           # Payment webhooks
-│   ├── services/
-│   │   ├── ai_scorer.py          # AI scoring engine
-│   │   └── email_service.py      # Email delivery
-│   ├── alembic/                  # Database migrations
-│   ├── requirements.txt          # Python dependencies
-│   ├── .env.example              # Environment template
-│   ├── docker-compose.yml        # PostgreSQL setup
-│   └── README.md                 # Backend docs
-│
-├── frontend/                     # Next.js frontend
-│   ├── app/
-│   │   ├── page.tsx              # Landing page
-│   │   ├── assess/page.tsx       # Assessment form
-│   │   └── results/[reportId]/page.tsx  # Results page
-│   ├── components/
-│   │   ├── ScoreCircle.tsx       # Animated score
-│   │   ├── BreakdownCard.tsx     # Category breakdown
-│   │   └── YesNoToggle.tsx       # Yes/No toggle
-│   ├── types/index.ts            # TypeScript types
-│   ├── .env.local.example        # Environment template
-│   └── README.md                 # Frontend docs
-│
-└── INTEGRATION_GUIDE.md          # Full integration guide
-```
-
-## Quick Start
-
-### Prerequisites
-
-- **Node.js 18+**
-- **Python 3.11+**
-- **PostgreSQL** (or Docker)
-- **Anthropic API Key** (from console.anthropic.com)
-
-### 1. Backend Setup
-
-```bash
-cd backend
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Start PostgreSQL
-docker-compose up -d
-
-# Configure environment
-cp .env.example .env
-# Edit .env with your ANTHROPIC_API_KEY and other credentials
-
-# Run migrations
-alembic revision --autogenerate -m "Initial migration"
-alembic upgrade head
-
-# Start server
-uvicorn main:app --reload
-```
-
-Backend runs on: **http://localhost:8000**
-
-API docs: **http://localhost:8000/docs**
-
-### 2. Frontend Setup
-
-```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Configure environment (already created)
-# Edit .env.local if needed
-
-# Start development server
-npm run dev
-```
-
-Frontend runs on: **http://localhost:3000**
-
-### 3. Test the Application
-
-1. Visit http://localhost:3000
-2. Click "Check My Visa Risk — Free"
-3. Fill out the 15-question assessment
-4. View your AI-generated risk score
-
-## Features
-
-### Landing Page
-- Problem statement and statistics
-- Clear value proposition
-- Trust indicators
-- "How It Works" section
-
-### Assessment Form
-- 5-step multi-step form (16 questions)
-- Real-time validation
-- Progress indicator
-- Clean, intuitive UI
-
-### Results Page
-- Animated risk score (0-100)
-- Risk level: Critical/High/Moderate/Good
-- Summary of biggest concerns
-- Teaser breakdown (2 worst categories)
-- Paywall for full report
-
-### AI Scoring
-- Claude Opus 4.5 analysis
-- Context-aware for Pakistani applicants
-- 4-category breakdown:
-  1. Financial Stability
-  2. Home Ties
-  3. Purpose & Documentation
-  4. Risk Profile
-- Specific, actionable fixes
-
-### Payment & Delivery
-- LemonSqueezy integration
-- Webhook-based fulfillment
-- Email delivery of full report
-- Professional HTML email template
-
-## User Flow
-
-1. **Landing** → User learns about the problem
-2. **Assess** → User fills out 15 questions
-3. **Results (Free)** → User sees risk score + teaser
-4. **Payment** → User pays $12 via LemonSqueezy
-5. **Webhook** → Backend marks report as paid
-6. **Email** → User receives full report
-7. **Results (Paid)** → User sees all 4 categories with fixes
-
-## Design Language
-
-- **Theme:** Dark, clean, trustworthy
-- **Colors:**
-  - Background: `#0a0a0f`
-  - Card: `#12121a`
-  - Border: `#1e1e2e`
-  - Accent: `#3b82f6` (electric blue)
-  - Risk colors: Red (#ef4444), Orange (#f97316), Yellow (#eab308), Green (#22c55e)
-- **Font:** Inter
-- **Style:** Minimal, not flashy - this is a serious tool
-
-## API Endpoints
-
-### Reports
-
-- `POST /api/reports/start` - Create new report
-- `POST /api/reports/{id}/submit` - Submit answers, get AI score
-- `GET /api/reports/{id}` - Get report (full if paid)
-
-### Webhooks
-
-- `POST /api/webhooks/lemonsqueezy` - Payment webhook
-
-## Environment Variables
-
-### Backend (.env)
-
-```env
-DATABASE_URL=postgresql+asyncpg://visa_user:visa_password@localhost:5432/visa_db
-ANTHROPIC_API_KEY=sk-ant-xxxxx
-RESEND_API_KEY=re_xxxxx
-LEMONSQUEEZY_WEBHOOK_SECRET=your-webhook-secret
-R2_BUCKET_NAME=your-bucket
-R2_ENDPOINT_URL=https://xxx.r2.cloudflarestorage.com
-R2_ACCESS_KEY_ID=your-key
-R2_SECRET_ACCESS_KEY=your-secret
-```
-
-### Frontend (.env.local)
-
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8000
-NEXT_PUBLIC_LEMONSQUEEZY_CHECKOUT_URL=https://visascore.lemonsqueezy.com/checkout/buy/variant-id
-```
-
-## Testing
-
-### Backend Tests
-
-```bash
-cd backend
-python test_ai_scorer.py
-```
-
-Tests 3 applicant profiles (strong, weak, moderate).
-
-### Frontend Build
-
-```bash
-cd frontend
-npm run build
-```
-
-Verifies TypeScript and builds production bundle.
-
-### Integration Test
-
-1. Start both services
-2. Complete full user flow
-3. Verify database entries
-4. Test payment webhook (use LemonSqueezy test mode)
-
-## Cost Analysis
-
-### Per Assessment
-
-- **AI (Claude Opus 4.5):** $0.03-0.05
-- **Database:** Negligible
-- **Email:** $0.001
-
-**Total cost per assessment:** ~$0.03-0.05
-
-### Monthly (1,000 assessments)
-
-- **AI:** $30-50
-- **Database:** $10-20
-- **Backend Hosting:** $5-10
-- **Frontend Hosting:** $0 (Vercel free tier)
-- **Email:** $2
-- **Total:** ~$50-80/month
-
-**Revenue:** 1,000 × $12 = $12,000
-
-**Profit:** ~$11,920/month 💰
-
-## Deployment
-
-### Backend (Railway)
-
-1. Push to GitHub
-2. Create Railway project
-3. Add PostgreSQL database
-4. Set environment variables
-5. Deploy from GitHub
-6. Set up custom domain
-
-See: [backend/DEPLOYMENT_CHECKLIST.md](./backend/DEPLOYMENT_CHECKLIST.md)
-
-### Frontend (Vercel)
-
-1. Push to GitHub
-2. Import to Vercel
-3. Set environment variables
-4. Deploy
-5. Set up custom domain
-
-See: [frontend/README.md](./frontend/README.md)
-
-### LemonSqueezy Setup
-
-1. Create account
-2. Create product ($12)
-3. Set up webhook: `https://api.yourdomain.com/api/webhooks/lemonsqueezy`
-4. Copy webhook secret to backend .env
-5. Test with test mode
-
-## Documentation
-
-- **[INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)** - Complete integration guide
-- **[backend/README.md](./backend/README.md)** - Backend documentation
-- **[backend/AI_SCORER_IMPLEMENTATION.md](./backend/AI_SCORER_IMPLEMENTATION.md)** - AI scoring details
-- **[backend/DEPLOYMENT_CHECKLIST.md](./backend/DEPLOYMENT_CHECKLIST.md)** - Production deployment
-- **[frontend/README.md](./frontend/README.md)** - Frontend documentation
-- **[frontend/QUICKSTART.md](./frontend/QUICKSTART.md)** - Frontend quick start
-
-## Security
-
-- ✅ Environment variables for secrets
-- ✅ Webhook signature verification
-- ✅ HTTPS in production (required)
-- ✅ Database password encryption
-- ⚠️ Update CORS for production
-- ⚠️ Add rate limiting before launch
-
-## Performance
-
-- Async database operations
-- Efficient AI prompts (~500 tokens)
-- Optimized frontend bundle
-- Static page pre-rendering
-- Connection pooling
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## License
-
-Proprietary
-
-## Support
-
-- **Backend Issues:** See [backend/README.md](./backend/README.md)
-- **Frontend Issues:** See [frontend/README.md](./frontend/README.md)
-- **Integration Issues:** See [INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)
-
-## Roadmap
-
-### Short Term
-- [ ] Add analytics tracking
-- [ ] Implement rate limiting
-- [ ] Add user testimonials
-- [ ] SEO optimization
-
-### Medium Term
-- [ ] Multi-language support (Urdu)
-- [ ] Mobile app
-- [ ] PDF report generation
-- [ ] Referral program
-
-### Long Term
-- [ ] Other visa types (UK, USA, Canada)
-- [ ] Success tracking
-- [ ] Consultation booking
-- [ ] Document verification service
-
-## Contributing
-
-This is a private project. No external contributions accepted.
-
-## Status
-
-✅ **Backend:** Production-ready with AI scoring
-
-✅ **Frontend:** Production-ready with all pages
-
-✅ **Integration:** Fully tested and working
-
-⚠️ **Payment:** Needs LemonSqueezy configuration
-
-⚠️ **Email:** Needs Resend domain verification
-
-Ready for deployment! 🚀
+# ParchiVisa
+
+Student-visa readiness checks for applicants to the UK, Canada, Australia and the USA.
+Live at **[parchivisa.app](https://parchivisa.app)**.
+
+Most students learn their application was weak from the refusal letter — after the fee
+is gone and the intake is missed. ParchiVisa assesses a file against published
+government criteria *before* it is lodged, and returns a readiness score, the specific
+issues that would sink it, and the order to fix them in.
 
 ---
 
-**Built for Pakistani Schengen visa applicants** 🇵🇰
+## The central engineering constraint
 
-For quick start, see:
-- Backend: [backend/QUICKSTART.md](./backend/QUICKSTART.md)
-- Frontend: [frontend/QUICKSTART.md](./frontend/QUICKSTART.md)
-- Integration: [INTEGRATION_GUIDE.md](./INTEGRATION_GUIDE.md)
+**The score is computed, not generated.** Scoring is deterministic: the same answers
+always produce the same verdict, and every finding traces back to a published rule in
+the policy registry. A language model is used in exactly one place — rewriting four
+per-finding prose fields in the readiness report — behind a locked response schema. It
+cannot originate a fact, introduce a figure, or influence whether an applicant passes.
+
+This is a product claim as much as a technical one, so it is enforced structurally
+rather than by convention:
+
+- `services/readiness_engine.py` owns scoring; it has no LLM dependency at all
+- `services/gemini_narrator.py` is schema-locked and falls back to deterministic
+  templated prose (`services/narration_fallback.py`) when the API key is absent or the
+  call fails — report generation never hard-depends on a live model
+- Band mapping is single-source: a cap caps the score, and `band_for_score` is pure
+  mapping, so a score and its label can't disagree
+
+## Architecture
+
+```
+Next.js 14 (App Router, TypeScript, Tailwind)     →  Vercel
+        │  Clerk-authenticated, JSON over HTTPS
+        ▼
+FastAPI (async SQLAlchemy 2.0, Python 3.12)       →  Coolify, on a DO droplet
+        ├── PostgreSQL     ·  DO Managed Database · Alembic migrations
+        ├── Redis          ·  cache + cross-worker rate-limit counters (optional)
+        ├── Cloudflare R2  ·  versioned country rule data
+        ├── Gemini         ·  report narration only, schema-locked
+        └── Playwright     ·  server-side A4 PDF rendering
+```
+
+Both Redis and Playwright degrade rather than fail: without Redis the limiter falls
+back to per-process counters, and without Chromium the PDF route returns 503 while the
+on-screen report keeps working.
+
+## Engineering decisions worth reading
+
+| Concern | Approach |
+|---|---|
+| Quota bypass via parallel requests | The check-then-insert on usage caps is a TOCTOU pair. A Postgres transaction-scoped advisory lock keyed on `(user, feature)` serialises it, so a burst can't all read "under limit". See `services/entitlements.py`. |
+| Rate-limit evasion | Limits key on the verified Clerk user ID, not the IP — rotating IPs doesn't multiply an account's allowance. Falls back to IP only for unauthenticated liveness routes. |
+| PII at rest | Extracted document fields are encrypted at the column level (`services/encryption.py`). No passport numbers are collected at any point. |
+| Unsigned payment webhooks | Gumroad pings aren't signed, so a shared secret is required and compared in constant time; without it configured the endpoint disables itself (503) rather than becoming an open plan-grant. |
+| Interactive API docs | Swagger, ReDoc and the OpenAPI schema are disabled when `ENVIRONMENT=production`. |
+| Report link sharing | Reports are addressed by unguessable token, with separate short-lived render tokens for the PDF pipeline. |
+
+## Repository layout
+
+```
+backend/     FastAPI service
+  routers/     HTTP surface, one module per feature area
+  services/    Business logic — engines, policy registry, integrations
+  alembic/     17 migrations, all with working downgrades
+  tests/       1,290 tests
+frontend/    Next.js application
+  app/         App Router routes
+  components/  UI, organised by feature; `paper/` is the design system
+  __tests__/   Component and behaviour tests
+docs/        Feature and operator documentation
+deploy/      Deployment notes
+```
+
+## Running locally
+
+Requires Python 3.12+, Node 18+, and a PostgreSQL instance.
+
+```bash
+cd backend && python -m venv .venv && ./.venv/Scripts/activate && pip install -r requirements-dev.txt
+```
+
+```bash
+cd backend && cp .env.example .env && alembic upgrade head && uvicorn main:app --reload
+```
+
+```bash
+cd frontend && npm install && npm run dev
+```
+
+On Windows the frontend must point at `http://127.0.0.1:8000` rather than `localhost` —
+the backend binds IPv4 only, and Node resolves `localhost` to `::1` first.
+
+## Tests
+
+```bash
+cd backend && ./.venv/Scripts/python.exe -m pytest -q
+```
+
+```bash
+cd frontend && npx jest && npx tsc --noEmit
+```
+
+## Deployment
+
+Frontend deploys to Vercel and the backend to Coolify on a DigitalOcean droplet, both
+on push to `main`. Postgres is a DigitalOcean Managed Database; Redis runs alongside
+the backend in Coolify. Alembic migrations run on container start via
+`backend/docker-entrypoint.sh`.
+
+`docker-compose.prod.yml` and `deploy/DEPLOYMENT.md` describe an alternative
+all-in-one droplet topology (Compose + Caddy + self-hosted Postgres). That is **not**
+the live deployment — see [deploy/DEPLOYMENT.md](deploy/DEPLOYMENT.md).
+
+## Scope
+
+Live: the readiness checker and the downloadable readiness report, for four
+destination countries.
+
+Built but intentionally dark behind feature flags: SOP review and mock interview
+(`NEXT_PUBLIC_AI_TOOLS_ENABLED`), and the consultant/agency workspace
+(`NEXT_PUBLIC_AGENCY_ENABLED`).
+
+## Disclaimer
+
+ParchiVisa is not an immigration agent and not a law firm. It does not file
+applications, does not represent applicants, and does not promise visa outcomes.

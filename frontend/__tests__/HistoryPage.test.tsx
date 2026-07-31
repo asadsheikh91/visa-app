@@ -325,7 +325,9 @@ describe('PreviousChecks — loading state', () => {
 describe('PreviousChecks — empty state', () => {
   it('shows empty state message when no checks exist', () => {
     renderPrevious({ checks: [] })
-    expect(screen.getByText(/No checks yet.*run your first/)).toBeInTheDocument()
+    // Heading and prompt are separate elements, so match them separately.
+    expect(screen.getByText(/No checks yet/i)).toBeInTheDocument()
+    expect(screen.getByText(/run your first/i)).toBeInTheDocument()
   })
 })
 

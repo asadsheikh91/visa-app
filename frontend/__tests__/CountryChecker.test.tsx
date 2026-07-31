@@ -19,7 +19,12 @@ jest.mock('next/link', () => ({
   ),
 }))
 // The result phase renders ResultCard, whose report prompt uses these.
-jest.mock('next/navigation', () => ({ useRouter: () => ({ push: jest.fn() }) }))
+jest.mock('next/navigation', () => ({
+  useRouter: () => ({ push: jest.fn() }),
+  // CountryChecker reads the `intake` query param; an empty URLSearchParams
+  // gives the real `.get()` contract (null when absent) without a router.
+  useSearchParams: () => new URLSearchParams(),
+}))
 jest.mock('@/lib/useReportApi', () => ({ useReportApi: () => ({ generate: jest.fn() }) }))
 
 import { useVisaApi } from '../lib/useVisaApi'

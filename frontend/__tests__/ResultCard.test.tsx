@@ -7,7 +7,7 @@
  */
 import '@testing-library/jest-dom'
 import React from 'react'
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import { ResultCard } from '../components/checker/ResultCard'
 import type { CheckResult } from '../types/visa'
 
@@ -25,6 +25,26 @@ jest.mock('next/link', () => ({
 // ResultCard's post-check report prompt uses these — stub them out.
 jest.mock('next/navigation', () => ({ useRouter: () => ({ push: jest.fn() }) }))
 jest.mock('@/lib/useReportApi', () => ({ useReportApi: () => ({ generate: jest.fn() }) }))
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * A findings block renders its title and its count as two separate elements — a
+ * mono header label plus a tone-coloured count stamp — so they can't be matched
+ * as a single "Title (n)" string. Assert them as a pair, scoped to the header row
+ * so the count doesn't collide with digits elsewhere on the card.
+ *
+ * Titles are sentence case in the markup and uppercased by CSS, so match
+ * case-insensitively.
+ */
+function expectFindingsBlock(title: string, count: number) {
+  const label = screen.getByText(new RegExp(`^${title}$`, 'i'))
+  const headerRow = label.closest('div')
+  expect(headerRow).not.toBeNull()
+  expect(within(headerRow as HTMLElement).getByText(String(count))).toBeInTheDocument()
+}
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -83,13 +103,13 @@ describe('ResultCard — critical_blockers', () => {
         { question_id: 'q_coe', message: 'You need a CoE.', rule: 'CoE Required' },
       ],
     }))
-    expect(screen.getByText('Critical Blockers (1)')).toBeInTheDocument()
+    expectFindingsBlock('Critical blockers', 1)
     expect(screen.getByText('You need a CoE.')).toBeInTheDocument()
   })
 
   it('does not render blockers section when empty', () => {
     renderResult(makeResult({ critical_blockers: [] }))
-    expect(screen.queryByText(/Critical Blockers/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Critical blockers/i)).not.toBeInTheDocument()
   })
 })
 
@@ -104,13 +124,13 @@ describe('ResultCard — high_risk_flags', () => {
         { question_id: 'q_funds', message: 'Insufficient evidence of funds.', rule: 'Financial Capacity' },
       ],
     }))
-    expect(screen.getByText('High-Risk Flags (1)')).toBeInTheDocument()
+    expectFindingsBlock('High-risk flags', 1)
     expect(screen.getByText('Insufficient evidence of funds.')).toBeInTheDocument()
   })
 
   it('does not render high-risk flags section when empty', () => {
     renderResult(makeResult({ high_risk_flags: [] }))
-    expect(screen.queryByText(/High-Risk Flags/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/High-risk flags/i)).not.toBeInTheDocument()
   })
 
   it('renders multiple high-risk flags', () => {
@@ -120,7 +140,7 @@ describe('ResultCard — high_risk_flags', () => {
         { question_id: 'q2', message: 'Flag two.' },
       ],
     }))
-    expect(screen.getByText('High-Risk Flags (2)')).toBeInTheDocument()
+    expectFindingsBlock('High-risk flags', 2)
     expect(screen.getByText('Flag one.')).toBeInTheDocument()
     expect(screen.getByText('Flag two.')).toBeInTheDocument()
   })
@@ -137,13 +157,13 @@ describe('ResultCard — soft_warnings', () => {
         { question_id: 'q_gs', message: 'Strengthen your genuine student evidence.' },
       ],
     }))
-    expect(screen.getByText('Advisory Notices (1)')).toBeInTheDocument()
+    expectFindingsBlock('Advisory notices', 1)
     expect(screen.getByText('Strengthen your genuine student evidence.')).toBeInTheDocument()
   })
 
   it('does not render advisory notices section when empty', () => {
     renderResult(makeResult({ soft_warnings: [] }))
-    expect(screen.queryByText(/Advisory Notices/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Advisory notices/i)).not.toBeInTheDocument()
   })
 })
 
@@ -158,7 +178,7 @@ describe('ResultCard — warnings', () => {
         { question_id: 'q_misc', message: 'Address this before applying.' },
       ],
     }))
-    expect(screen.getByText('Warnings (1)')).toBeInTheDocument()
+    expectFindingsBlock('Warnings', 1)
     expect(screen.getByText('Address this before applying.')).toBeInTheDocument()
   })
 
@@ -177,7 +197,7 @@ describe('ResultCard — recommendations', () => {
     renderResult(makeResult({
       recommendations: ['Fix the CoE issue.', 'Consult an agent.'],
     }))
-    expect(screen.getByText('Recommendations (2)')).toBeInTheDocument()
+    expectFindingsBlock('Recommendations', 2)
     expect(screen.getByText('Fix the CoE issue.')).toBeInTheDocument()
     expect(screen.getByText('Consult an agent.')).toBeInTheDocument()
   })

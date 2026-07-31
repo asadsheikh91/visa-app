@@ -19,6 +19,7 @@ docker-compose*.yml
 
 # Local agent / editor tooling — never part of the app
 .claude/
+.agents/
 
 # dependencies
 node_modules/
@@ -31,6 +32,7 @@ frontend/.next/
 dist/
 build/
 out/
+*.tsbuildinfo
 
 # python
 __pycache__/
@@ -51,3 +53,12 @@ yarn-error.log*
 
 # local machine artifacts — not part of the app, leaks local paths/username
 source_file_list.txt
+
+# Business & marketing material — kept locally, never published with the code
+LINKEDIN_COPY.md
+LINKEDIN_COMPANY_PAGE.md
+ParchiVisa_PitchDeck.pptx
+
+# Stray root lockfile — the real ones are frontend/package-lock.json and
+# backend/requirements*.txt; nothing is installed from the repo root
+/package-lock.json

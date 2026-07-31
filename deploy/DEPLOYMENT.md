@@ -1,129 +1,106 @@
-# Deploying ParchiVisa to a DigitalOcean Droplet
+# Deploying ParchiVisa
 
-Single 2GB Droplet running Postgres + backend + frontend + Caddy (TLS), all via
-Docker Compose. Everything lives on one box — no external managed services.
+## The live topology
 
-## 1. Create the Droplet
+| Component | Host | Trigger |
+|---|---|---|
+| Frontend (Next.js) | Vercel | push to `main` |
+| Backend (FastAPI) | Coolify, on a DigitalOcean droplet | push to `main` |
+| Redis | Coolify, same droplet | — |
+| PostgreSQL | DigitalOcean Managed Database | — |
 
-- Image: **Ubuntu 24.04 LTS**
-- Plan: Basic, **2 GB RAM / 1 vCPU** (~$12/mo) — Playwright/Chromium needs the headroom
-- Add a **Volume** (Block Storage) if you want Postgres data on separate, resizable
-  disk instead of the Droplet's own disk — optional at this stage, skip it to start
-- Add your SSH key at creation (don't use password auth)
-- Region: closest to your users
+Domains: `parchivisa.app` (Vercel) and `api.parchivisa.app` (Coolify).
 
-## 2. Point DNS at it
+Both platforms watch the GitHub repository and redeploy automatically on push to
+`main`. There is no build gate between a push and production.
 
-At your domain registrar, add A records to the Droplet's IP:
-- `parchivisa.com` → droplet IP
-- `www.parchivisa.com` → droplet IP
-- `api.parchivisa.com` → droplet IP
+## Frontend — Vercel
 
-Caddy (already configured in [deploy/Caddyfile](Caddyfile)) auto-provisions Let's
-Encrypt certs for all three the first time it starts, **as long as DNS has
-propagated** — wait for `dig parchivisa.com` to return the droplet IP before
-starting the stack.
+Vercel builds `frontend/`. Environment variables are set in the Vercel project, not in
+this repository. `NEXT_PUBLIC_*` values are baked into the client bundle at build time,
+so changing one requires a redeploy — not just a restart.
 
-## 3. Install Docker on the Droplet
-
-```bash
-ssh root@<droplet-ip>
-curl -fsSL https://get.docker.com | sh
-apt-get install -y docker-compose-plugin
 ```
-
-## 4. Clone the repo and configure env files
-
-```bash
-git clone <your-repo-url> /opt/parchivisa
-cd /opt/parchivisa
-```
-
-Three env files needed, none of them committed to git:
-
-**`.env`** (repo root — copy from [.env.prod.example](../.env.prod.example)):
-```
-POSTGRES_USER=parchivisa
-POSTGRES_PASSWORD=<generate a strong random value>
-POSTGRES_DB=parchivisa
-NEXT_PUBLIC_API_URL=https://api.parchivisa.com
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_xxxxx
+NEXT_PUBLIC_API_URL=https://api.parchivisa.app
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_live_…
 NEXT_PUBLIC_AI_TOOLS_ENABLED=false
 NEXT_PUBLIC_AGENCY_ENABLED=false
+CLERK_SECRET_KEY=sk_live_…
 ```
-`docker compose` auto-loads this file from the repo root, so no extra flags
-needed. Generate the Postgres password with e.g. `openssl rand -base64 24`.
 
-**`backend/.env`** — copy from `backend/.env.example` and fill in real values.
-The important change from the example: point `DATABASE_URL` at the `postgres`
-service by its Compose network hostname (not `localhost`, not a Supabase URL),
-using the same credentials as the root `.env`:
-```
-DATABASE_URL=postgresql+asyncpg://parchivisa:<same-password-as-root-.env>@postgres:5432/parchivisa
-ENVIRONMENT=production
-CORS_ALLOWED_ORIGINS=https://parchivisa.com,https://www.parchivisa.com
-REPORT_PRINT_BASE_URL=https://parchivisa.com
-```
-Plus real values for `CLERK_JWKS_URL`, `CLERK_SECRET_KEY`, `FIELD_ENCRYPTION_KEY`,
-`R2_*`, and any of `ANTHROPIC_API_KEY` / `GEMINI_API_KEY` / `GUMROAD_WEBHOOK_SECRET`
-you're using. Leave `REDIS_URL` unset for now — it's optional.
+## Backend — Coolify
 
-**`frontend/.env.production`** — same `NEXT_PUBLIC_*` values as the root `.env`
-(Next.js needs them at container runtime too, in addition to the build-time args
-Compose passes in).
+Coolify builds `backend/Dockerfile`. The image installs Chromium through Playwright's
+own installer, which is what makes the report PDF route work — and why the backend
+needs real memory headroom.
 
-## 5. Build and start
+Environment variables live in Coolify's configuration. The ones that change behaviour
+when missing:
+
+| Variable | Effect if unset |
+|---|---|
+| `DATABASE_URL` | Backend will not start |
+| `CLERK_JWKS_URL`, `CLERK_SECRET_KEY`, `CLERK_ISSUER` | Authenticated routes reject |
+| `CORS_ALLOWED_ORIGINS` | Defaults to `localhost:3000` — the live frontend is blocked |
+| `ENVIRONMENT=production` | Swagger, ReDoc and the OpenAPI schema stay publicly exposed |
+| `FIELD_ENCRYPTION_KEY` | Document PII encryption unavailable |
+| `REPORT_PRINT_BASE_URL` | PDF rendering cannot resolve the print route |
+| `ADMIN_EMAILS` | Admin panel inaccessible |
+| `GUMROAD_WEBHOOK_SECRET` | Billing webhook disables itself (503) — fail-closed by design |
+| `GEMINI_API_KEY` | Reports fall back to deterministic templated prose |
+| `REDIS_URL` | Rate limits become per-process; cache falls back to in-memory |
+
+## Migrations
+
+`backend/docker-entrypoint.sh` runs `alembic upgrade head` before serving traffic, on
+every container start. Alembic no-ops when the database is already at head.
+
+**A push to `main` therefore runs a migration against production with no gate.** Every
+migration in `backend/alembic/versions/` has a working `downgrade()`, but a downgrade
+that drops a column still destroys the data in it. Point-in-time recovery on the
+managed database is the backstop, but recovering that way means losing every write
+made since the restore point — so treat a migration that drops or rewrites data as a
+manual operation, not something that rides a normal deploy.
+
+## Backups
+
+Postgres is a DigitalOcean Managed Database, so backups are automatic: daily
+snapshots plus point-in-time recovery within the retention window, taken and stored
+by DigitalOcean rather than on the droplet. Nothing in this repository schedules or
+manages them.
+
+Two things this does *not* do for you:
+
+1. **Restores are untested until you test one.** Recover to a scratch database once,
+   so the procedure is familiar before it is urgent.
+2. **Retention is finite.** Point-in-time recovery only reaches back as far as the
+   plan's window — long enough to catch a bad deploy, not long enough to catch data
+   loss you notice weeks later.
+
+Redis holds only cache entries and rate-limit counters. It is not backed up and does
+not need to be; losing it costs a cold cache and reset counters.
+
+## Rollback
+
+- **Frontend:** Vercel retains previous deployments; promote the last good one.
+- **Backend:** redeploy the previous commit from Coolify.
+- **Database:** covered by neither of the above. See Backups.
+
+## Verifying a deploy
 
 ```bash
-cd /opt/parchivisa
-docker compose -f docker-compose.prod.yml up -d --build
+curl -s -o /dev/null -w "%{http_code}\n" https://parchivisa.app/
+curl -s -o /dev/null -w "%{http_code}\n" https://api.parchivisa.app/health
+curl -s -o /dev/null -w "%{http_code}\n" https://api.parchivisa.app/docs   # 404 expected
 ```
 
-The backend entrypoint runs `alembic upgrade head` automatically before starting
-uvicorn, so migrations run against the freshly-created Postgres container on
-first boot, and safely no-op on every redeploy after that.
+`/docs` returning 404 is correct in production — interactive API documentation is
+disabled when `ENVIRONMENT=production`.
 
-## 6. Verify
+## Legacy: the all-in-one droplet
 
-```bash
-docker compose -f docker-compose.prod.yml ps
-docker compose -f docker-compose.prod.yml logs -f caddy    # watch cert issuance
-docker compose -f docker-compose.prod.yml logs -f backend  # watch migrations run
-curl -I https://api.parchivisa.com/docs   # should 404 in production (docs disabled) — expected
-curl -I https://parchivisa.com
-```
-
-## 7. Back up Postgres
-
-Since Postgres now lives only on this Droplet, you own backups. Simplest
-approach — a nightly `pg_dump` to a file, shipped off-box (e.g. to a DO Spaces
-bucket or R2, since you already have R2 credentials configured):
-
-```bash
-# /opt/parchivisa/deploy/backup.sh
-#!/bin/bash
-set -e
-docker exec parchivisa_postgres pg_dump -U parchivisa parchivisa | gzip > /opt/backups/parchivisa_$(date +%F).sql.gz
-# then rclone/aws s3 cp /opt/backups/parchivisa_$(date +%F).sql.gz to R2/Spaces
-find /opt/backups -mtime +14 -delete
-```
-Wire it up with `crontab -e`:
-```
-0 3 * * * /opt/parchivisa/deploy/backup.sh
-```
-This is the one piece you were getting for free with a managed DB — it's a
-five-minute script, but don't skip it before you have real user data.
-
-## 8. Redeploying after code changes
-
-```bash
-cd /opt/parchivisa
-git pull
-docker compose -f docker-compose.prod.yml up -d --build
-```
-
-## Later, once you outgrow this
-
-- Add DO Managed Redis and set `REDIS_URL` — no code changes needed, it's already optional.
-- Move Postgres to a DO Managed Database once backup/failover ops become a burden — swap `DATABASE_URL`, nothing else changes since it's already a bog-standard Postgres URL.
-- Move to App Platform or add a second Droplet + load balancer once a single 2GB box is the bottleneck.
+`docker-compose.prod.yml` at the repository root describes a different topology —
+frontend, backend, Postgres and Caddy on a single droplet behind Caddy-managed TLS.
+**This is not the live deployment.** It is retained as a self-hosting path, and shares
+the backend build context with the live setup. If you change how ParchiVisa is
+deployed, change it deliberately; do not assume the Compose file reflects production.
